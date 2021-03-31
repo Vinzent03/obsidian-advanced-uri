@@ -1,9 +1,36 @@
 # Advanced Obsidian URI
 A Plugin for [Obsidian](https://obsidian.md)
 
-## How does it work?
+Schema: `obsidian://advanced-uri?vault=<your-vault>&<parameter>=<value>&<parameter2>=<value2>`
 
-WIP
+
+| /               | parameters                    | explanation                                                         |
+| --------------- | ----------------------------- | ------------------------------------------------------------------- |
+| write           | filepath, data                | Only writes `data` to `filepath` if the file is not already present |
+| override        | filepath, data, mode=override | Writes `data` to `filepath` even if the file already exists         |
+| append          | filepath, data, mode=append   | Only appends `data` to `filepath`                                   |
+| workspace       | workspace                     | Opens the workspace called `workspace`                              |
+| heading         | filepath, heading             | Opens the `heading` in `filepath`                                   |
+| block reference | filepath, block               | Opens the `block` in `filepath`                                     | 
+
+## Examples
+
+**Write** "Hello World" to "my-file.md":
+`obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World`
+
+**Override** "This text is overwritten" to "my-file.md":
+`obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=This%20text%20is%20overwritten&mode=override`
+
+Open **workspace** "main":
+`obsidian://advanced-uri?vault=<your-vault>&workspace=main`
+
+Open **heading** "Goal" in "my-file.md" (**Important:** Without syntax, only `Goal`):
+`obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&heading=Goal`
+
+Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `12345`):
+`obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345`
+
+
 
 ## Compatibility
 Custom plugins are only available for Obsidian v0.9.7+.
