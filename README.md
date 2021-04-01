@@ -10,7 +10,7 @@ This is especially important because an improperly encoded "reserved" character 
 | /               | parameters                    | explanation                                                         |
 | --------------- | ----------------------------- | ------------------------------------------------------------------- |
 | write           | filepath, data                | Only writes `data` to `filepath` if the file is not already present |
-| override        | filepath, data, mode=override | Writes `data` to `filepath` even if the file already exists         |
+| overwrite       | filepath, data, mode=overwrite| Writes `data` to `filepath` even if the file already exists         |
 | append          | filepath, data, mode=append   | Only appends `data` to `filepath`                                   |
 | prepend         | filepath, data, mode=prepend  | Only prepends `data` to `filepath`                                  |
 | workspace       | workspace                     | Opens the workspace called `workspace`                              |
@@ -22,8 +22,8 @@ This is especially important because an improperly encoded "reserved" character 
 **Write** "Hello World" to "my-file.md":
 `obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World`
 
-**Override** "This text is overwritten" to "my-file.md":
-`obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=This%20text%20is%20overwritten&mode=override`
+**Overwrite** "This text is overwritten" to "my-file.md":
+`obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=This%20text%20is%20overwritten&mode=overwrite`
 
 Open **workspace** "main":
 `obsidian://advanced-uri?vault=<your-vault>&workspace=main`

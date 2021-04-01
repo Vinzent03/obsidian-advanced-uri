@@ -11,7 +11,7 @@ interface Parameters {
     workspace: string;
     filepath: string;
     data: string;
-    mode: "override" | "append" | "prepend";
+    mode: "overwrite" | "append" | "prepend";
     heading: string;
     block: string;
 }
@@ -54,7 +54,7 @@ export default class AdvancedURI extends Plugin {
         }
         const file = this.app.vault.getAbstractFileByPath(path);
 
-        if (parameters.mode === "override") {
+        if (parameters.mode === "overwrite") {
             this.writeAndOpenFile(path, parameters.data);
         }
         else if (parameters.mode === "prepend") {
