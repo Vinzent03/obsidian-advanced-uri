@@ -9,6 +9,7 @@ Schema: `obsidian://advanced-uri?vault=<your-vault>&<parameter>=<value>&<paramet
 | write           | filepath, data                | Only writes `data` to `filepath` if the file is not already present |
 | override        | filepath, data, mode=override | Writes `data` to `filepath` even if the file already exists         |
 | append          | filepath, data, mode=append   | Only appends `data` to `filepath`                                   |
+| prepend         | filepath, data, mode=prepend  | Only prepends `data` to `filepath`                                  |
 | workspace       | workspace                     | Opens the workspace called `workspace`                              |
 | heading         | filepath, heading             | Opens the `heading` in `filepath`                                   |
 | block reference | filepath, block               | Opens the `block` in `filepath`                                     | 
