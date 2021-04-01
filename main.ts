@@ -84,12 +84,12 @@ export default class AdvancedURI extends Plugin {
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
             this.app.workspace.iterateAllLeaves(leaf => {
-                if (leaf.getDisplayText() != "" && outputFileName.startsWith(leaf.getDisplayText())) {
+                if ((leaf.view as any).file?.path === outputFileName) {
                     fileIsAlreadyOpened = true;
                 }
             });
             if (!fileIsAlreadyOpened)
-                this.app.workspace.openLinkText(outputFileName, "/", true);
+                this.app.workspace.openLinkText(outputFileName, "", true);
         }
     }
 
