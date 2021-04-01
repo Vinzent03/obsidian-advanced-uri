@@ -27,8 +27,11 @@ export default class AdvancedURI extends Plugin {
             const parameters = e as unknown as Parameters;
 
             if (parameters.workspace) {
-                const workspaces = (this.app as any).internalPlugins.plugins.workspaces;
-                if (workspaces.enabled) {
+                const workspaces = (this.app as any)?.internalPlugins?.plugins?.workspaces;
+                if (!workspaces) {
+                    new Notice("Cannot find Workspaces plugin. Please file an issue.");
+                }
+                else if (workspaces.enabled) {
                     workspaces.instance.loadWorkspace(parameters.workspace);
                 } else {
                     new Notice("Workspaces plugin is not enabled");
