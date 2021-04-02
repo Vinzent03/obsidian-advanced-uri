@@ -7,17 +7,30 @@ Ensure that your values are properly URI encoded. For example, forward slash cha
 
 This is especially important because an improperly encoded "reserved" character may break the interpretation of the URI. [See here for details](https://en.wikipedia.org/wiki/Percent-encoding)
 
+## Writing
 | /               | parameters                    | explanation                                                         |
 | --------------- | ----------------------------- | ------------------------------------------------------------------- |
 | write           | filepath, data                | Only writes `data` to `filepath` if the file is not already present |
 | overwrite       | filepath, data, mode=overwrite| Writes `data` to `filepath` even if the file already exists         |
 | append          | filepath, data, mode=append   | Only appends `data` to `filepath`                                   |
 | prepend         | filepath, data, mode=prepend  | Only prepends `data` to `filepath`                                  |
-| workspace       | workspace                     | Opens the workspace called `workspace`                              |
-| heading         | filepath, heading             | Opens the `heading` in `filepath`                                   |
-| block reference | filepath, block               | Opens the `block` in `filepath`                                     | 
 
-## Examples
+## Navigation
+| /               | parameters        | explanation                                       |
+| --------------- | ----------------- | -------------------------------------- |
+| workspace       | workspace         | Opens the workspace called `workspace` |
+| heading         | filepath, heading | Opens the `heading` in `filepath`      |
+| block reference | filepath, block   | Opens the `block` in `filepath`        |
+
+## Daily notes
+| /         | parameters                       | explanation                                                                                              |
+| --------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| write     | daily=true, data                 | Only writes `data` to today's daily note if the note does not already exists                             |
+| overwrite | daily=true, data, mode=overwrite | Writes `data` to today's daily note even if the file already exists                                      |
+| append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  | 
+| prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
+
+# Examples
 
 **Write** "Hello World" to "my-file.md":
 `obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World`
@@ -34,7 +47,8 @@ Open **heading** "Goal" in "my-file.md" (**Important:** Without syntax, only `Go
 Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `12345`):
 `obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345`
 
-
+**Append** "Hello World" to today's **daily note**.
+`obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append`
 
 ## Compatibility
 Custom plugins are only available for Obsidian v0.9.7+.
