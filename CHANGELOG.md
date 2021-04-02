@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/0.2.1...0.2.2) (2021-04-02)
+
+
+### Features
+
+* copy Advanced Obsidian URI ([43983ad](https://github.com/Vinzent03/obsidian-advanced-uri/commit/43983ade0e2e4204fd0939edeab2b6a6d19ca62e)), closes [#4](https://github.com/Vinzent03/obsidian-advanced-uri/issues/4)
+
 ### [0.2.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/0.2.0...0.2.1) (2021-04-02)
 
 
