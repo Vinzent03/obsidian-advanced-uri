@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/0.2.0...0.2.1) (2021-04-02)
+
+
+### Features
+
+* add daily notes support ([c2333fe](https://github.com/Vinzent03/obsidian-advanced-uri/commit/c2333fe2ea930f4056b9365a68effc7fb6f08a9f)), closes [#2](https://github.com/Vinzent03/obsidian-advanced-uri/issues/2)
+
 ## [0.2.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/0.1.1...0.2.0) (2021-04-01)
 
 
