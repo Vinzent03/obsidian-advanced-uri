@@ -1,4 +1,4 @@
-import { App, normalizePath, Notice, Plugin, PluginSettingTab, Setting, TFile } from "obsidian";
+import { App, MarkdownView, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 
 const DEFAULT_SETTINGS: AdvancedURISettings = {
@@ -44,6 +44,45 @@ export default class AdvancedURI extends Plugin {
                 this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "");
             }
         });
+
+        this.registerEvent(
+            this.app.workspace.on('file-menu', (menu, file: TFile, source: string) => {
+                if (source !== "pane-more-options") {
+                    return;
+                }
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (!view) {
+                    return;
+                }
+
+                menu.addItem((item) => {
+                    item.setTitle(`Copy Advanced URI`).setIcon('link')
+                        .onClick((evt) => {
+                            const pos = view.editor.getCursor();
+                            const cache = this.app.metadataCache.getFileCache(view.file);
+                            if (cache.headings) {
+                                for (const heading of cache.headings) {
+                                    if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
+                                        let url = this.buildURIBase(view.file.path) + `&heading=${heading.heading}`;
+                                        navigator.clipboard.writeText(encodeURI(url));
+                                        return;
+                                    }
+                                }
+                            }
+                            if (cache.blocks) {
+                                for (const blockID of Object.keys(cache.blocks)) {
+                                    const block = cache.blocks[blockID];
+                                    if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
+                                        let url = this.buildURIBase(view.file.path) + `&block=${blockID}`;
+                                        navigator.clipboard.writeText(encodeURI(url));
+                                        return;
+                                    }
+                                }
+                            }
+                            new EnterDataModal(this, view.file.path).open();
+                        });
+                });
+            }));
     }
 
     handleWorkspace(workspace: string) {
@@ -146,6 +185,10 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
+    buildURIBase(file: string) {
+        return `obsidian://advanced-uri?vault=${this.app.vault.getName()}&filepath=${file}`;
+    }
+
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     }
@@ -173,5 +216,41 @@ class SettingsTab extends PluginSettingTab {
                 this.plugin.saveSettings();
             }).setValue(this.plugin.settings.openFileOnWrite));
 
+    }
+}
+
+class EnterDataModal extends SuggestModal<string> {
+    plugin: AdvancedURI;
+    modes = ["overwrite", "append", "prepend"];
+    file: string;
+
+    constructor(plugin: AdvancedURI, file: string) {
+        super(plugin.app);
+        this.plugin = plugin;
+        this.setPlaceholder("Type your data to be written to the file");
+        this.file = file;
+    }
+
+
+    getSuggestions(query: string): string[] {
+        if (query == "") query = "...";
+        return [query, ...this.modes.map(e => `${query} in ${e} mode`)];
+    }
+
+    renderSuggestion(value: string, el: HTMLElement): void {
+        el.innerText = value;
+    }
+
+    onChooseSuggestion(item: string, _: MouseEvent | KeyboardEvent): void {
+        for (const mode of this.modes) {
+            if (item.endsWith(` in ${mode} mode`)) {
+                const data = item.substring(0, item.indexOf(` in ${mode} mode`));
+                const uri = this.plugin.buildURIBase(this.file) + `&data=${data}&mode=${mode}`;
+                navigator.clipboard.writeText(encodeURI(uri));
+                return;
+            }
+        }
+        const uri = this.plugin.buildURIBase(this.file) + `&data=${item}`;
+        navigator.clipboard.writeText(encodeURI(uri));
     }
 }
