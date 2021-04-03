@@ -7,6 +7,8 @@ Ensure that your values are properly URI encoded. For example, forward slash cha
 
 This is especially important because an improperly encoded "reserved" character may break the interpretation of the URI. [See here for details](https://en.wikipedia.org/wiki/Percent-encoding)
 
+To get the URI in a more convenient way you can use the `Copy Advanced URI` button in the file menu. When you are in a heading or block with a reference an URI to navigate to it, is copied to your clipboard. Otherwise a modal is opened, where you can type in your data that should be written to the current file.
+
 ## Writing
 | /               | parameters                    | explanation                                                         |
 | --------------- | ----------------------------- | ------------------------------------------------------------------- |
