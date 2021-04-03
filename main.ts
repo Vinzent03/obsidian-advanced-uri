@@ -34,7 +34,7 @@ export default class AdvancedURI extends Plugin {
             } else if (parameters.filepath && parameters.data) {
                 this.handleWrite(parameters);
 
-            } else if (parameters.daily === "true" && parameters.data) {
+            } else if (parameters.daily === "true") {
                 this.handleDailyNote(parameters);
 
             } else if (parameters.filepath && parameters.heading) {
@@ -134,27 +134,34 @@ export default class AdvancedURI extends Plugin {
         const moment = (window as any).moment(Date.now());
         const allDailyNotes = getAllDailyNotes();
         let dailyNote = getDailyNote(moment, allDailyNotes);
-        if (parameters.mode === "overwrite") {
+
+        if (parameters.data && parameters.mode === "overwrite") {
             this.app.vault.adapter.write(dailyNote.path, parameters.data);
 
-        } else if (parameters.mode === "prepend") {
+        } else if (parameters.data && parameters.mode === "prepend") {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
             this.prepend(dailyNote, parameters.data);
 
-        } else if (parameters.mode === "append") {
+        } else if (parameters.data && parameters.mode === "append") {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
             this.append(dailyNote, parameters.data);
 
-        } else if (dailyNote) {
+        } else if (parameters.data && dailyNote) {
             new Notice("File already exists");
 
-        } else {
+        } else if (parameters.data) {
             dailyNote = await createDailyNote(moment);
             this.writeAndOpenFile(dailyNote.path, parameters.data);
+
+        } else {
+            if (!dailyNote) {
+                dailyNote = await createDailyNote(moment);
+            }
+            this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openFileOnWrite);
         }
 
     }

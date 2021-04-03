@@ -10,6 +10,7 @@ This is especially important because an improperly encoded "reserved" character 
 To get the URI in a more convenient way you can use the `Copy Advanced URI` button in the file menu. When you are in a heading or block with a reference an URI to navigate to it, is copied to your clipboard. Otherwise a modal is opened, where you can type in your data that should be written to the current file.
 
 ## Writing
+
 | /               | parameters                    | explanation                                                         |
 | --------------- | ----------------------------- | ------------------------------------------------------------------- |
 | write           | filepath, data                | Only writes `data` to `filepath` if the file is not already present |
@@ -18,6 +19,7 @@ To get the URI in a more convenient way you can use the `Copy Advanced URI` butt
 | prepend         | filepath, data, mode=prepend  | Only prepends `data` to `filepath`                                  |
 
 ## Navigation
+
 | /               | parameters        | explanation                                       |
 | --------------- | ----------------- | -------------------------------------- |
 | workspace       | workspace         | Opens the workspace called `workspace` |
@@ -25,8 +27,10 @@ To get the URI in a more convenient way you can use the `Copy Advanced URI` butt
 | block reference | filepath, block   | Opens the `block` in `filepath`        |
 
 ## Daily notes
+
 | /         | parameters                       | explanation                                                                                              |
 | --------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| open      | daily=true                       | Opens the daily note. If the note does not already exists, it will be created                            |
 | write     | daily=true, data                 | Only writes `data` to today's daily note if the note does not already exists                             |
 | overwrite | daily=true, data, mode=overwrite | Writes `data` to today's daily note even if the file already exists                                      |
 | append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  | 
