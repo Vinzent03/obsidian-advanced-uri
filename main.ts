@@ -27,6 +27,14 @@ export default class AdvancedURI extends Plugin {
         await this.loadSettings();
         this.addSettingTab(new SettingsTab(this.app, this));
 
+
+        this.addCommand({
+            id: "copy-uri-current-file",
+            name: "copy URI for current file",
+            callback: () => this.buildURI()
+        });
+
+
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
 
@@ -62,30 +70,7 @@ export default class AdvancedURI extends Plugin {
 
                 menu.addItem((item) => {
                     item.setTitle(`Copy Advanced URI`).setIcon('link')
-                        .onClick((evt) => {
-                            const pos = view.editor.getCursor();
-                            const cache = this.app.metadataCache.getFileCache(view.file);
-                            if (cache.headings) {
-                                for (const heading of cache.headings) {
-                                    if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
-                                        let url = this.buildURIBase(view.file.path) + `&heading=${heading.heading}`;
-                                        navigator.clipboard.writeText(encodeURI(url));
-                                        return;
-                                    }
-                                }
-                            }
-                            if (cache.blocks) {
-                                for (const blockID of Object.keys(cache.blocks)) {
-                                    const block = cache.blocks[blockID];
-                                    if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
-                                        let url = this.buildURIBase(view.file.path) + `&block=${blockID}`;
-                                        navigator.clipboard.writeText(encodeURI(url));
-                                        return;
-                                    }
-                                }
-                            }
-                            new EnterDataModal(this, view.file.path).open();
-                        });
+                        .onClick((evt) => this.buildURI());
                 });
             }));
     }
@@ -216,6 +201,36 @@ export default class AdvancedURI extends Plugin {
         return `obsidian://advanced-uri?vault=${this.app.vault.getName()}&filepath=${file}`;
     }
 
+    buildURI() {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (!view) return;
+
+        const pos = view.editor.getCursor();
+        const cache = this.app.metadataCache.getFileCache(view.file);
+        if (cache.headings) {
+            for (const heading of cache.headings) {
+                if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
+                    let url = this.buildURIBase(view.file.path) + `&heading=${heading.heading}`;
+                    navigator.clipboard.writeText(encodeURI(url));
+                    new Notice("Advanced URI copied to your clipboard");
+                    return;
+                }
+            }
+        }
+        if (cache.blocks) {
+            for (const blockID of Object.keys(cache.blocks)) {
+                const block = cache.blocks[blockID];
+                if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
+                    let url = this.buildURIBase(view.file.path) + `&block=${blockID}`;
+                    navigator.clipboard.writeText(encodeURI(url));
+                    new Notice("Advanced URI copied to your clipboard");
+                    return;
+                }
+            }
+        }
+        new EnterDataModal(this, view.file.path).open();
+    }
+
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     }
@@ -274,10 +289,12 @@ class EnterDataModal extends SuggestModal<string> {
                 const data = item.substring(0, item.indexOf(` in ${mode} mode`));
                 const uri = this.plugin.buildURIBase(this.file) + `&data=${data}&mode=${mode}`;
                 navigator.clipboard.writeText(encodeURI(uri));
+                new Notice("Advanced URI copied to your clipboard");
                 return;
             }
         }
         const uri = this.plugin.buildURIBase(this.file) + `&data=${item}`;
         navigator.clipboard.writeText(encodeURI(uri));
+        new Notice("Advanced URI copied to your clipboard");
     }
 }
