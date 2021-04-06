@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/0.2.2...1.0.0) (2021-04-06)
+
+
+### Features
+
+* execute commands ([0a5f47f](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0a5f47f8b86cb74ac5a5adb9e908bfc80f2f5e1b))
+* open daily note without writing ([3d52fc9](https://github.com/Vinzent03/obsidian-advanced-uri/commit/3d52fc911d24a3d83322667450a1f40f5e8601c8))
+
 ### [0.2.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/0.2.1...0.2.2) (2021-04-02)
 
 
