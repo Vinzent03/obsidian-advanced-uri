@@ -16,6 +16,8 @@ interface Parameters {
     mode: "overwrite" | "append" | "prepend";
     heading: string;
     block: string;
+    commandname: string,
+    commandid: string,
 }
 
 export default class AdvancedURI extends Plugin {
@@ -30,6 +32,9 @@ export default class AdvancedURI extends Plugin {
 
             if (parameters.workspace) {
                 this.handleWorkspace(parameters.workspace);
+
+            } else if (parameters.commandname || parameters.commandid) {
+                this.handleCommand(parameters);
 
             } else if (parameters.filepath && parameters.data) {
                 this.handleWrite(parameters);
@@ -95,6 +100,21 @@ export default class AdvancedURI extends Plugin {
 
         } else {
             new Notice("Workspaces plugin is not enabled");
+        }
+    }
+
+    handleCommand(parameters: Parameters) {
+        if (parameters.commandid) {
+            (this.app as any).commands.executeCommandById(parameters.commandid);
+        } else if (parameters.commandname) {
+            const rawCommands = (this.app as any).commands.commands;
+            for (const command in rawCommands) {
+                if (rawCommands[command].name === parameters.commandname) {
+                    rawCommands[command].callback();
+                    return;
+                }
+
+            }
         }
     }
 

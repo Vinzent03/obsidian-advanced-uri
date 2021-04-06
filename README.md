@@ -36,6 +36,13 @@ To get the URI in a more convenient way you can use the `Copy Advanced URI` butt
 | append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  | 
 | prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
 
+## Execute command
+
+| /               | parameters  | explanation                  |
+| --------------- | ----------- | ---------------------------- |
+| execute by name | commandname | Executes command by its name |
+| execute by id   | commandid   | Executes command by its id | 
+
 # Examples
 
 **Write** "Hello World" to "my-file.md":
