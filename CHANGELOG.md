@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.1.0...1.2.0) (2021-04-07)
+
+
+### Features
+
+* encode file data properly ([70ef2ca](https://github.com/Vinzent03/obsidian-advanced-uri/commit/70ef2ca03934f61374530cd2510fdc2edfaf24cb))
+* execute command in given file ([ae2d088](https://github.com/Vinzent03/obsidian-advanced-uri/commit/ae2d088b4ae2c2c0857d709a6f701d1f90460b0d)), closes [#5](https://github.com/Vinzent03/obsidian-advanced-uri/issues/5)
+
+
+### Bug Fixes
+
+* commands with checkCallback didn't work ([46d2478](https://github.com/Vinzent03/obsidian-advanced-uri/commit/46d24787f42ecf59e5da1aabb4d272e421d949a9))
+
 ## [1.1.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.0.0...1.1.0) (2021-04-06)
 
 
