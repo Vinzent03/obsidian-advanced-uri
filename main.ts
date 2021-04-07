@@ -37,9 +37,9 @@ export default class AdvancedURI extends Plugin {
 
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
-
-            parameters.data = decodeURIComponent(parameters.data);
-
+            if (parameters.data) {
+                parameters.data = decodeURIComponent(parameters.data);
+            }
             if (parameters.workspace) {
                 this.handleWorkspace(parameters.workspace);
 
