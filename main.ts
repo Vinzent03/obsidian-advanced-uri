@@ -88,7 +88,10 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    handleCommand(parameters: Parameters) {
+    async handleCommand(parameters: Parameters) {
+        if (parameters.filepath) {
+            await this.app.workspace.openLinkText(parameters.filepath, "/");
+        }
         if (parameters.commandid) {
             (this.app as any).commands.executeCommandById(parameters.commandid);
         } else if (parameters.commandname) {

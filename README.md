@@ -20,7 +20,7 @@ To get the URI in a more convenient way you can use the `Copy Advanced URI` butt
 
 ## Navigation
 
-| /               | parameters        | explanation                                       |
+| /               | parameters        | explanation                            |
 | --------------- | ----------------- | -------------------------------------- |
 | workspace       | workspace         | Opens the workspace called `workspace` |
 | heading         | filepath, heading | Opens the `heading` in `filepath`      |
@@ -38,10 +38,12 @@ To get the URI in a more convenient way you can use the `Copy Advanced URI` butt
 
 ## Execute command
 
-| /               | parameters  | explanation                  |
-| --------------- | ----------- | ---------------------------- |
-| execute by name | commandname | Executes command by its name |
-| execute by id   | commandid   | Executes command by its id | 
+| /               | parameters            | explanation                                            |
+| --------------- | --------------------- | ------------------------------------------------------ |
+| execute by name | commandname           | Executes command by its name                           |
+| execute by name | commandname, filepath | Opens `filepath` and then executes command by its name | 
+| execute by id   | commandid             | Executes command by its id                             |
+| execute by id   | commandid, filepath   | Opens `filepath` and then executes command by its id   |
 
 # Examples
 
