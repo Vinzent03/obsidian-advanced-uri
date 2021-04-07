@@ -38,6 +38,8 @@ export default class AdvancedURI extends Plugin {
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
 
+            parameters.data = decodeURIComponent(parameters.data);
+
             if (parameters.workspace) {
                 this.handleWorkspace(parameters.workspace);
 
@@ -294,7 +296,7 @@ class EnterDataModal extends SuggestModal<string> {
         for (const mode of this.modes) {
             if (item.endsWith(` in ${mode} mode`)) {
                 const data = item.substring(0, item.indexOf(` in ${mode} mode`));
-                const uri = this.plugin.buildURIBase(this.file) + `&data=${data}&mode=${mode}`;
+                const uri = this.plugin.buildURIBase(this.file) + `&data=${encodeURIComponent(data)}&mode=${mode}`;
                 navigator.clipboard.writeText(encodeURI(uri));
                 new Notice("Advanced URI copied to your clipboard");
                 return;
