@@ -98,7 +98,11 @@ export default class AdvancedURI extends Plugin {
             const rawCommands = (this.app as any).commands.commands;
             for (const command in rawCommands) {
                 if (rawCommands[command].name === parameters.commandname) {
-                    rawCommands[command].callback();
+                    if (rawCommands[command].callback) {
+                        rawCommands[command].callback();
+                    } else {
+                        rawCommands[command].checkCallback();
+                    }
                     return;
                 }
 
