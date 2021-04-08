@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.2.1...1.3.0) (2021-04-08)
+
+
+### Features
+
+* add better settings ([96f67cd](https://github.com/Vinzent03/obsidian-advanced-uri/commit/96f67cdcfbb51d66800db7c0e6ed853c56c6ed91)), closes [#6](https://github.com/Vinzent03/obsidian-advanced-uri/issues/6)
+* add command URI builder ([0daf996](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0daf9961fe8d4b953d9478f55445e721e13feeed))
+* add daily notes URI builder ([cb0ebb6](https://github.com/Vinzent03/obsidian-advanced-uri/commit/cb0ebb68d2755a89265b7c26ec5c7781f77d0fa9)), closes [#7](https://github.com/Vinzent03/obsidian-advanced-uri/issues/7)
+* encode and decode everything ([8a35341](https://github.com/Vinzent03/obsidian-advanced-uri/commit/8a35341d6ab3883d829e3dce8a4284d90859e909))
+
 ### [1.2.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.2.0...1.2.1) (2021-04-07)
 
 
