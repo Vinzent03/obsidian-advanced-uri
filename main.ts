@@ -1,4 +1,4 @@
-import { App, MarkdownView, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
+import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 
 const DEFAULT_SETTINGS: AdvancedURISettings = {
@@ -42,6 +42,21 @@ export default class AdvancedURI extends Plugin {
             id: "copy-uri-daily",
             name: "copy URI for daily note",
             callback: () => new EnterDataModal(this).open()
+        });
+
+        this.addCommand({
+            id: "copy-uri-command",
+            name: "copy URI for command",
+            callback: () => {
+                const fileModal = new FileModal(this);
+                fileModal.open();
+                fileModal.onChooseItem = (item: string) => {
+                    if (item === "Without opening a file before") {
+                        item = undefined;
+                    }
+                    new CommandModal(this, item).open();
+                };
+            }
         });
 
 
@@ -372,5 +387,56 @@ class EnterDataModal extends SuggestModal<EnterData> {
         } else {
             return this.plugin.getURIBase() + "&daily=true";
         }
+    }
+}
+
+class FileModal extends FuzzySuggestModal<string> {
+    plugin: AdvancedURI;
+    file: string;
+    constructor(plugin: AdvancedURI, file?: string) {
+        super(plugin.app);
+        this.plugin = plugin;
+        this.file = file;
+        this.setPlaceholder("Select a file to be opened before executing the command");
+    }
+
+    getItems(): string[] {
+        return ["Without opening a file before", ...this.app.vault.getFiles().map(e => e.path)];
+    }
+
+    getItemText(item: string): string {
+        return item;
+    }
+
+    onChooseItem(item: string, evt: MouseEvent | KeyboardEvent): void {
+
+    }
+}
+
+class CommandModal extends FuzzySuggestModal<Command> {
+    plugin: AdvancedURI;
+    file: string;
+    constructor(plugin: AdvancedURI, file?: string) {
+        super(plugin.app);
+        this.plugin = plugin;
+        this.file = file;
+    }
+
+    getItems(): Command[] {
+        const rawCommands = (this.app as any).commands.commands;
+        const commands: Command[] = Object.keys(rawCommands).map(e => {
+            return { id: rawCommands[e].id, name: rawCommands[e].name };
+        });
+        return commands;
+    }
+
+    getItemText(item: Command): string {
+        return item.name;
+    }
+
+    onChooseItem(item: Command, _: MouseEvent | KeyboardEvent): void {
+        let uri: string;
+        uri = this.plugin.getURIBase(this.file) + `&commandid=${encodeURIComponent(item.id)}`;
+        this.plugin.copyURI(uri);
     }
 }
