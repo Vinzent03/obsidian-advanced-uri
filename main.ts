@@ -13,15 +13,15 @@ interface AdvancedURISettings {
     openDailyInNewPane: boolean;
 }
 interface Parameters {
-    workspace: string;
-    filepath: string;
-    daily: "true";
-    data: string;
-    mode: "overwrite" | "append" | "prepend";
-    heading: string;
-    block: string;
-    commandname: string,
-    commandid: string,
+    workspace?: string;
+    filepath?: string;
+    daily?: "true";
+    data?: string;
+    mode?: "overwrite" | "append" | "prepend";
+    heading?: string;
+    block?: string;
+    commandname?: string,
+    commandid?: string,
 }
 
 export default class AdvancedURI extends Plugin {
@@ -62,9 +62,11 @@ export default class AdvancedURI extends Plugin {
 
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
-            if (parameters.data) {
-                parameters.data = decodeURIComponent(parameters.data);
+
+            for (const parameter in parameters) {
+                (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
             }
+
             if (parameters.workspace) {
                 this.handleWorkspace(parameters.workspace);
 
@@ -231,15 +233,6 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    getURIBase(file?: string) {
-        const base = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
-        if (file) {
-            return base + `&filepath=${file}`;
-        } else {
-            return base;
-        }
-    }
-
     handleCopyFileURI() {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
@@ -249,8 +242,10 @@ export default class AdvancedURI extends Plugin {
         if (cache.headings) {
             for (const heading of cache.headings) {
                 if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
-                    const uri = this.getURIBase(view.file.path) + `&heading=${heading.heading}`;
-                    this.copyURI(uri);
+                    this.copyURI({
+                        filepath: view.file.path,
+                        heading: heading.heading
+                    });
                     return;
                 }
             }
@@ -259,8 +254,10 @@ export default class AdvancedURI extends Plugin {
             for (const blockID of Object.keys(cache.blocks)) {
                 const block = cache.blocks[blockID];
                 if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
-                    const uri = this.getURIBase(view.file.path) + `&block=${blockID}`;
-                    this.copyURI(uri);
+                    this.copyURI({
+                        filepath: view.file.path,
+                        block: blockID
+                    });
                     return;
                 }
             }
@@ -268,8 +265,15 @@ export default class AdvancedURI extends Plugin {
         new EnterDataModal(this, view.file.path).open();
     }
 
-    copyURI(decodedURI: string) {
-        navigator.clipboard.writeText(encodeURI(decodedURI));
+    copyURI(parameters: Parameters) {
+        let uri = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
+        for (const parameter in parameters) {
+            if ((parameters as any)[parameter]) {
+                uri = uri + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
+            }
+        }
+
+        navigator.clipboard.writeText(encodeURI(uri));
         new Notice("Advanced URI copied to your clipboard");
     }
 
@@ -350,7 +354,9 @@ class EnterDataModal extends SuggestModal<EnterData> {
                     data: query,
                     display: `Without data. Just open daily note`,
                     mode: mode,
-                    func: () => this.plugin.copyURI(this.buildURI())
+                    func: () => this.plugin.copyURI({
+                        daily: "true",
+                    })
 
                 });
             } else if (mode === "write") {
@@ -358,15 +364,40 @@ class EnterDataModal extends SuggestModal<EnterData> {
                     data: query,
                     display: query,
                     mode: mode,
-                    func: () => this.plugin.copyURI(this.buildURI() + `&data=${encodeURIComponent(query)}`)
-
+                    func: () => {
+                        if (this.file) {
+                            this.plugin.copyURI({
+                                filepath: this.file,
+                                data: query
+                            });
+                        } else {
+                            this.plugin.copyURI({
+                                daily: "true",
+                                data: query
+                            });
+                        }
+                    }
                 });
             } else {
                 suggestions.push({
                     data: query,
                     display: `${query} in ${mode} mode`,
                     mode: mode,
-                    func: () => this.plugin.copyURI(this.buildURI() + `&data=${encodeURIComponent(query)}&mode=${mode}`)
+                    func: () => {
+                        if (this.file) {
+                            this.plugin.copyURI({
+                                filepath: this.file,
+                                data: query,
+                                mode: mode as Parameters["mode"]
+                            });
+                        } else {
+                            this.plugin.copyURI({
+                                daily: "true",
+                                data: query,
+                                mode: mode as Parameters["mode"]
+                            });
+                        }
+                    }
                 });
             }
         }
@@ -376,18 +407,11 @@ class EnterDataModal extends SuggestModal<EnterData> {
 
     renderSuggestion(value: EnterData, el: HTMLElement): void {
         el.innerText = value.display;
-    }
+    };
 
     onChooseSuggestion(item: EnterData, _: MouseEvent | KeyboardEvent): void {
         item.func();
-    }
-    buildURI(): string {
-        if (this.file) {
-            return this.plugin.getURIBase(this.file);
-        } else {
-            return this.plugin.getURIBase() + "&daily=true";
-        }
-    }
+    };
 }
 
 class FileModal extends FuzzySuggestModal<string> {
@@ -435,8 +459,9 @@ class CommandModal extends FuzzySuggestModal<Command> {
     }
 
     onChooseItem(item: Command, _: MouseEvent | KeyboardEvent): void {
-        let uri: string;
-        uri = this.plugin.getURIBase(this.file) + `&commandid=${encodeURIComponent(item.id)}`;
-        this.plugin.copyURI(uri);
+        this.plugin.copyURI({
+            filepath: this.file,
+            commandid: item.id
+        });
     }
 }
