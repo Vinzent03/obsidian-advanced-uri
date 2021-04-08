@@ -35,7 +35,13 @@ export default class AdvancedURI extends Plugin {
         this.addCommand({
             id: "copy-uri-current-file",
             name: "copy URI for current file",
-            callback: () => this.buildURI()
+            callback: () => this.handleCopyFileURI()
+        });
+
+        this.addCommand({
+            id: "copy-uri-daily",
+            name: "copy URI for daily note",
+            callback: () => new EnterDataModal(this).open()
         });
 
 
@@ -65,7 +71,7 @@ export default class AdvancedURI extends Plugin {
         });
 
         this.registerEvent(
-            this.app.workspace.on('file-menu', (menu, file: TFile, source: string) => {
+            this.app.workspace.on('file-menu', (menu, _, source) => {
                 if (source !== "pane-more-options") {
                     return;
                 }
@@ -76,7 +82,7 @@ export default class AdvancedURI extends Plugin {
 
                 menu.addItem((item) => {
                     item.setTitle(`Copy Advanced URI`).setIcon('link')
-                        .onClick((evt) => this.buildURI());
+                        .onClick((_) => this.handleCopyFileURI());
                 });
             }));
     }
@@ -210,11 +216,16 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    buildURIBase(file: string) {
-        return `obsidian://advanced-uri?vault=${this.app.vault.getName()}&filepath=${file}`;
+    getURIBase(file?: string) {
+        const base = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
+        if (file) {
+            return base + `&filepath=${file}`;
+        } else {
+            return base;
+        }
     }
 
-    buildURI() {
+    handleCopyFileURI() {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
 
@@ -223,9 +234,8 @@ export default class AdvancedURI extends Plugin {
         if (cache.headings) {
             for (const heading of cache.headings) {
                 if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
-                    let url = this.buildURIBase(view.file.path) + `&heading=${heading.heading}`;
-                    navigator.clipboard.writeText(encodeURI(url));
-                    new Notice("Advanced URI copied to your clipboard");
+                    const uri = this.getURIBase(view.file.path) + `&heading=${heading.heading}`;
+                    this.copyURI(uri);
                     return;
                 }
             }
@@ -234,14 +244,18 @@ export default class AdvancedURI extends Plugin {
             for (const blockID of Object.keys(cache.blocks)) {
                 const block = cache.blocks[blockID];
                 if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
-                    let url = this.buildURIBase(view.file.path) + `&block=${blockID}`;
-                    navigator.clipboard.writeText(encodeURI(url));
-                    new Notice("Advanced URI copied to your clipboard");
+                    const uri = this.getURIBase(view.file.path) + `&block=${blockID}`;
+                    this.copyURI(uri);
                     return;
                 }
             }
         }
         new EnterDataModal(this, view.file.path).open();
+    }
+
+    copyURI(decodedURI: string) {
+        navigator.clipboard.writeText(encodeURI(decodedURI));
+        new Notice("Advanced URI copied to your clipboard");
     }
 
     async loadSettings() {
@@ -289,12 +303,19 @@ class SettingsTab extends PluginSettingTab {
     }
 }
 
-class EnterDataModal extends SuggestModal<string> {
-    plugin: AdvancedURI;
-    modes = ["overwrite", "append", "prepend"];
-    file: string;
+interface EnterData {
+    mode: string;
+    data: string,
+    display: string,
+    func: Function,
+}
 
-    constructor(plugin: AdvancedURI, file: string) {
+class EnterDataModal extends SuggestModal<EnterData> {
+    plugin: AdvancedURI;
+    modes = ["daily", "write", "overwrite", "append", "prepend"];
+    file: string | undefined;
+
+    constructor(plugin: AdvancedURI, file?: string) {
         super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder("Type your data to be written to the file");
@@ -302,27 +323,54 @@ class EnterDataModal extends SuggestModal<string> {
     }
 
 
-    getSuggestions(query: string): string[] {
+    getSuggestions(query: string): EnterData[] {
         if (query == "") query = "...";
-        return [query, ...this.modes.map(e => `${query} in ${e} mode`)];
-    }
 
-    renderSuggestion(value: string, el: HTMLElement): void {
-        el.innerText = value;
-    }
-
-    onChooseSuggestion(item: string, _: MouseEvent | KeyboardEvent): void {
+        let suggestions: EnterData[] = [];
         for (const mode of this.modes) {
-            if (item.endsWith(` in ${mode} mode`)) {
-                const data = item.substring(0, item.indexOf(` in ${mode} mode`));
-                const uri = this.plugin.buildURIBase(this.file) + `&data=${encodeURIComponent(data)}&mode=${mode}`;
-                navigator.clipboard.writeText(encodeURI(uri));
-                new Notice("Advanced URI copied to your clipboard");
-                return;
+            if (this.file && mode === "daily") {
+                continue;
+            } else if (!this.file && mode === "daily") {
+                suggestions.push({
+                    data: query,
+                    display: `Without data. Just open daily note`,
+                    mode: mode,
+                    func: () => this.plugin.copyURI(this.buildURI())
+
+                });
+            } else if (mode === "write") {
+                suggestions.push({
+                    data: query,
+                    display: query,
+                    mode: mode,
+                    func: () => this.plugin.copyURI(this.buildURI() + `&data=${encodeURIComponent(query)}`)
+
+                });
+            } else {
+                suggestions.push({
+                    data: query,
+                    display: `${query} in ${mode} mode`,
+                    mode: mode,
+                    func: () => this.plugin.copyURI(this.buildURI() + `&data=${encodeURIComponent(query)}&mode=${mode}`)
+                });
             }
         }
-        const uri = this.plugin.buildURIBase(this.file) + `&data=${item}`;
-        navigator.clipboard.writeText(encodeURI(uri));
-        new Notice("Advanced URI copied to your clipboard");
+
+        return suggestions;
+    }
+
+    renderSuggestion(value: EnterData, el: HTMLElement): void {
+        el.innerText = value.display;
+    }
+
+    onChooseSuggestion(item: EnterData, _: MouseEvent | KeyboardEvent): void {
+        item.func();
+    }
+    buildURI(): string {
+        if (this.file) {
+            return this.plugin.getURIBase(this.file);
+        } else {
+            return this.plugin.getURIBase() + "&daily=true";
+        }
     }
 }
