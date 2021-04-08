@@ -2,11 +2,15 @@ import { App, MarkdownView, normalizePath, Notice, Plugin, PluginSettingTab, Set
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 
 const DEFAULT_SETTINGS: AdvancedURISettings = {
-    openFileOnWrite: true
+    openFileOnWrite: true,
+    openDailyInNewPane: false,
+    openFileOnWriteInNewPane: false,
 };
 
 interface AdvancedURISettings {
     openFileOnWrite: boolean;
+    openFileOnWriteInNewPane: boolean;
+    openDailyInNewPane: boolean;
 }
 interface Parameters {
     workspace: string;
@@ -150,7 +154,7 @@ export default class AdvancedURI extends Plugin {
         let dailyNote = getDailyNote(moment, allDailyNotes);
 
         if (parameters.data && parameters.mode === "overwrite") {
-            this.app.vault.adapter.write(dailyNote.path, parameters.data);
+            this.writeAndOpenFile(dailyNote.path, parameters.data);
 
         } else if (parameters.data && parameters.mode === "prepend") {
             if (!dailyNote) {
@@ -175,7 +179,7 @@ export default class AdvancedURI extends Plugin {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
-            this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openFileOnWrite);
+            this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane);
         }
 
     }
@@ -202,7 +206,7 @@ export default class AdvancedURI extends Plugin {
                 }
             });
             if (!fileIsAlreadyOpened)
-                this.app.workspace.openLinkText(outputFileName, "", true);
+                this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane);
         }
     }
 
@@ -261,11 +265,26 @@ class SettingsTab extends PluginSettingTab {
         containerEl.createEl("h2", { text: this.plugin.manifest.name });
 
         new Setting(containerEl)
-            .setName("Open file in a pane on write")
+            .setName("Open file on write")
             .addToggle(cb => cb.onChange(value => {
                 this.plugin.settings.openFileOnWrite = value;
                 this.plugin.saveSettings();
             }).setValue(this.plugin.settings.openFileOnWrite));
+
+        new Setting(containerEl)
+            .setName("Open file on write in a new pane")
+            .setDisabled(this.plugin.settings.openFileOnWrite)
+            .addToggle(cb => cb.onChange(value => {
+                this.plugin.settings.openFileOnWriteInNewPane = value;
+                this.plugin.saveSettings();
+            }).setValue(this.plugin.settings.openFileOnWriteInNewPane));
+
+        new Setting(containerEl)
+            .setName("Open daily note in a new pane")
+            .addToggle(cb => cb.onChange(value => {
+                this.plugin.settings.openDailyInNewPane = value;
+                this.plugin.saveSettings();
+            }).setValue(this.plugin.settings.openDailyInNewPane));
 
     }
 }
