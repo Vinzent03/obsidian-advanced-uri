@@ -65,6 +65,17 @@ Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `
 **Append** "Hello World" to today's **daily note**.
 `obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append`
 
+# Tips
+
+- If you want to insert templates (templates from [Templater plugin](https://github.com/SilentVoid13/Templater) too) I suggest you using my [hotkeys for templates](https://github.com/Vinzent03/obsidian-hotkeys-for-templates) plugin. Just enable your templates and insert them by calling the command via URI. 
+    - Command id for core templates: `obsidian-hotkeys-for-templates:<filepath.md>`
+    - Command id for Templater templates: `obsidian-hotkeys-for-templates:templater:<filepath.md>`
+- If you want to open starred notes. I suggest you using my [Hotkeys for starred files](https://github.com/Vinzent03/obsidian-shortcuts-for-starred-files) plugin. Same as for the templates. Just call the commands.
+    - Command id to open file in current pane: `obsidian-shortcuts-for-starred-files:open-file-<index>`
+    - Command id to open file in a new pane: `obsidian-shortcuts-for-starred-files:open-file-in-new-pane-<index>`
+
+
+
 ## Compatibility
 Custom plugins are only available for Obsidian v0.9.7+.
 
