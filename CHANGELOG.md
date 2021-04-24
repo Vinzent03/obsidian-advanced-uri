@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.3.0...1.4.0) (2021-04-24)
+
+
+### Features
+
+* add mode support for command execution ([2bc4af1](https://github.com/Vinzent03/obsidian-advanced-uri/commit/2bc4af14d207e4eaa53800f2195c2917ffca9204)), closes [#8](https://github.com/Vinzent03/obsidian-advanced-uri/issues/8)
+
 ## [1.3.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.2.1...1.3.0) (2021-04-08)
 
 
