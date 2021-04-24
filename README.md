@@ -38,12 +38,15 @@ To get the URI in a more convenient way you can use the commands to copy Advance
 
 ## Execute command
 
-| /               | parameters            | explanation                                            |
-| --------------- | --------------------- | ------------------------------------------------------ |
-| execute by name | commandname           | Executes command by its name                           |
-| execute by name | commandname, filepath | Opens `filepath` and then executes command by its name | 
-| execute by id   | commandid             | Executes command by its id                             |
-| execute by id   | commandid, filepath   | Opens `filepath` and then executes command by its id   |
+| /               | parameters                                            | explanation                                                                                           |
+| --------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| execute by name | commandname                                           | Executes command by its name                                                                          |
+| execute by name | commandname, filepath                                 | Opens `filepath` and then executes command by its name                                                |
+| execute by name | commandname, filepath, mode=append                    | Opens `filepath`, adds empty line at the end and sets cursor, then executes command by its name       |
+| execute by name | commandname, filepath, mode=prepend                   | Opens `filepath`, adds empty line at the beginning and sets cursor, then executes command by its name |
+| execute by name | commandname, filepath, mode=overwrite                 | Opens `filepath`, clears the file, then executes command by its name                                  |
+| execute by id   | commandid                                             | Executes command by its id                                                                            |
+| execute by id   | commandid, filepath, (same modes as execute by name) | Opens `filepath` and then executes command by its id                                                  |
 
 # Examples
 

@@ -119,7 +119,28 @@ export default class AdvancedURI extends Plugin {
 
     async handleCommand(parameters: Parameters) {
         if (parameters.filepath) {
-            await this.app.workspace.openLinkText(parameters.filepath, "/");
+            if (parameters.mode) {
+                await this.app.workspace.openLinkText(parameters.filepath, "/", undefined, {
+                    state: { mode: "source" }
+                });
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (view) {
+                    const editor = view.editor;
+                    const data = editor.getValue();
+                    if (parameters.mode === "append") {
+                        editor.setValue(data + "\n");
+                        const lines = editor.lineCount();
+                        editor.setCursor({ ch: 0, line: lines });
+                    } else if (parameters.mode === "prepend") {
+                        editor.setValue("\n" + data);
+                        editor.setCursor({ ch: 0, line: 0 });
+                    } else if (parameters.mode === "overwrite") {
+                        editor.setValue("");
+                    }
+                }
+            } else {
+                await this.app.workspace.openLinkText(parameters.filepath, "/");
+            }
         }
         if (parameters.commandid) {
             (this.app as any).commands.executeCommandById(parameters.commandid);
@@ -134,7 +155,6 @@ export default class AdvancedURI extends Plugin {
                     }
                     return;
                 }
-
             }
         }
     }
