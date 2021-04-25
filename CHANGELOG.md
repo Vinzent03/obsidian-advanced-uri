@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.4.0...1.4.1) (2021-04-25)
+
+
+### Bug Fixes
+
+* prepend/append mode needed an existing file ([894760c](https://github.com/Vinzent03/obsidian-advanced-uri/commit/894760ca7bc79c9ed0b0aa89111bf36e12266283))
+
 ## [1.4.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.3.0...1.4.0) (2021-04-24)
 
 
