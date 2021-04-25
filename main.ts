@@ -172,11 +172,15 @@ export default class AdvancedURI extends Plugin {
         } else if (parameters.mode === "prepend") {
             if (file instanceof TFile) {
                 this.prepend(file, parameters.data);
+            } else {
+                this.prepend(path, parameters.data);
             }
 
         } else if (parameters.mode === "append") {
             if (file instanceof TFile) {
                 this.append(file, parameters.data);
+            } else {
+                this.append(path, parameters.data);
             }
 
         } else if (file instanceof TFile) {
@@ -227,16 +231,32 @@ export default class AdvancedURI extends Plugin {
 
     }
 
-    async append(file: TFile, data: string) {
-        const fileData = await this.app.vault.read(file);
+    async append(file: TFile | string, data: string) {
+        let path: string;
+        let fileData: string;
+        if (file instanceof TFile) {
+            fileData = await this.app.vault.read(file);
+            path = file.path;
+        } else {
+            path = file;
+            fileData = "";
+        }
         const dataToWrite = fileData + "\n" + data;
-        this.writeAndOpenFile(file.path, dataToWrite);
+        this.writeAndOpenFile(path, dataToWrite);
     }
 
-    async prepend(file: TFile, data: string) {
-        const fileData = await this.app.vault.read(file);
+    async prepend(file: TFile | string, data: string) {
+        let path: string;
+        let fileData: string;
+        if (file instanceof TFile) {
+            fileData = await this.app.vault.read(file);
+            path = file.path;
+        } else {
+            path = file;
+            fileData = "";
+        }
         const dataToWrite = data + "\n" + fileData;
-        this.writeAndOpenFile(file.path, dataToWrite);
+        this.writeAndOpenFile(path, dataToWrite);
     }
 
     async writeAndOpenFile(outputFileName: string, text: string) {
