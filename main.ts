@@ -5,12 +5,14 @@ const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileOnWrite: true,
     openDailyInNewPane: false,
     openFileOnWriteInNewPane: false,
+    openFileWithoutWriteInNewPane: false,
 };
 
 interface AdvancedURISettings {
     openFileOnWrite: boolean;
     openFileOnWriteInNewPane: boolean;
     openDailyInNewPane: boolean;
+    openFileWithoutWriteInNewPane: boolean;
 }
 interface Parameters {
     workspace?: string;
@@ -66,6 +68,9 @@ export default class AdvancedURI extends Plugin {
             for (const parameter in parameters) {
                 (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
             }
+            if (parameters.filepath) {
+                parameters.filepath = normalizePath(parameters.filepath);
+            }
 
             if (parameters.workspace) {
                 this.handleWorkspace(parameters.workspace);
@@ -84,6 +89,8 @@ export default class AdvancedURI extends Plugin {
 
             } else if (parameters.filepath && parameters.block) {
                 this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "");
+            } else if (parameters.filepath) {
+                this.handleOpen(parameters);
             }
         });
 
@@ -160,7 +167,7 @@ export default class AdvancedURI extends Plugin {
     }
 
     async handleWrite(parameters: Parameters) {
-        let path = normalizePath(parameters.filepath);
+        let path = parameters.filepath;
         if (!path.endsWith(".md")) {
             path = path + ".md";
         }
@@ -189,6 +196,11 @@ export default class AdvancedURI extends Plugin {
         } else {
             this.writeAndOpenFile(path, parameters.data);
         }
+    }
+
+    async handleOpen(parameters: Parameters) {
+        await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane);
+        await this.setCursor(parameters.mode);
     }
 
     async handleDailyNote(parameters: Parameters) {
@@ -226,7 +238,10 @@ export default class AdvancedURI extends Plugin {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
-            this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane);
+            await this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane);
+            if (parameters.mode) {
+                await this.setCursor(parameters.mode);
+            }
         }
 
     }
@@ -270,6 +285,28 @@ export default class AdvancedURI extends Plugin {
             });
             if (!fileIsAlreadyOpened)
                 this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane);
+        }
+    }
+
+    async setCursor(mode: Parameters["mode"]) {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (view) {
+            const editor = view.editor;
+
+            let viewState = view.leaf.getViewState();
+            viewState.state.mode = "source";
+
+            if (mode === "append") {
+                const lastLine = editor.lastLine();
+                const lastLineLength = editor.getLine(lastLine).length;
+                await view.leaf.setViewState(viewState, { focus: true });
+
+                editor.setCursor({ ch: lastLineLength, line: lastLine });
+            } else if (mode === "prepend") {
+                await view.leaf.setViewState(viewState, { focus: true });
+
+                editor.setCursor({ ch: 0, line: 0 });
+            }
         }
     }
 
@@ -359,6 +396,13 @@ class SettingsTab extends PluginSettingTab {
                 this.plugin.saveSettings();
             }).setValue(this.plugin.settings.openDailyInNewPane));
 
+        new Setting(containerEl)
+            .setName("Open file without write in new pane")
+            .addToggle(cb => cb.onChange(value => {
+                this.plugin.settings.openFileWithoutWriteInNewPane = value;
+                this.plugin.saveSettings();
+            }).setValue(this.plugin.settings.openFileWithoutWriteInNewPane));
+
     }
 }
 
@@ -371,57 +415,41 @@ interface EnterData {
 
 class EnterDataModal extends SuggestModal<EnterData> {
     plugin: AdvancedURI;
-    modes = ["daily", "write", "overwrite", "append", "prepend"];
+    //null if for normal write mode, its not associated with a special mode like "append" or "prepend"
+    modes = [null, "overwrite", "append", "prepend"];
     file: string | undefined;
 
     constructor(plugin: AdvancedURI, file?: string) {
         super(plugin.app);
         this.plugin = plugin;
-        this.setPlaceholder("Type your data to be written to the file");
+        this.setPlaceholder("Type your data to be written to the file or leave it empty to just open it");
         this.file = file;
     }
 
 
     getSuggestions(query: string): EnterData[] {
-        if (query == "") query = "...";
+        if (query == "") query = null;
 
         let suggestions: EnterData[] = [];
         for (const mode of this.modes) {
-            if (this.file && mode === "daily") {
-                continue;
-            } else if (!this.file && mode === "daily") {
-                suggestions.push({
-                    data: query,
-                    display: `Without data. Just open daily note`,
-                    mode: mode,
-                    func: () => this.plugin.copyURI({
-                        daily: "true",
-                    })
-
-                });
-            } else if (mode === "write") {
-                suggestions.push({
-                    data: query,
-                    display: query,
-                    mode: mode,
-                    func: () => {
-                        if (this.file) {
-                            this.plugin.copyURI({
-                                filepath: this.file,
-                                data: query
-                            });
-                        } else {
-                            this.plugin.copyURI({
-                                daily: "true",
-                                data: query
-                            });
-                        }
+            if (!(mode === "overwrite" && !query)) {
+                let display: string;
+                if (query) {
+                    if (mode) {
+                        display = `Write "${query}" in ${mode} mode`;
+                    } else {
+                        display = `Write "${query}"`;
                     }
-                });
-            } else {
+                } else {
+                    if (mode) {
+                        display = `Open in ${mode} mode`;
+                    } else {
+                        display = `Open`;
+                    }
+                }
                 suggestions.push({
                     data: query,
-                    display: `${query} in ${mode} mode`,
+                    display: display,
                     mode: mode,
                     func: () => {
                         if (this.file) {
