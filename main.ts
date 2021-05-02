@@ -24,6 +24,9 @@ interface Parameters {
     block?: string;
     commandname?: string,
     commandid?: string,
+    search?: string,
+    searchregex?: string;
+    replace?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -47,13 +50,32 @@ export default class AdvancedURI extends Plugin {
         });
 
         this.addCommand({
+            id: "copy-uri-search-and-replace",
+            name: "copy URI for search and replace",
+            callback: () => {
+                const fileModal = new FileModal(this, "Used file for search and replace");
+                fileModal.open();
+                fileModal.onChooseItem = (filePath: string) => {
+                    if (filePath === "Don't specify a file.") {
+                        filePath = undefined;
+                    }
+                    const searchModal = new SearchModal(this);
+                    searchModal.open();
+                    searchModal.onChooseSuggestion = (item: SearchData) => {
+                        new ReplaceModal(this, item, filePath).open();
+                    };
+                };
+            },
+        });
+
+        this.addCommand({
             id: "copy-uri-command",
             name: "copy URI for command",
             callback: () => {
-                const fileModal = new FileModal(this);
+                const fileModal = new FileModal(this, "Select a file to be opened before executing the command");
                 fileModal.open();
                 fileModal.onChooseItem = (item: string) => {
-                    if (item === "Without opening a file before") {
+                    if (item === "Don't specify a file.") {
                         item = undefined;
                     }
                     new CommandModal(this, item).open();
@@ -70,6 +92,9 @@ export default class AdvancedURI extends Plugin {
             }
             if (parameters.filepath) {
                 parameters.filepath = normalizePath(parameters.filepath);
+                if (!parameters.filepath.endsWith(".md")) {
+                    parameters.filepath = parameters.filepath + ".md";
+                }
             }
 
             if (parameters.workspace) {
@@ -89,6 +114,10 @@ export default class AdvancedURI extends Plugin {
 
             } else if (parameters.filepath && parameters.block) {
                 this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "");
+
+            } else if ((parameters.search || parameters.searchregex) && parameters.replace) {
+                this.handleSearchAndReplace(parameters);
+
             } else if (parameters.filepath) {
                 this.handleOpen(parameters);
             }
@@ -166,11 +195,41 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    async handleWrite(parameters: Parameters) {
-        let path = parameters.filepath;
-        if (!path.endsWith(".md")) {
-            path = path + ".md";
+    async handleSearchAndReplace(parameters: Parameters) {
+        let file: TFile;
+        console.log(parameters.filepath);
+        if (parameters.filepath) {
+
+            const abstractFile = this.app.vault.getAbstractFileByPath(parameters.filepath);
+            if (abstractFile instanceof TFile) {
+                file = abstractFile;
+            }
+        } else {
+            file = this.app.workspace.getActiveFile();
         }
+
+        if (file) {
+            let data = await this.app.vault.read(file);
+            if (parameters.searchregex) {
+                try {
+                    const [, , pattern, flags] = parameters.searchregex.match(/(\/?)(.+)\1([a-z]*)/i);
+                    const regex = new RegExp(pattern, flags);
+                    data = data.replace(regex, parameters.replace);
+                } catch (error) {
+                    new Notice(`Can't parse ${parameters.searchregex} as RegEx`);
+                }
+            } else {
+                data = data.replaceAll(parameters.search, parameters.replace);
+            }
+
+            await this.writeAndOpenFile(file.path, data);
+        } else {
+            new Notice("Cannot find file");
+        }
+    }
+
+    async handleWrite(parameters: Parameters) {
+        const path = parameters.filepath;
         const file = this.app.vault.getAbstractFileByPath(path);
 
         if (parameters.mode === "overwrite") {
@@ -484,16 +543,14 @@ class EnterDataModal extends SuggestModal<EnterData> {
 
 class FileModal extends FuzzySuggestModal<string> {
     plugin: AdvancedURI;
-    file: string;
-    constructor(plugin: AdvancedURI, file?: string) {
+    constructor(plugin: AdvancedURI, private placeHolder: string) {
         super(plugin.app);
         this.plugin = plugin;
-        this.file = file;
-        this.setPlaceholder("Select a file to be opened before executing the command");
+        this.setPlaceholder(this.placeHolder);
     }
 
     getItems(): string[] {
-        return ["Without opening a file before", ...this.app.vault.getFiles().map(e => e.path)];
+        return ["Don't specify a file.", ...this.app.vault.getFiles().map(e => e.path)];
     }
 
     getItemText(item: string): string {
@@ -532,4 +589,90 @@ class CommandModal extends FuzzySuggestModal<Command> {
             commandid: item.id
         });
     }
+}
+
+interface SearchData {
+    source: string;
+    display: string;
+    isRegEx: boolean;
+}
+
+class SearchModal extends SuggestModal<SearchData> {
+    plugin: AdvancedURI;
+
+    constructor(plugin: AdvancedURI) {
+        super(plugin.app);
+        this.plugin = plugin;
+        this.setPlaceholder("Searched text. RegEx is supported");
+    }
+
+
+    getSuggestions(query: string): SearchData[] {
+        if (query === "") {
+            query = "...";
+        }
+        let regex: RegExp;
+        try {
+            regex = new RegExp(query);
+        } catch (error) { }
+        return [
+            {
+                source: query,
+                isRegEx: false,
+                display: query
+            },
+            {
+                source: query,
+                display: regex ? `As RegEx: ${query}` : `Can't parse RegEx`,
+                isRegEx: true
+            }
+        ];
+    }
+
+    renderSuggestion(value: SearchData, el: HTMLElement): void {
+        el.innerText = value.display;
+    };
+
+    onChooseSuggestion(item: SearchData, _: MouseEvent | KeyboardEvent): void {
+
+    };
+}
+
+class ReplaceModal extends SuggestModal<string> {
+    plugin: AdvancedURI;
+
+    constructor(plugin: AdvancedURI, private search: SearchData, private filepath: string) {
+        super(plugin.app);
+        this.plugin = plugin;
+        this.setPlaceholder("Replacement text");
+    }
+
+
+    getSuggestions(query: string): string[] {
+        if (query === "") {
+            query = "...";
+        }
+        return [query];
+    }
+
+    renderSuggestion(value: string, el: HTMLElement): void {
+        el.innerText = value;
+    };
+
+    onChooseSuggestion(item: string, _: MouseEvent | KeyboardEvent): void {
+        if (this.search.isRegEx) {
+            this.plugin.copyURI({
+                filepath: this.filepath,
+                searchregex: this.search.source,
+                replace: item
+            });
+        } else {
+            this.plugin.copyURI({
+                filepath: this.filepath,
+                search: this.search.source,
+                replace: item
+            });
+        }
+
+    };
 }
