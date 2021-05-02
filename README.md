@@ -48,11 +48,13 @@ To get the URI in a more convenient way you can use the commands to copy Advance
 | execute by id   | commandid                                             | Executes command by its id                                                                            |
 | execute by id   | commandid, filepath, (same modes as execute by name) | Opens `filepath` and then executes command by its id                                                  |
 
-## Seach and replace
-| /      | parameters           | explanation                                              |
-| ------ | -------------------- | -------------------------------------------------------- |
-| Normal | search, replace      | Replaces every occurence of `search` with `replace`      | 
-| RegEx  | searchregex, replace | Uses `searchregex` to replace every match with `replace` |
+## Search and replace
+| /      | parameters                     | explanation                                                                  |
+| ------ | ------------------------------ | ---------------------------------------------------------------------------- |
+| Normal | search, replace                | Replaces every occurence of `search` with `replace` in the current file      |
+| Normal | search, replace, filepath      | Replaces every occurence of `search` with `replace` in `filepath`            |
+| RegEx  | searchregex, replace           | Uses `searchregex` to replace every match with `replace` in the current file |
+| RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       | 
 
 # Examples
 
