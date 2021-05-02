@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.5.0...1.6.0) (2021-05-02)
+
+
+### Features
+
+* add search and replace ([cd50799](https://github.com/Vinzent03/obsidian-advanced-uri/commit/cd507993530737dd12fc5cf0c2c4e3eae79fdeeb))
+
 ## [1.5.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.4.1...1.5.0) (2021-04-30)
 
 
