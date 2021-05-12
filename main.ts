@@ -39,7 +39,7 @@ export default class AdvancedURI extends Plugin {
 
         this.addCommand({
             id: "copy-uri-current-file",
-            name: "copy URI for current file",
+            name: "copy URI for file",
             callback: () => this.handleCopyFileURI()
         });
 
@@ -55,14 +55,11 @@ export default class AdvancedURI extends Plugin {
             callback: () => {
                 const fileModal = new FileModal(this, "Used file for search and replace");
                 fileModal.open();
-                fileModal.onChooseItem = (filePath: string) => {
-                    if (filePath === "Don't specify a file.") {
-                        filePath = undefined;
-                    }
+                fileModal.onChooseItem = (filePath: FileModalData) => {
                     const searchModal = new SearchModal(this);
                     searchModal.open();
-                    searchModal.onChooseSuggestion = (item: SearchData) => {
-                        new ReplaceModal(this, item, filePath).open();
+                    searchModal.onChooseSuggestion = (item: SearchModalData) => {
+                        new ReplaceModal(this, item, filePath?.source).open();
                     };
                 };
             },
@@ -74,11 +71,8 @@ export default class AdvancedURI extends Plugin {
             callback: () => {
                 const fileModal = new FileModal(this, "Select a file to be opened before executing the command");
                 fileModal.open();
-                fileModal.onChooseItem = (item: string) => {
-                    if (item === "Don't specify a file.") {
-                        item = undefined;
-                    }
-                    new CommandModal(this, item).open();
+                fileModal.onChooseItem = (item: FileModalData) => {
+                    new CommandModal(this, item?.source).open();
                 };
             }
         });
@@ -398,7 +392,11 @@ export default class AdvancedURI extends Plugin {
                 }
             }
         }
-        new EnterDataModal(this, view.file.path).open();
+        const fileModal = new FileModal(this, "Choose a file", false);
+        fileModal.open();
+        fileModal.onChooseItem = (item, _) => {
+            new EnterDataModal(this, item.source).open();
+        };
     }
 
     copyURI(parameters: Parameters) {
@@ -541,23 +539,36 @@ class EnterDataModal extends SuggestModal<EnterData> {
     };
 }
 
-class FileModal extends FuzzySuggestModal<string> {
+interface FileModalData {
+    source: string;
+    display: string;
+}
+
+class FileModal extends FuzzySuggestModal<FileModalData> {
     plugin: AdvancedURI;
-    constructor(plugin: AdvancedURI, private placeHolder: string) {
+    constructor(plugin: AdvancedURI, private placeHolder: string, private allowNoFile: boolean = true) {
         super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder(this.placeHolder);
     }
 
-    getItems(): string[] {
-        return ["Don't specify a file.", ...this.app.vault.getFiles().map(e => e.path)];
+    getItems(): FileModalData[] {
+        let specialItems: FileModalData[] = [];
+        if (this.allowNoFile) {
+            specialItems.push({ display: "<Don't specify a file>", source: undefined });
+        }
+        const file = this.app.workspace.getActiveFile();
+        if (file) {
+            specialItems.push({ display: "<Current file>", source: file.path });
+        }
+        return [...specialItems, ...this.app.vault.getFiles().map(e => { return { display: e.path, source: e.path }; })];
     }
 
-    getItemText(item: string): string {
-        return item;
+    getItemText(item: FileModalData): string {
+        return item.display;
     }
 
-    onChooseItem(item: string, evt: MouseEvent | KeyboardEvent): void {
+    onChooseItem(item: FileModalData, evt: MouseEvent | KeyboardEvent): void {
 
     }
 }
@@ -591,13 +602,13 @@ class CommandModal extends FuzzySuggestModal<Command> {
     }
 }
 
-interface SearchData {
+interface SearchModalData {
     source: string;
     display: string;
     isRegEx: boolean;
 }
 
-class SearchModal extends SuggestModal<SearchData> {
+class SearchModal extends SuggestModal<SearchModalData> {
     plugin: AdvancedURI;
 
     constructor(plugin: AdvancedURI) {
@@ -607,7 +618,7 @@ class SearchModal extends SuggestModal<SearchData> {
     }
 
 
-    getSuggestions(query: string): SearchData[] {
+    getSuggestions(query: string): SearchModalData[] {
         if (query === "") {
             query = "...";
         }
@@ -629,11 +640,11 @@ class SearchModal extends SuggestModal<SearchData> {
         ];
     }
 
-    renderSuggestion(value: SearchData, el: HTMLElement): void {
+    renderSuggestion(value: SearchModalData, el: HTMLElement): void {
         el.innerText = value.display;
     };
 
-    onChooseSuggestion(item: SearchData, _: MouseEvent | KeyboardEvent): void {
+    onChooseSuggestion(item: SearchModalData, _: MouseEvent | KeyboardEvent): void {
 
     };
 }
@@ -641,7 +652,7 @@ class SearchModal extends SuggestModal<SearchData> {
 class ReplaceModal extends SuggestModal<string> {
     plugin: AdvancedURI;
 
-    constructor(plugin: AdvancedURI, private search: SearchData, private filepath: string) {
+    constructor(plugin: AdvancedURI, private search: SearchModalData, private filepath: string) {
         super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder("Replacement text");
