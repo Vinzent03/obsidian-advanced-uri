@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.6.0...1.7.0) (2021-05-13)
+
+
+### Features
+
+* improve file picker for uri generation ([bfc6005](https://github.com/Vinzent03/obsidian-advanced-uri/commit/bfc6005a8d676d8785281ce9c7577f2798b47f18))
+* support heading for append and prepend mode ([53936cb](https://github.com/Vinzent03/obsidian-advanced-uri/commit/53936cbe6613722f89088e4db30d2e1e012d5bda)), closes [#11](https://github.com/Vinzent03/obsidian-advanced-uri/issues/11)
+
 ## [1.6.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.5.0...1.6.0) (2021-05-02)
 
 
