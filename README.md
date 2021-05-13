@@ -18,6 +18,8 @@ To get the URI in a more convenient way you can use the commands to copy Advance
 | append          | filepath, data, mode=append   | Only appends `data` to `filepath`                                   |
 | prepend         | filepath, data, mode=prepend  | Only prepends `data` to `filepath`                                  |
 
+The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
+
 ## Navigation
 
 | /               | parameters        | explanation                            |
@@ -35,6 +37,8 @@ To get the URI in a more convenient way you can use the commands to copy Advance
 | overwrite | daily=true, data, mode=overwrite | Writes `data` to today's daily note even if the file already exists                                      |
 | append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  | 
 | prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
+
+The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 
 ## Execute command
 

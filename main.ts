@@ -231,16 +231,16 @@ export default class AdvancedURI extends Plugin {
 
         } else if (parameters.mode === "prepend") {
             if (file instanceof TFile) {
-                this.prepend(file, parameters.data);
+                this.prepend(file, parameters);
             } else {
-                this.prepend(path, parameters.data);
+                this.prepend(path, parameters);
             }
 
         } else if (parameters.mode === "append") {
             if (file instanceof TFile) {
-                this.append(file, parameters.data);
+                this.append(file, parameters);
             } else {
-                this.append(path, parameters.data);
+                this.append(path, parameters);
             }
 
         } else if (file instanceof TFile) {
@@ -272,13 +272,13 @@ export default class AdvancedURI extends Plugin {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
-            this.prepend(dailyNote, parameters.data);
+            this.prepend(dailyNote, parameters);
 
         } else if (parameters.data && parameters.mode === "append") {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
-            this.append(dailyNote, parameters.data);
+            this.append(dailyNote, parameters);
 
         } else if (parameters.data && dailyNote) {
             new Notice("File already exists");
@@ -299,31 +299,63 @@ export default class AdvancedURI extends Plugin {
 
     }
 
-    async append(file: TFile | string, data: string) {
+    async append(file: TFile | string, parameters: Parameters) {
         let path: string;
-        let fileData: string;
-        if (file instanceof TFile) {
-            fileData = await this.app.vault.read(file);
-            path = file.path;
-        } else {
-            path = file;
-            fileData = "";
+        let dataToWrite: string;
+        if (parameters.heading) {
+            if (file instanceof TFile) {
+                path = file.path;
+                const line = this.getEndAndBeginningOfHeading(file, parameters.heading)?.lastLine;
+                if (line === undefined) return;
+
+                const data = await this.app.vault.read(file);
+                const lines = data.split("\n");
+
+                lines.splice(line, 0, ...parameters.data.split("\n"));
+                dataToWrite = lines.join("\n");
+            }
         }
-        const dataToWrite = fileData + "\n" + data;
+        else {
+            let fileData: string;
+            if (file instanceof TFile) {
+                fileData = await this.app.vault.read(file);
+                path = file.path;
+            } else {
+                path = file;
+                fileData = "";
+            }
+            dataToWrite = fileData + "\n" + parameters.data;
+        }
         this.writeAndOpenFile(path, dataToWrite);
     }
 
-    async prepend(file: TFile | string, data: string) {
+    async prepend(file: TFile | string, parameters: Parameters) {
         let path: string;
-        let fileData: string;
-        if (file instanceof TFile) {
-            fileData = await this.app.vault.read(file);
-            path = file.path;
+        let dataToWrite: string;
+        if (parameters.heading) {
+            if (file instanceof TFile) {
+                path = file.path;
+                const line = this.getEndAndBeginningOfHeading(file, parameters.heading)?.firstLine;
+                if (line === undefined) return;
+
+                const data = await this.app.vault.read(file);
+                const lines = data.split("\n");
+
+                lines.splice(line, 0, ...parameters.data.split("\n"));
+                dataToWrite = lines.join("\n");
+            }
+
         } else {
-            path = file;
-            fileData = "";
+            let fileData: string;
+            if (file instanceof TFile) {
+                fileData = await this.app.vault.read(file);
+                path = file.path;
+            } else {
+                path = file;
+                fileData = "";
+            }
+            dataToWrite = parameters.data + "\n" + fileData;
         }
-        const dataToWrite = data + "\n" + fileData;
         this.writeAndOpenFile(path, dataToWrite);
     }
 
@@ -338,6 +370,27 @@ export default class AdvancedURI extends Plugin {
             });
             if (!fileIsAlreadyOpened)
                 this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane);
+        }
+    }
+
+    getEndAndBeginningOfHeading(file: TFile, heading: string): { "lastLine": number, "firstLine": number; } {
+        const cache = this.app.metadataCache.getFileCache(file);
+        const sections = cache.sections;
+        const foundHeading = cache.headings?.find(e => e.heading === heading);
+
+
+        if (foundHeading) {
+            const foundSectionIndex = sections.findIndex(section => section.type === "heading" && section.position.start.line === foundHeading.position.start.line);
+            const restSections = sections.slice(foundSectionIndex + 1);
+
+            const nextHeadingIndex = restSections?.findIndex(e => e.type === "heading");
+
+            const lastSection = restSections[(nextHeadingIndex !== -1 ? nextHeadingIndex : restSections.length) - 1] ?? sections[foundSectionIndex];
+            const lastLine = lastSection.position.end.line + 1;
+
+            return { "lastLine": lastLine, "firstLine": sections[foundSectionIndex].position.end.line + 1 };
+        } else {
+            new Notice("Can't find heading");
         }
     }
 
