@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.7.0...1.7.1) (2021-05-15)
+
+
+### Bug Fixes
+
+* copying on mobile didn't work ([693e6a0](https://github.com/Vinzent03/obsidian-advanced-uri/commit/693e6a0e07746a7633cb3840f018d21cb63756a6)), closes [#12](https://github.com/Vinzent03/obsidian-advanced-uri/issues/12)
+
 ## [1.7.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.6.0...1.7.0) (2021-05-13)
 
 
