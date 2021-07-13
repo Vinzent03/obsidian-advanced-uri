@@ -1,11 +1,13 @@
-import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
+import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterEntry, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
-
+import { v4 as uuidv4 } from 'uuid';
 const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileOnWrite: true,
     openDailyInNewPane: false,
     openFileOnWriteInNewPane: false,
     openFileWithoutWriteInNewPane: false,
+    idField: "id",
+    useUID: false,
 };
 
 interface AdvancedURISettings {
@@ -13,7 +15,10 @@ interface AdvancedURISettings {
     openFileOnWriteInNewPane: boolean;
     openDailyInNewPane: boolean;
     openFileWithoutWriteInNewPane: boolean;
+    idField: string;
+    useUID: boolean;
 }
+
 interface Parameters {
     workspace?: string;
     filepath?: string;
@@ -27,6 +32,7 @@ interface Parameters {
     search?: string,
     searchregex?: string;
     replace?: string;
+    uid?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -84,9 +90,17 @@ export default class AdvancedURI extends Plugin {
             for (const parameter in parameters) {
                 (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
             }
-            if (parameters.filepath) {
+            if (parameters.uid) {
+                parameters.filepath = this.getFileFromUID(parameters.uid)?.path;
+                console.log(parameters.filepath);
+
+            }
+            else if (parameters.filepath) {
                 parameters.filepath = normalizePath(parameters.filepath);
-                if (!parameters.filepath.endsWith(".md")) {
+                const index = parameters.filepath.lastIndexOf(".");
+                const extension = parameters.filepath.substring(index < 0 ? parameters.filepath.length : index);
+
+                if (extension === "") {
                     parameters.filepath = parameters.filepath + ".md";
                 }
             }
@@ -132,6 +146,12 @@ export default class AdvancedURI extends Plugin {
                         .onClick((_) => this.handleCopyFileURI());
                 });
             }));
+    }
+
+    getFileFromUID(uid: string): TFile | undefined {
+        const files = this.app.vault.getFiles();
+        const idKey = this.settings.idField;
+        return files.find(file => parseFrontMatterEntry(this.app.metadataCache.getFileCache(file)?.frontmatter, idKey) == uid);
     }
 
     handleWorkspace(workspace: string) {
@@ -452,8 +472,13 @@ export default class AdvancedURI extends Plugin {
         };
     }
 
-    copyURI(parameters: Parameters) {
+    async copyURI(parameters: Parameters) {
         let uri = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
+        const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
+        if (this.settings.useUID && file instanceof TFile) {
+            parameters.filepath = undefined;
+            parameters.uid = await this.getURIFromFile(file);
+        }
         for (const parameter in parameters) {
             if ((parameters as any)[parameter]) {
                 uri = uri + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
@@ -479,6 +504,28 @@ export default class AdvancedURI extends Plugin {
         new Notice("Advanced URI copied to your clipboard");
     }
 
+    async getURIFromFile(file: TFile): Promise<string> {
+        const fileContent: string = await this.app.vault.read(file);
+        const frontmatter = this.app.metadataCache.getFileCache(file).frontmatter;
+        let uid = parseFrontMatterEntry(frontmatter, this.settings.idField);
+        console.log(uid);
+        if (uid) return uid;
+        const isYamlEmpty: boolean = ((!frontmatter || frontmatter.length === 0) && !fileContent.match(/^-{3}\s*\n*\r*-{3}/));
+        uid = uuidv4();
+        let splitContent = fileContent.split("\n");
+        if (isYamlEmpty) {
+            splitContent.unshift("---");
+            splitContent.unshift(`${this.settings.idField}: ${uid}`);
+            splitContent.unshift("---");
+        }
+        else {
+            splitContent.splice(1, 0, `${this.settings.idField}: ${uid}`);
+        }
+
+        const newFileContent = splitContent.join("\n");
+        await this.app.vault.modify(file, newFileContent);
+        return uid;
+    }
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     }
@@ -527,6 +574,20 @@ class SettingsTab extends PluginSettingTab {
                 this.plugin.settings.openFileWithoutWriteInNewPane = value;
                 this.plugin.saveSettings();
             }).setValue(this.plugin.settings.openFileWithoutWriteInNewPane));
+
+        new Setting(containerEl)
+            .setName("Use UID instead of file paths")
+            .addToggle(cb => cb.onChange(value => {
+                this.plugin.settings.useUID = value;
+                this.plugin.saveSettings();
+            }).setValue(this.plugin.settings.useUID));
+
+        new Setting(containerEl)
+            .setName("UID field in frontmatter")
+            .addText(cb => cb.onChange(value => {
+                this.plugin.settings.idField = value;
+                this.plugin.saveSettings();
+            }).setValue(this.plugin.settings.idField));
 
     }
 }

@@ -11,12 +11,12 @@ To get the URI in a more convenient way you can use the commands to copy Advance
 
 ## Writing
 
-| /               | parameters                    | explanation                                                         |
-| --------------- | ----------------------------- | ------------------------------------------------------------------- |
-| write           | filepath, data                | Only writes `data` to `filepath` if the file is not already present |
-| overwrite       | filepath, data, mode=overwrite| Writes `data` to `filepath` even if the file already exists         |
-| append          | filepath, data, mode=append   | Only appends `data` to `filepath`                                   |
-| prepend         | filepath, data, mode=prepend  | Only prepends `data` to `filepath`                                  |
+| /         | parameters                     | explanation                                                         |
+| --------- | ------------------------------ | ------------------------------------------------------------------- |
+| write     | filepath, data                 | Only writes `data` to `filepath` if the file is not already present |
+| overwrite | filepath, data, mode=overwrite | Writes `data` to `filepath` even if the file already exists         |
+| append    | filepath, data, mode=append    | Only appends `data` to `filepath`                                   |
+| prepend   | filepath, data, mode=prepend   | Only prepends `data` to `filepath`                                  |
 
 The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 
@@ -35,21 +35,21 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | open      | daily=true                       | Opens the daily note. If the note does not already exists, it will be created                            |
 | write     | daily=true, data                 | Only writes `data` to today's daily note if the note does not already exists                             |
 | overwrite | daily=true, data, mode=overwrite | Writes `data` to today's daily note even if the file already exists                                      |
-| append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  | 
+| append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  |
 | prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
 
 The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 
 ## Execute command
 
-| /               | parameters                                            | explanation                                                                                           |
-| --------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| execute by name | commandname                                           | Executes command by its name                                                                          |
-| execute by name | commandname, filepath                                 | Opens `filepath` and then executes command by its name                                                |
-| execute by name | commandname, filepath, mode=append                    | Opens `filepath`, adds empty line at the end and sets cursor, then executes command by its name       |
-| execute by name | commandname, filepath, mode=prepend                   | Opens `filepath`, adds empty line at the beginning and sets cursor, then executes command by its name |
-| execute by name | commandname, filepath, mode=overwrite                 | Opens `filepath`, clears the file, then executes command by its name                                  |
-| execute by id   | commandid                                             | Executes command by its id                                                                            |
+| /               | parameters                                           | explanation                                                                                           |
+| --------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| execute by name | commandname                                          | Executes command by its name                                                                          |
+| execute by name | commandname, filepath                                | Opens `filepath` and then executes command by its name                                                |
+| execute by name | commandname, filepath, mode=append                   | Opens `filepath`, adds empty line at the end and sets cursor, then executes command by its name       |
+| execute by name | commandname, filepath, mode=prepend                  | Opens `filepath`, adds empty line at the beginning and sets cursor, then executes command by its name |
+| execute by name | commandname, filepath, mode=overwrite                | Opens `filepath`, clears the file, then executes command by its name                                  |
+| execute by id   | commandid                                            | Executes command by its id                                                                            |
 | execute by id   | commandid, filepath, (same modes as execute by name) | Opens `filepath` and then executes command by its id                                                  |
 
 ## Search and replace
@@ -58,7 +58,7 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | Normal | search, replace                | Replaces every occurence of `search` with `replace` in the current file      |
 | Normal | search, replace, filepath      | Replaces every occurence of `search` with `replace` in `filepath`            |
 | RegEx  | searchregex, replace           | Uses `searchregex` to replace every match with `replace` in the current file |
-| RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       | 
+| RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       |
 
 # Examples
 
@@ -79,6 +79,13 @@ Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `
 
 **Append** "Hello World" to today's **daily note**.
 `obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append`
+
+# UUID support
+Some users prefer to navigate to specific notes per UUID instead of the file path to be able to rename these files, but to keep the link still working.
+
+If you enable that option in the setting, every generated command with the `filepath` parameter is replaces with the `uid` parameter. The uid is either read from the frontmatter or generated and then written to the frontmatter. 
+
+Navigating is always supported and doesn't need the setting to be enabled. Every command with the `filepath` parameter can be replaced with the `uid` parameter.
 
 # Tips
 
