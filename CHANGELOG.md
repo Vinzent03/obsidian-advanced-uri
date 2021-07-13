@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.7.1...1.8.0) (2021-07-13)
+
+
+### Features
+
+* add support to navigate by UUID ([c1f509c](https://github.com/Vinzent03/obsidian-advanced-uri/commit/c1f509c2b2ed6d75d3688df4b0d2e98c9629c32e)), closes [#13](https://github.com/Vinzent03/obsidian-advanced-uri/issues/13)
+
 ### [1.7.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.7.0...1.7.1) (2021-05-15)
 
 
