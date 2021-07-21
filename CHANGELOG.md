@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/sigmoid-azoth/obsidian-advanced-uri/compare/1.8.0...1.9.0) (2021-07-21)
+
+
+### Features
+
+* added an option to remove search results instead of replace ([71227d8](https://github.com/sigmoid-azoth/obsidian-advanced-uri/commit/71227d8c6aafbc106fedb97045e7f72afb2abbd5))
+
 ## [1.8.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.7.1...1.8.0) (2021-07-13)
 
 
