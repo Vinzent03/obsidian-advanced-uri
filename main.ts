@@ -32,6 +32,7 @@ interface Parameters {
     search?: string,
     searchregex?: string;
     replace?: string;
+    remove?: "true";
     uid?: string;
 }
 
@@ -66,6 +67,34 @@ export default class AdvancedURI extends Plugin {
                     searchModal.open();
                     searchModal.onChooseSuggestion = (item: SearchModalData) => {
                         new ReplaceModal(this, item, filePath?.source).open();
+                    };
+                };
+            },
+        });
+
+        this.addCommand({
+            id: "copy-uri-search-and-remove",
+            name: "copy URI for search and remove",
+            callback: () => {
+                const fileModal = new FileModal(this, "Used file for search and remove");
+                fileModal.open();
+                fileModal.onChooseItem = (filePath: FileModalData) => {
+                    const searchModal = new SearchModal(this);
+                    searchModal.open();
+                    searchModal.onChooseSuggestion = (item: SearchModalData) => {
+                        if (item.isRegEx) {
+                            this.copyURI({
+                                filepath: filePath?.source,
+                                searchregex: item.source,
+                                remove: "true"
+                            });
+                        } else {
+                            this.copyURI({
+                                filepath: filePath?.source,
+                                search: item.source,
+                                remove: "true"
+                            });
+                        }
                     };
                 };
             },
@@ -125,6 +154,9 @@ export default class AdvancedURI extends Plugin {
 
             } else if ((parameters.search || parameters.searchregex) && parameters.replace) {
                 this.handleSearchAndReplace(parameters);
+
+            } else if ((parameters.search || parameters.searchregex) && parameters.remove === "true") {
+                this.handleSearchAndRemove(parameters);
 
             } else if (parameters.filepath) {
                 this.handleOpen(parameters);
@@ -234,6 +266,39 @@ export default class AdvancedURI extends Plugin {
                 }
             } else {
                 data = data.replaceAll(parameters.search, parameters.replace);
+            }
+
+            await this.writeAndOpenFile(file.path, data);
+        } else {
+            new Notice("Cannot find file");
+        }
+    }
+
+    async handleSearchAndRemove(parameters: Parameters) {
+        let file: TFile;
+        console.log(parameters.filepath);
+        if (parameters.filepath) {
+
+            const abstractFile = this.app.vault.getAbstractFileByPath(parameters.filepath);
+            if (abstractFile instanceof TFile) {
+                file = abstractFile;
+            }
+        } else {
+            file = this.app.workspace.getActiveFile();
+        }
+
+        if (file) {
+            let data = await this.app.vault.read(file);
+            if (parameters.searchregex) {
+                try {
+                    const [, , pattern, flags] = parameters.searchregex.match(/(\/?)(.+)\1([a-z]*)/i);
+                    const regex = new RegExp(pattern, flags);
+                    data = data.replace(regex, '');
+                } catch (error) {
+                    new Notice(`Can't parse ${parameters.searchregex} as RegEx`);
+                }
+            } else {
+                data = data.replaceAll(parameters.search, '');
             }
 
             await this.writeAndOpenFile(file.path, data);

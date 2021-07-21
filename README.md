@@ -52,13 +52,17 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | execute by id   | commandid                                            | Executes command by its id                                                                            |
 | execute by id   | commandid, filepath, (same modes as execute by name) | Opens `filepath` and then executes command by its id                                                  |
 
-## Search and replace
-| /      | parameters                     | explanation                                                                  |
-| ------ | ------------------------------ | ---------------------------------------------------------------------------- |
-| Normal | search, replace                | Replaces every occurence of `search` with `replace` in the current file      |
-| Normal | search, replace, filepath      | Replaces every occurence of `search` with `replace` in `filepath`            |
-| RegEx  | searchregex, replace           | Uses `searchregex` to replace every match with `replace` in the current file |
-| RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       |
+## Search, replace and remove
+| /      | parameters                         | explanation                                                                  |
+| ------ | ---------------------------------- | ---------------------------------------------------------------------------- |
+| Normal | search, replace                    | Replaces every occurrence of `search` with `replace` in the current file      |
+| Normal | search, replace, filepath          | Replaces every occurrence of `search` with `replace` in `filepath`            |
+| RegEx  | searchregex, replace               | Uses `searchregex` to replace every match with `replace` in the current file |
+| RegEx  | searchregex, replace, filepath     | Uses `searchregex` to replace every match with `replace` in `filepath`       |
+| Normal | search, remove=true                | Removes every occurrence of `search` in the current file                      |
+| Normal | search, remove=true, filepath      | Removes every occurrence of `search` in `filepath`                            |
+| RegEx  | searchregex, remove=true           | Uses `searchregex` to remove every match in the current file                 |
+| RegEx  | searchregex, remove=true, filepath | Uses `searchregex` to remove every match in `filepath`                       |
 
 # Examples
 
