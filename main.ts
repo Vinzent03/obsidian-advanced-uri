@@ -92,7 +92,6 @@ export default class AdvancedURI extends Plugin {
             }
             if (parameters.uid) {
                 parameters.filepath = this.getFileFromUID(parameters.uid)?.path;
-                console.log(parameters.filepath);
 
             }
             else if (parameters.filepath) {
@@ -123,7 +122,7 @@ export default class AdvancedURI extends Plugin {
             } else if (parameters.filepath && parameters.block) {
                 this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "");
 
-            } else if ((parameters.search || parameters.searchregex) && parameters.replace) {
+            } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
                 this.handleSearchAndReplace(parameters);
 
             } else if (parameters.filepath) {
@@ -211,7 +210,6 @@ export default class AdvancedURI extends Plugin {
 
     async handleSearchAndReplace(parameters: Parameters) {
         let file: TFile;
-        console.log(parameters.filepath);
         if (parameters.filepath) {
 
             const abstractFile = this.app.vault.getAbstractFileByPath(parameters.filepath);
@@ -480,7 +478,8 @@ export default class AdvancedURI extends Plugin {
             parameters.uid = await this.getURIFromFile(file);
         }
         for (const parameter in parameters) {
-            if ((parameters as any)[parameter]) {
+
+            if ((parameters as any)[parameter] != undefined) {
                 uri = uri + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
             }
         }
@@ -508,7 +507,6 @@ export default class AdvancedURI extends Plugin {
         const fileContent: string = await this.app.vault.read(file);
         const frontmatter = this.app.metadataCache.getFileCache(file).frontmatter;
         let uid = parseFrontMatterEntry(frontmatter, this.settings.idField);
-        console.log(uid);
         if (uid) return uid;
         const isYamlEmpty: boolean = ((!frontmatter || frontmatter.length === 0) && !fileContent.match(/^-{3}\s*\n*\r*-{3}/));
         uid = uuidv4();
@@ -780,7 +778,7 @@ class SearchModal extends SuggestModal<SearchModalData> {
 
 class ReplaceModal extends SuggestModal<string> {
     plugin: AdvancedURI;
-
+    emptyText = "Empty text (replace with nothing)";
     constructor(plugin: AdvancedURI, private search: SearchModalData, private filepath: string) {
         super(plugin.app);
         this.plugin = plugin;
@@ -790,7 +788,7 @@ class ReplaceModal extends SuggestModal<string> {
 
     getSuggestions(query: string): string[] {
         if (query === "") {
-            query = "...";
+            query = this.emptyText;
         }
         return [query];
     }
@@ -804,13 +802,13 @@ class ReplaceModal extends SuggestModal<string> {
             this.plugin.copyURI({
                 filepath: this.filepath,
                 searchregex: this.search.source,
-                replace: item
+                replace: item == this.emptyText ? "" : item
             });
         } else {
             this.plugin.copyURI({
                 filepath: this.filepath,
                 search: this.search.source,
-                replace: item
+                replace: item == this.emptyText ? "" : item
             });
         }
 
