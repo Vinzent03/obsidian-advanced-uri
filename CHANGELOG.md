@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.8.0...1.8.1) (2021-07-23)
+
+
+### Bug Fixes
+
+* support replacing with empty text ([0468ac2](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0468ac24b79b4787a84ca7768968ca5219a12073))
+
 ## [1.8.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.7.1...1.8.0) (2021-07-13)
 
 
