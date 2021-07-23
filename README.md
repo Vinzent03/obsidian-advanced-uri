@@ -3,7 +3,7 @@ A Plugin for [Obsidian](https://obsidian.md)
 
 Schema: `obsidian://advanced-uri?vault=<your-vault>&<parameter>=<value>&<parameter2>=<value2>`
 
-Ensure that your values are properly URI encoded. For example, forward slash characters `/` must be encoded as `%2F` and space characters must be encoded as `%20`.
+Ensure that your values are properly URI encoded. Partly even two times. Every parameter value needs to be encoded with `encodeURIComponent()` and the whole URI with `encodeURI()`. For example, forward slash characters `/` must be encoded as `%2F` and space characters must be encoded as `%20`.
 
 This is especially important because an improperly encoded "reserved" character may break the interpretation of the URI. [See here for details](https://en.wikipedia.org/wiki/Percent-encoding)
 
