@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.8.1...1.9.0) (2021-07-28)
+
+
+### Features
+
+* add file name support ([4816800](https://github.com/Vinzent03/obsidian-advanced-uri/commit/4816800282d0b9a5b59865ab8c295a8f0b67ee9b)), closes [#17](https://github.com/Vinzent03/obsidian-advanced-uri/issues/17)
+
 ### [1.8.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.8.0...1.8.1) (2021-07-23)
 
 
