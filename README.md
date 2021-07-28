@@ -9,6 +9,21 @@ This is especially important because an improperly encoded "reserved" character 
 
 To get the URI in a more convenient way you can use the commands to copy Advanced URI. Just search for `Advanced URI`. When you are in a heading or block with a reference an URI to navigate to it, is copied to your clipboard. Otherwise a modal is opened, where you can type in your data that should be written to the current file.
 
+## Types of file identification
+
+### Frontmatter support (For example UUID)
+Some users prefer to navigate to specific notes per UUID instead of the file path to be able to rename these files, but to keep the link still working.
+
+If you enable that option in the setting, every generated command with the `filepath` parameter is replaces with the `uid` parameter. The uid is either read from the frontmatter or generated and then written to the frontmatter. 
+
+Navigating is always supported and doesn't need the setting to be enabled. Every command with the `filepath` parameter can be replaced with the `uid` parameter.
+
+### File name
+`filename` prefers just the file name, like when linking via `[[fileName]]`. In addition, it supports aliases. It can be used everywhere where `filepath` is used.
+
+### File path
+Properly encoded full path of the file.
+
 ## Writing
 
 | /         | parameters                     | explanation                                                         |
@@ -78,14 +93,7 @@ Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `
 `obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345`
 
 **Append** "Hello World" to today's **daily note**.
-`obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append`
-
-# UUID support
-Some users prefer to navigate to specific notes per UUID instead of the file path to be able to rename these files, but to keep the link still working.
-
-If you enable that option in the setting, every generated command with the `filepath` parameter is replaces with the `uid` parameter. The uid is either read from the frontmatter or generated and then written to the frontmatter. 
-
-Navigating is always supported and doesn't need the setting to be enabled. Every command with the `filepath` parameter can be replaced with the `uid` parameter.
+`obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append
 
 # Tips
 
@@ -115,7 +123,7 @@ Custom plugins are only available for Obsidian v0.9.7+.
 ### From GitHub
 1. Download the [latest release](https://github.com/Vinzent03/obsidian-advanced-uri/releases/latest)
 2. Move `manifest.json` and `main.js` to `<vault>/.obsidian/plugins/obsidian-advanced-uri`
-3. Reload Obsidian (Str + r)
+3. Reload Obsidian (CTRL + R)
 4. Go to settings and disable safe mode
 5. Enable `Advanced Obsidian URI`
 

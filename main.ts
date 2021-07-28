@@ -1,4 +1,4 @@
-import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterEntry, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
+import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
 const DEFAULT_SETTINGS: AdvancedURISettings = {
@@ -33,6 +33,7 @@ interface Parameters {
     searchregex?: string;
     replace?: string;
     uid?: string;
+    filename?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -93,6 +94,13 @@ export default class AdvancedURI extends Plugin {
             if (parameters.uid) {
                 parameters.filepath = this.getFileFromUID(parameters.uid)?.path;
 
+            }
+            else if (parameters.filename) {
+                let file = this.app.metadataCache.getFirstLinkpathDest(parameters.filename, "");
+                if (!file) {
+                    file = this.app.vault.getMarkdownFiles().find(file => parseFrontMatterAliases(this.app.metadataCache.getFileCache(file).frontmatter)?.includes(parameters.filename));
+                }
+                parameters.filepath = file?.path ?? normalizePath(parameters.filename);
             }
             else if (parameters.filepath) {
                 parameters.filepath = normalizePath(parameters.filepath);
