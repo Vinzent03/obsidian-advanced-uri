@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.9.0...1.10.0) (2021-08-04)
+
+
+### Features
+
+* support heading and block for daily notes ([fe78a27](https://github.com/Vinzent03/obsidian-advanced-uri/commit/fe78a27510d8432bda6532b903e7f41e56a9df51)), closes [#19](https://github.com/Vinzent03/obsidian-advanced-uri/issues/19)
+
 ## [1.9.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.8.1...1.9.0) (2021-07-28)
 
 
