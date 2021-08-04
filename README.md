@@ -48,12 +48,12 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | /         | parameters                       | explanation                                                                                              |
 | --------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | open      | daily=true                       | Opens the daily note. If the note does not already exists, it will be created                            |
-| write     | daily=true, data                 | Only writes `data` to today's daily note if the note does not already exists                             |
+| write     | daily=true, data                 | Only writes `data` to today's daily note if the note does not already exist                              |
 | overwrite | daily=true, data, mode=overwrite | Writes `data` to today's daily note even if the file already exists                                      |
 | append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  |
 | prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
 
-The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
+Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#navigation) and [writing](https://github.com/Vinzent03/obsidian-advanced-uri#writing) are `heading` and `block` supported too.
 
 ## Execute command
 

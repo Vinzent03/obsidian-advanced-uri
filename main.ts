@@ -312,12 +312,18 @@ export default class AdvancedURI extends Plugin {
         } else if (parameters.data) {
             dailyNote = await createDailyNote(moment);
             this.writeAndOpenFile(dailyNote.path, parameters.data);
-
         } else {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
-            await this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane);
+            if (parameters.heading) {
+                this.app.workspace.openLinkText(dailyNote.path + "#" + parameters.heading, "", this.settings.openDailyInNewPane);
+
+            } else if (parameters.block) {
+                this.app.workspace.openLinkText(dailyNote.path + "#^" + parameters.block, "", this.settings.openDailyInNewPane);
+            } else {
+                await this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane);
+            }
             if (parameters.mode) {
                 await this.setCursor(parameters.mode);
             }
