@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.10.0...1.11.0) (2021-09-06)
+
+
+### Features
+
+* add support to check for file existence ([27ad1a1](https://github.com/Vinzent03/obsidian-advanced-uri/commit/27ad1a13b01d3a1f8557520d255c2081caddc64c)), closes [#20](https://github.com/Vinzent03/obsidian-advanced-uri/issues/20)
+
 ## [1.10.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.9.0...1.10.0) (2021-08-04)
 
 
