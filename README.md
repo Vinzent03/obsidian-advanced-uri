@@ -75,6 +75,11 @@ Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#naviga
 | RegEx  | searchregex, replace           | Uses `searchregex` to replace every match with `replace` in the current file |
 | RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       |
 
+## Check file existence
+| /   | parameters            | explanation                                         |
+| --- | --------------------- | --------------------------------------------------- |
+| /   | filepath, exists=true | Copies `1` to clipboard if file exists, `0` if not. |
+
 # Examples
 
 **Write** "Hello World" to "my-file.md":

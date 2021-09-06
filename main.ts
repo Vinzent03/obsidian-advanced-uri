@@ -34,6 +34,7 @@ interface Parameters {
     replace?: string;
     uid?: string;
     filename?: string;
+    exists?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -117,6 +118,9 @@ export default class AdvancedURI extends Plugin {
 
             } else if (parameters.commandname || parameters.commandid) {
                 this.handleCommand(parameters);
+
+            } else if (parameters.filepath && parameters.exists === "true") {
+                this.handleDoesFileExist(parameters);
 
             } else if (parameters.filepath && parameters.data) {
                 this.handleWrite(parameters);
@@ -215,7 +219,12 @@ export default class AdvancedURI extends Plugin {
             }
         }
     }
+    async handleDoesFileExist(parameters: Parameters) {
+        const exists = await this.app.vault.adapter.exists(parameters.filepath);
 
+        this.copyText((exists ? 1 : 0).toString());
+
+    }
     async handleSearchAndReplace(parameters: Parameters) {
         let file: TFile;
         if (parameters.filepath) {
@@ -497,10 +506,14 @@ export default class AdvancedURI extends Plugin {
                 uri = uri + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
             }
         }
+        await this.copyText(encodeURI(uri));
 
-        navigator.clipboard.writeText(encodeURI(uri));
         new Notice("Advanced URI copied to your clipboard");
     }
+
+    copyText(text: string) {
+        return navigator.clipboard.writeText(text);
+    };
 
     async getURIFromFile(file: TFile): Promise<string> {
         const fileContent: string = await this.app.vault.read(file);
@@ -522,7 +535,7 @@ export default class AdvancedURI extends Plugin {
         const newFileContent = splitContent.join("\n");
         await this.app.vault.modify(file, newFileContent);
         return uid;
-    }
+    };
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     }
