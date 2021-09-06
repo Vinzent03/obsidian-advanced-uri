@@ -498,22 +498,7 @@ export default class AdvancedURI extends Plugin {
             }
         }
 
-        if (navigator.clipboard && navigator.permissions)
-            navigator.clipboard.writeText(encodeURI(uri));
-        else {
-            var t = document.createElement("textarea");
-            t.value = encodeURI(uri),
-                t.style.top = "0",
-                t.style.left = "0",
-                t.style.position = "fixed",
-                document.body.appendChild(t);
-            try {
-                t.focus(),
-                    t.select(),
-                    document.execCommand("copy");
-            } catch (e) { }
-            document.body.removeChild(t);
-        }
+        navigator.clipboard.writeText(encodeURI(uri));
         new Notice("Advanced URI copied to your clipboard");
     }
 
