@@ -287,7 +287,15 @@ export default class AdvancedURI extends Plugin {
     }
 
     async handleOpen(parameters: Parameters) {
-        await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane);
+        let fileIsAlreadyOpened = false;
+        this.app.workspace.iterateAllLeaves(leaf => {
+            if ((leaf.view as any).file?.path === parameters.filepath) {
+                fileIsAlreadyOpened = true;
+                this.app.workspace.setActiveLeaf(leaf, true, true);
+            }
+        });
+        if (!fileIsAlreadyOpened)
+            this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane);
         await this.setCursor(parameters.mode);
     }
 
@@ -407,6 +415,7 @@ export default class AdvancedURI extends Plugin {
             this.app.workspace.iterateAllLeaves(leaf => {
                 if ((leaf.view as any).file?.path === outputFileName) {
                     fileIsAlreadyOpened = true;
+                    this.app.workspace.setActiveLeaf(leaf, true, true);
                 }
             });
             if (!fileIsAlreadyOpened)
