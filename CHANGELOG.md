@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.11.1...1.11.2) (2021-10-05)
+
+
+### Bug Fixes
+
+* focus existing pane instead of open new one ([a6020c7](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a6020c7c826fb3764afaa5eb34431e781f0efa4d)), closes [#26](https://github.com/Vinzent03/obsidian-advanced-uri/issues/26)
+
 ### [1.11.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.11.0...1.11.1) (2021-09-06)
 
 ## [1.11.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.10.0...1.11.0) (2021-09-06)
