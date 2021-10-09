@@ -35,6 +35,7 @@ interface Parameters {
     uid?: string;
     filename?: string;
     exists?: string;
+    viewmode?: "source" | "preview";
 }
 
 export default class AdvancedURI extends Plugin {
@@ -129,10 +130,10 @@ export default class AdvancedURI extends Plugin {
                 this.handleDailyNote(parameters);
 
             } else if (parameters.filepath && parameters.heading) {
-                this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "");
+                this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
 
             } else if (parameters.filepath && parameters.block) {
-                this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "");
+                this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
 
             } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
                 this.handleSearchAndReplace(parameters);
@@ -200,7 +201,7 @@ export default class AdvancedURI extends Plugin {
                     }
                 }
             } else {
-                await this.app.workspace.openLinkText(parameters.filepath, "/");
+                await this.app.workspace.openLinkText(parameters.filepath, "/", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
             }
         }
         if (parameters.commandid) {
@@ -251,7 +252,7 @@ export default class AdvancedURI extends Plugin {
                 data = data.replaceAll(parameters.search, parameters.replace);
             }
 
-            await this.writeAndOpenFile(file.path, data);
+            await this.writeAndOpenFile(file.path, data, parameters);
         } else {
             new Notice("Cannot find file");
         }
@@ -262,7 +263,7 @@ export default class AdvancedURI extends Plugin {
         const file = this.app.vault.getAbstractFileByPath(path);
 
         if (parameters.mode === "overwrite") {
-            this.writeAndOpenFile(path, parameters.data);
+            this.writeAndOpenFile(path, parameters.data, parameters);
 
         } else if (parameters.mode === "prepend") {
             if (file instanceof TFile) {
@@ -282,7 +283,7 @@ export default class AdvancedURI extends Plugin {
             new Notice("File already exists");
 
         } else {
-            this.writeAndOpenFile(path, parameters.data);
+            this.writeAndOpenFile(path, parameters.data, parameters);
         }
     }
 
@@ -291,11 +292,14 @@ export default class AdvancedURI extends Plugin {
         this.app.workspace.iterateAllLeaves(leaf => {
             if ((leaf.view as any).file?.path === parameters.filepath) {
                 fileIsAlreadyOpened = true;
+                let viewState = leaf.getViewState();
+                viewState.state.mode = parameters.viewmode;
                 this.app.workspace.setActiveLeaf(leaf, true, true);
+                leaf.setViewState(viewState);
             }
         });
         if (!fileIsAlreadyOpened)
-            this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane);
+            this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
         await this.setCursor(parameters.mode);
     }
 
@@ -309,7 +313,7 @@ export default class AdvancedURI extends Plugin {
         let dailyNote = getDailyNote(moment, allDailyNotes);
 
         if (parameters.data && parameters.mode === "overwrite") {
-            this.writeAndOpenFile(dailyNote.path, parameters.data);
+            this.writeAndOpenFile(dailyNote.path, parameters.data, parameters);
 
         } else if (parameters.data && parameters.mode === "prepend") {
             if (!dailyNote) {
@@ -328,18 +332,18 @@ export default class AdvancedURI extends Plugin {
 
         } else if (parameters.data) {
             dailyNote = await createDailyNote(moment);
-            this.writeAndOpenFile(dailyNote.path, parameters.data);
+            this.writeAndOpenFile(dailyNote.path, parameters.data, parameters);
         } else {
             if (!dailyNote) {
                 dailyNote = await createDailyNote(moment);
             }
             if (parameters.heading) {
-                this.app.workspace.openLinkText(dailyNote.path + "#" + parameters.heading, "", this.settings.openDailyInNewPane);
+                this.app.workspace.openLinkText(dailyNote.path + "#" + parameters.heading, "", this.settings.openDailyInNewPane, this.getViewStateFromMode(parameters));
 
             } else if (parameters.block) {
-                this.app.workspace.openLinkText(dailyNote.path + "#^" + parameters.block, "", this.settings.openDailyInNewPane);
+                this.app.workspace.openLinkText(dailyNote.path + "#^" + parameters.block, "", this.settings.openDailyInNewPane, this.getViewStateFromMode(parameters));
             } else {
-                await this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane);
+                await this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane, this.getViewStateFromMode(parameters));
             }
             if (parameters.mode) {
                 await this.setCursor(parameters.mode);
@@ -375,7 +379,7 @@ export default class AdvancedURI extends Plugin {
             }
             dataToWrite = fileData + "\n" + parameters.data;
         }
-        this.writeAndOpenFile(path, dataToWrite);
+        this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
     async prepend(file: TFile | string, parameters: Parameters) {
@@ -405,10 +409,10 @@ export default class AdvancedURI extends Plugin {
             }
             dataToWrite = parameters.data + "\n" + fileData;
         }
-        this.writeAndOpenFile(path, dataToWrite);
+        this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
-    async writeAndOpenFile(outputFileName: string, text: string) {
+    async writeAndOpenFile(outputFileName: string, text: string, parameters: Parameters) {
         await this.app.vault.adapter.write(outputFileName, text);
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
@@ -419,7 +423,7 @@ export default class AdvancedURI extends Plugin {
                 }
             });
             if (!fileIsAlreadyOpened)
-                this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane);
+                this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
         }
     }
 
@@ -544,7 +548,11 @@ export default class AdvancedURI extends Plugin {
         const newFileContent = splitContent.join("\n");
         await this.app.vault.modify(file, newFileContent);
         return uid;
-    };
+    }
+
+    getViewStateFromMode(parameters: Parameters) {
+        return { state: { mode: parameters.viewmode } };
+    }
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     }

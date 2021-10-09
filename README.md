@@ -7,11 +7,12 @@ Ensure that your values are properly URI encoded. Partly even two times. Every p
 
 This is especially important because an improperly encoded "reserved" character may break the interpretation of the URI. [See here for details](https://en.wikipedia.org/wiki/Percent-encoding)
 
-To get the URI in a more convenient way you can use the commands to copy Advanced URI. Just search for `Advanced URI`. When you are in a heading or block with a reference an URI to navigate to it, is copied to your clipboard. Otherwise a modal is opened, where you can type in your data that should be written to the current file.
+To get the URI in a more convenient way you can use the commands to copy Advanced URI. Just search for `Advanced URI`. When you are in a heading or block with a reference an URI to navigate to it, is copied to your clipboard. Otherwise, a modal is opened, where you can type in your data that should be written to the current file.
 
 ## Types of file identification
 
 ### Frontmatter support (For example UUID)
+
 Some users prefer to navigate to specific notes per UUID instead of the file path to be able to rename these files, but to keep the link still working.
 
 If you enable that option in the setting, every generated command with the `filepath` parameter is replaces with the `uid` parameter. The uid is either read from the frontmatter or generated and then written to the frontmatter. 
@@ -24,7 +25,15 @@ Navigating is always supported and doesn't need the setting to be enabled. Every
 ### File path
 Properly encoded full path of the file.
 
-## Writing
+## Viewmode
+Every action opening or focusing a pane supports the parameter `viewmode`. Accepted values: 
+- `source`: Sets the editor to edit/source mode
+- `preview`: Sets the editor to preview mode
+
+I am not using a boolean value to better support upcoming WYSIWYG mode.
+## Actions
+
+### Writing
 
 | /         | parameters                     | explanation                                                         |
 | --------- | ------------------------------ | ------------------------------------------------------------------- |
@@ -35,7 +44,7 @@ Properly encoded full path of the file.
 
 The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 
-## Navigation
+### Navigation
 
 | /               | parameters        | explanation                            |
 | --------------- | ----------------- | -------------------------------------- |
@@ -43,7 +52,7 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | heading         | filepath, heading | Opens the `heading` in `filepath`      |
 | block reference | filepath, block   | Opens the `block` in `filepath`        |
 
-## Daily notes
+### Daily notes
 
 | /         | parameters                       | explanation                                                                                              |
 | --------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -53,9 +62,9 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  |
 | prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
 
-Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#navigation) and [writing](https://github.com/Vinzent03/obsidian-advanced-uri#writing) are `heading` and `block` supported too.
+Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#navigation) and [writing](https://github.com/Vinzent03/obsidian-advanced-uri#writing)  `heading` and `block` are supported too.
 
-## Execute command
+### Execute command
 
 | /               | parameters                                           | explanation                                                                                           |
 | --------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -67,7 +76,7 @@ Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#naviga
 | execute by id   | commandid                                            | Executes command by its id                                                                            |
 | execute by id   | commandid, filepath, (same modes as execute by name) | Opens `filepath` and then executes command by its id                                                  |
 
-## Search and replace
+### Search and replace
 | /      | parameters                     | explanation                                                                  |
 | ------ | ------------------------------ | ---------------------------------------------------------------------------- |
 | Normal | search, replace                | Replaces every occurence of `search` with `replace` in the current file      |
@@ -75,12 +84,12 @@ Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#naviga
 | RegEx  | searchregex, replace           | Uses `searchregex` to replace every match with `replace` in the current file |
 | RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       |
 
-## Check file existence
+### Check file existence
 | /   | parameters            | explanation                                         |
 | --- | --------------------- | --------------------------------------------------- |
 | /   | filepath, exists=true | Copies `1` to clipboard if file exists, `0` if not. |
 
-# Examples
+## Examples
 
 **Write** "Hello World" to "my-file.md":
 `obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World`
