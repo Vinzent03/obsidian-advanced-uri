@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.11.2...1.12.0) (2021-10-09)
+
+
+### Features
+
+* support setting viewmode ([9ebc0d4](https://github.com/Vinzent03/obsidian-advanced-uri/commit/9ebc0d452812df7fbad416ad7d638464a69f772a)), closes [#27](https://github.com/Vinzent03/obsidian-advanced-uri/issues/27)
+
 ### [1.11.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.11.1...1.11.2) (2021-10-05)
 
 
