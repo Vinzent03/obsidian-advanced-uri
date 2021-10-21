@@ -1,6 +1,7 @@
 import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
+import { getDailyNotePath } from "./daily_note_utils";
 const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileOnWrite: true,
     openDailyInNewPane: false,
@@ -90,6 +91,8 @@ export default class AdvancedURI extends Plugin {
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
 
+            /** Allows writing to new created daily note without any `Parameters.mode` */
+            let createdDailyNote = false;
             for (const parameter in parameters) {
                 (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
             }
@@ -112,6 +115,26 @@ export default class AdvancedURI extends Plugin {
                 if (extension === "") {
                     parameters.filepath = parameters.filepath + ".md";
                 }
+            } else if (parameters.daily === "true") {
+                if (!appHasDailyNotesPluginLoaded()) {
+                    new Notice("Daily notes plugin is not loaded");
+                    return;
+                }
+                const moment = (window as any).moment(Date.now());
+                const allDailyNotes = getAllDailyNotes();
+                let dailyNote = getDailyNote(moment, allDailyNotes);
+                if (!dailyNote) {
+                    /// Prevent daily note from being created on existing check
+                    if (parameters.exists === "true") {
+                        parameters.filepath = await getDailyNotePath(moment);
+                    } else {
+                        dailyNote = await createDailyNote(moment);
+                        createdDailyNote = true;
+                    }
+                }
+                if (dailyNote !== undefined) {
+                    parameters.filepath = dailyNote.path;
+                }
             }
 
             if (parameters.workspace) {
@@ -124,10 +147,7 @@ export default class AdvancedURI extends Plugin {
                 this.handleDoesFileExist(parameters);
 
             } else if (parameters.filepath && parameters.data) {
-                this.handleWrite(parameters);
-
-            } else if (parameters.daily === "true") {
-                this.handleDailyNote(parameters);
+                this.handleWrite(parameters, createdDailyNote);
 
             } else if (parameters.filepath && parameters.heading) {
                 this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
@@ -258,7 +278,7 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    async handleWrite(parameters: Parameters) {
+    async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {
         const path = parameters.filepath;
         const file = this.app.vault.getAbstractFileByPath(path);
 
@@ -279,7 +299,7 @@ export default class AdvancedURI extends Plugin {
                 this.append(path, parameters);
             }
 
-        } else if (file instanceof TFile) {
+        } else if (!createdDailyNote && file instanceof TFile) {
             new Notice("File already exists");
 
         } else {
@@ -299,57 +319,8 @@ export default class AdvancedURI extends Plugin {
             }
         });
         if (!fileIsAlreadyOpened)
-            this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+            await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
         await this.setCursor(parameters.mode);
-    }
-
-    async handleDailyNote(parameters: Parameters) {
-        if (!appHasDailyNotesPluginLoaded()) {
-            new Notice("Daily notes plugin is not loaded");
-            return;
-        }
-        const moment = (window as any).moment(Date.now());
-        const allDailyNotes = getAllDailyNotes();
-        let dailyNote = getDailyNote(moment, allDailyNotes);
-
-        if (parameters.data && parameters.mode === "overwrite") {
-            this.writeAndOpenFile(dailyNote.path, parameters.data, parameters);
-
-        } else if (parameters.data && parameters.mode === "prepend") {
-            if (!dailyNote) {
-                dailyNote = await createDailyNote(moment);
-            }
-            this.prepend(dailyNote, parameters);
-
-        } else if (parameters.data && parameters.mode === "append") {
-            if (!dailyNote) {
-                dailyNote = await createDailyNote(moment);
-            }
-            this.append(dailyNote, parameters);
-
-        } else if (parameters.data && dailyNote) {
-            new Notice("File already exists");
-
-        } else if (parameters.data) {
-            dailyNote = await createDailyNote(moment);
-            this.writeAndOpenFile(dailyNote.path, parameters.data, parameters);
-        } else {
-            if (!dailyNote) {
-                dailyNote = await createDailyNote(moment);
-            }
-            if (parameters.heading) {
-                this.app.workspace.openLinkText(dailyNote.path + "#" + parameters.heading, "", this.settings.openDailyInNewPane, this.getViewStateFromMode(parameters));
-
-            } else if (parameters.block) {
-                this.app.workspace.openLinkText(dailyNote.path + "#^" + parameters.block, "", this.settings.openDailyInNewPane, this.getViewStateFromMode(parameters));
-            } else {
-                await this.app.workspace.openLinkText(dailyNote.path, "", this.settings.openDailyInNewPane, this.getViewStateFromMode(parameters));
-            }
-            if (parameters.mode) {
-                await this.setCursor(parameters.mode);
-            }
-        }
-
     }
 
     async append(file: TFile | string, parameters: Parameters) {

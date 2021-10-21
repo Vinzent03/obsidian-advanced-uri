@@ -11,83 +11,84 @@ To get the URI in a more convenient way you can use the commands to copy Advance
 
 ## Types of file identification
 
+### File path
+Use `filepath=<your-file-path>` as identification.
+
+Properly encoded full path of the file.
+
+### File name
+Use `filename=<your-file-name>` as identification.
+
+`filename` prefers just the file name, like when linking via `[[fileName]]`. In addition, it supports aliases.
+
 ### Frontmatter support (For example UUID)
+Use `uid=<your-uid>` as identification.
 
 Some users prefer to navigate to specific notes per UUID instead of the file path to be able to rename these files, but to keep the link still working.
 
 If you enable that option in the setting, every generated command with the `filepath` parameter is replaces with the `uid` parameter. The uid is either read from the frontmatter or generated and then written to the frontmatter. 
 
-Navigating is always supported and doesn't need the setting to be enabled. Every command with the `filepath` parameter can be replaced with the `uid` parameter.
+Navigating is always supported and doesn't need the setting to be enabled. Use `uid=<your-uid>` as identification.
 
-### File name
-`filename` prefers just the file name, like when linking via `[[fileName]]`. In addition, it supports aliases. It can be used everywhere where `filepath` is used.
+### Daily note
+Use `daily=true` as identification.
 
-### File path
-Properly encoded full path of the file.
+Uses the current daily note. If it doesn't exists already, it will be created. For example to append text to the daily note use `obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append`.
 
-## Viewmode
+
+## View mode
 Every action opening or focusing a pane supports the parameter `viewmode`. Accepted values: 
 - `source`: Sets the editor to edit/source mode
 - `preview`: Sets the editor to preview mode
 
 I am not using a boolean value to better support upcoming WYSIWYG mode.
+
 ## Actions
+`<identification>` needs to be replaced by an option listed [above](https://github.com/Vinzent03/obsidian-advanced-uri#types-of-file-identification).
 
 ### Writing
 
-| /         | parameters                     | explanation                                                         |
-| --------- | ------------------------------ | ------------------------------------------------------------------- |
-| write     | filepath, data                 | Only writes `data` to `filepath` if the file is not already present |
-| overwrite | filepath, data, mode=overwrite | Writes `data` to `filepath` even if the file already exists         |
-| append    | filepath, data, mode=append    | Only appends `data` to `filepath`                                   |
-| prepend   | filepath, data, mode=prepend   | Only prepends `data` to `filepath`                                  |
+| /         | parameters                              | explanation                                                         |
+| --------- | --------------------------------------- | ------------------------------------------------------------------- |
+| write     | <identification\>, data                 | Only writes `data` to `filepath` if the file is not already present |
+| overwrite | <identification\>, data, mode=overwrite | Writes `data` to `filepath` even if the file already exists         |
+| append    | <identification\>, data, mode=append    | Only appends `data` to `filepath`                                   |
+| prepend   | <identification\>, data, mode=prepend   | Only prepends `data` to `filepath`                                  |
 
 The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 
 ### Navigation
 
-| /               | parameters        | explanation                            |
-| --------------- | ----------------- | -------------------------------------- |
-| workspace       | workspace         | Opens the workspace called `workspace` |
-| heading         | filepath, heading | Opens the `heading` in `filepath`      |
-| block reference | filepath, block   | Opens the `block` in `filepath`        |
-
-### Daily notes
-
-| /         | parameters                       | explanation                                                                                              |
-| --------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| open      | daily=true                       | Opens the daily note. If the note does not already exists, it will be created                            |
-| write     | daily=true, data                 | Only writes `data` to today's daily note if the note does not already exist                              |
-| overwrite | daily=true, data, mode=overwrite | Writes `data` to today's daily note even if the file already exists                                      |
-| append    | daily=true, data, mode=append    | Only appends `data` to today's daily note. The file will be created, if the file does not already exist  |
-| prepend   | daily=true, data, mode=prepend   | Only prepends `data` to today's daily note. The file will be created, if the file does not already exist |
-
-Like with [navigation](https://github.com/Vinzent03/obsidian-advanced-uri#navigation) and [writing](https://github.com/Vinzent03/obsidian-advanced-uri#writing)  `heading` and `block` are supported too.
+| /               | parameters                 | explanation                            |
+| --------------- | -------------------------- | -------------------------------------- |
+| workspace       | workspace                  | Opens the workspace called `workspace` |
+| heading         | <identification\>, heading | Opens the `heading` in `filepath`      |
+| block reference | <identification\>, block   | Opens the `block` in `filepath`        |
 
 ### Execute command
 
 | /               | parameters                                           | explanation                                                                                           |
 | --------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | execute by name | commandname                                          | Executes command by its name                                                                          |
-| execute by name | commandname, filepath                                | Opens `filepath` and then executes command by its name                                                |
-| execute by name | commandname, filepath, mode=append                   | Opens `filepath`, adds empty line at the end and sets cursor, then executes command by its name       |
-| execute by name | commandname, filepath, mode=prepend                  | Opens `filepath`, adds empty line at the beginning and sets cursor, then executes command by its name |
-| execute by name | commandname, filepath, mode=overwrite                | Opens `filepath`, clears the file, then executes command by its name                                  |
+| execute by name | commandname, <identification\>                       | Opens `filepath` and then executes command by its name                                                |
+| execute by name | commandname, <identification\>, mode=append          | Opens `filepath`, adds empty line at the end and sets cursor, then executes command by its name       |
+| execute by name | commandname, <identification\>, mode=prepend         | Opens `filepath`, adds empty line at the beginning and sets cursor, then executes command by its name |
+| execute by name | commandname, <identification\>, mode=overwrite       | Opens `filepath`, clears the file, then executes command by its name                                  |
 | execute by id   | commandid                                            | Executes command by its id                                                                            |
 | execute by id   | commandid, filepath, (same modes as execute by name) | Opens `filepath` and then executes command by its id                                                  |
 
 ### Search and replace
-| /      | parameters                     | explanation                                                                  |
-| ------ | ------------------------------ | ---------------------------------------------------------------------------- |
-| Normal | search, replace                | Replaces every occurence of `search` with `replace` in the current file      |
-| Normal | search, replace, filepath      | Replaces every occurence of `search` with `replace` in `filepath`            |
-| RegEx  | searchregex, replace           | Uses `searchregex` to replace every match with `replace` in the current file |
-| RegEx  | searchregex, replace, filepath | Uses `searchregex` to replace every match with `replace` in `filepath`       |
+| /      | parameters                              | explanation                                                                  |
+| ------ | --------------------------------------- | ---------------------------------------------------------------------------- |
+| Normal | search, replace                         | Replaces every occurrence of `search` with `replace` in the current file     |
+| Normal | search, replace, <identification\>      | Replaces every occurrence of `search` with `replace` in `filepath`           |
+| RegEx  | searchregex, replace                    | Uses `searchregex` to replace every match with `replace` in the current file |
+| RegEx  | searchregex, replace, <identification\> | Uses `searchregex` to replace every match with `replace` in `filepath`       |
 
 ### Check file existence
-| /   | parameters            | explanation                                         |
-| --- | --------------------- | --------------------------------------------------- |
-| /   | filepath, exists=true | Copies `1` to clipboard if file exists, `0` if not. |
+| /   | parameters                     | explanation                                         |
+| --- | ------------------------------ | --------------------------------------------------- |
+| /   | <identification\>, exists=true | Copies `1` to clipboard if file exists, `0` if not. |
 
 ## Examples
 
