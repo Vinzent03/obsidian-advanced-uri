@@ -4,5 +4,5 @@
     "description": "Advanced modes for Obsidian URI",
     "isDesktopOnly": false,
     "js": "main.js",
-    "version": "1.12.0"
+    "version": "1.13.0"
 }
