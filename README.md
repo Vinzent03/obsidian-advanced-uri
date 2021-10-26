@@ -108,7 +108,7 @@ Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `
 `obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345`
 
 **Append** "Hello World" to today's **daily note**.
-`obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append
+`obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append`
 
 # Tips
 
