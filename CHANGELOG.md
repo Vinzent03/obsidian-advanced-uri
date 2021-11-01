@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.13.0...1.14.0) (2021-11-01)
+
+
+### Features
+
+* add navigation to any settings tab ([702f30a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/702f30a930967b16efec4d5b14561e372ff36cfa)), closes [#29](https://github.com/Vinzent03/obsidian-advanced-uri/issues/29)
+
 ## [1.13.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.12.0...1.13.0) (2021-10-21)
 
 
