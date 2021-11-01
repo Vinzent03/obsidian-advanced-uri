@@ -59,11 +59,12 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 
 ### Navigation
 
-| /               | parameters                 | explanation                            |
-| --------------- | -------------------------- | -------------------------------------- |
-| workspace       | workspace                  | Opens the workspace called `workspace` |
-| heading         | <identification\>, heading | Opens the `heading` in `filepath`      |
-| block reference | <identification\>, block   | Opens the `block` in `filepath`        |
+| /               | parameters                 | explanation                                           |
+| --------------- | -------------------------- | ----------------------------------------------------- |
+| workspace       | workspace                  | Opens the workspace called `workspace`                |
+| heading         | <identification\>, heading | Opens the `heading` in `filepath`                     |
+| block reference | <identification\>, block   | Opens the `block` in `filepath`                       |
+| settings tab    | settingid                  | Opens a settings tab by id, all plugins are supported |
 
 ### Execute command
 

@@ -37,6 +37,7 @@ interface Parameters {
     filename?: string;
     exists?: string;
     viewmode?: "source" | "preview";
+    settingid?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -160,6 +161,8 @@ export default class AdvancedURI extends Plugin {
 
             } else if (parameters.filepath) {
                 this.handleOpen(parameters);
+            } else if (parameters.settingid) {
+                this.handleOpenSettings(parameters.settingid);
             }
         });
 
@@ -475,6 +478,13 @@ export default class AdvancedURI extends Plugin {
         fileModal.onChooseItem = (item, _) => {
             new EnterDataModal(this, item.source).open();
         };
+    }
+
+    handleOpenSettings(id: string) {
+        if ((this.app as any).setting.containerEl.parentElement === null) {
+            (this.app as any).setting.open();
+        }
+        (this.app as any).setting.openTabById(id);
     }
 
     async copyURI(parameters: Parameters) {
