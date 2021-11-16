@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.14.0...1.15.0) (2021-11-16)
+
+
+### Features
+
+* add x-success and x-error param ([5bda636](https://github.com/Vinzent03/obsidian-advanced-uri/commit/5bda63667326f2ad5eac884e84384aa27052b63a)), closes [#30](https://github.com/Vinzent03/obsidian-advanced-uri/issues/30)
+* save current workspace ([717fcfe](https://github.com/Vinzent03/obsidian-advanced-uri/commit/717fcfe57e1ba996b8ef054a8383ce15f8b52d98)), closes [#33](https://github.com/Vinzent03/obsidian-advanced-uri/issues/33)
+* update plugins, open theme/plugin browser ([a310d80](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a310d80cdf91ad962c60d4fd820f2ae8936eeeba)), closes [#32](https://github.com/Vinzent03/obsidian-advanced-uri/issues/32)
+
 ## [1.14.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.13.0...1.14.0) (2021-11-01)
 
 
