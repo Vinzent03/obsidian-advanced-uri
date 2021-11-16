@@ -42,6 +42,7 @@ interface Parameters {
     "x-success"?: string;
     "x-error"?: string;
     saveworkspace?: string;
+    updateplugins?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -167,6 +168,8 @@ export default class AdvancedURI extends Plugin {
                 this.handleOpen(parameters);
             } else if (parameters.settingid) {
                 this.handleOpenSettings(parameters);
+            } else if (parameters.updateplugins) {
+                this.handleUpdatePlugins(parameters);
             }
         });
 
@@ -515,7 +518,23 @@ export default class AdvancedURI extends Plugin {
         if ((this.app as any).setting.containerEl.parentElement === null) {
             (this.app as any).setting.open();
         }
-        (this.app as any).setting.openTabById(parameters.settingid);
+        if (parameters.settingid == "plugin-browser") {
+            (this.app as any).setting.openTabById("community-plugins");
+            (this.app as any).setting.activeTab.containerEl.find(".mod-cta").click();
+        } else if (parameters.settingid == "theme-browser") {
+            (this.app as any).setting.openTabById("appearance");
+            (this.app as any).setting.activeTab.containerEl.find(".mod-cta").click();
+        } else {
+            (this.app as any).setting.openTabById(parameters.settingid);
+        }
+        this.success(parameters);
+    }
+
+    handleUpdatePlugins(parameters: Parameters) {
+        parameters.settingid = "community-plugins";
+        this.handleOpenSettings(parameters);
+        (this.app as any).setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+
         this.success(parameters);
     }
 
@@ -561,7 +580,7 @@ export default class AdvancedURI extends Plugin {
         const newFileContent = splitContent.join("\n");
         await this.app.vault.modify(file, newFileContent);
         return uid;
-    }
+    };
 
     getViewStateFromMode(parameters: Parameters) {
         return { state: { mode: parameters.viewmode } };
