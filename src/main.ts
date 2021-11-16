@@ -530,11 +530,16 @@ export default class AdvancedURI extends Plugin {
         this.success(parameters);
     }
 
-    handleUpdatePlugins(parameters: Parameters) {
+    async handleUpdatePlugins(parameters: Parameters) {
         parameters.settingid = "community-plugins";
         this.handleOpenSettings(parameters);
         (this.app as any).setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+        new Notice("Waiting 10 seconds");
+        await new Promise(resolve => setTimeout(resolve, 10 * 1000));
 
+        if (Object.keys((this.app as any).plugins.updates).length !== 0) {
+            (this.app as any).setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+        }
         this.success(parameters);
     }
 

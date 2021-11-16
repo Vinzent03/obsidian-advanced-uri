@@ -87,10 +87,11 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | RegEx  | searchregex, replace                    | Uses `searchregex` to replace every match with `replace` in the current file |
 | RegEx  | searchregex, replace, <identification\> | Uses `searchregex` to replace every match with `replace` in `filepath`       |
 
-### Check file existence
+### Others
 | /   | parameters                     | explanation                                         |
 | --- | ------------------------------ | --------------------------------------------------- |
 | /   | <identification\>, exists=true | Copies `1` to clipboard if file exists, `0` if not. |
+| /   | updateplugins=true             | Updates all community-plugins                       |
 
 ## Examples
 
