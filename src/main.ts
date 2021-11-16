@@ -1,7 +1,8 @@
-import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
+import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, request, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
 import { getDailyNotePath } from "./daily_note_utils";
+
 const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileOnWrite: true,
     openDailyInNewPane: false,
@@ -38,6 +39,8 @@ interface Parameters {
     exists?: string;
     viewmode?: "source" | "preview";
     settingid?: string;
+    "x-success"?: string;
+    "x-error"?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -139,7 +142,7 @@ export default class AdvancedURI extends Plugin {
             }
 
             if (parameters.workspace) {
-                this.handleWorkspace(parameters.workspace);
+                this.handleWorkspace(parameters);
 
             } else if (parameters.commandname || parameters.commandid) {
                 this.handleCommand(parameters);
@@ -162,7 +165,7 @@ export default class AdvancedURI extends Plugin {
             } else if (parameters.filepath) {
                 this.handleOpen(parameters);
             } else if (parameters.settingid) {
-                this.handleOpenSettings(parameters.settingid);
+                this.handleOpenSettings(parameters);
             }
         });
 
@@ -183,22 +186,33 @@ export default class AdvancedURI extends Plugin {
             }));
     }
 
+    success(parameters: Parameters) {
+        if (parameters["x-success"])
+            request({ url: parameters["x-success"], });
+    }
+
+    failure(parameters: Parameters) {
+        if (parameters["x-error"])
+            request({ url: parameters["x-error"] });
+    }
+
     getFileFromUID(uid: string): TFile | undefined {
         const files = this.app.vault.getFiles();
         const idKey = this.settings.idField;
         return files.find(file => parseFrontMatterEntry(this.app.metadataCache.getFileCache(file)?.frontmatter, idKey) == uid);
     }
 
-    handleWorkspace(workspace: string) {
+    handleWorkspace(parameters: Parameters) {
         const workspaces = (this.app as any)?.internalPlugins?.plugins?.workspaces;
         if (!workspaces) {
             new Notice("Cannot find Workspaces plugin. Please file an issue.");
-
+            this.failure(parameters);
         } else if (workspaces.enabled) {
-            workspaces.instance.loadWorkspace(workspace);
-
+            workspaces.instance.loadWorkspace(parameters.workspace);
+            this.success(parameters);
         } else {
             new Notice("Workspaces plugin is not enabled");
+            this.failure(parameters);
         }
     }
 
@@ -238,15 +252,17 @@ export default class AdvancedURI extends Plugin {
                     } else {
                         rawCommands[command].checkCallback();
                     }
-                    return;
+                    break;
                 }
             }
         }
+        this.success(parameters);
     }
     async handleDoesFileExist(parameters: Parameters) {
         const exists = await this.app.vault.adapter.exists(parameters.filepath);
 
         this.copyText((exists ? 1 : 0).toString());
+        this.success(parameters);
 
     }
     async handleSearchAndReplace(parameters: Parameters) {
@@ -268,16 +284,20 @@ export default class AdvancedURI extends Plugin {
                     const [, , pattern, flags] = parameters.searchregex.match(/(\/?)(.+)\1([a-z]*)/i);
                     const regex = new RegExp(pattern, flags);
                     data = data.replace(regex, parameters.replace);
+                    this.success(parameters);
                 } catch (error) {
                     new Notice(`Can't parse ${parameters.searchregex} as RegEx`);
+                    this.failure(parameters);
                 }
             } else {
                 data = data.replaceAll(parameters.search, parameters.replace);
+                this.success(parameters);
             }
 
             await this.writeAndOpenFile(file.path, data, parameters);
         } else {
             new Notice("Cannot find file");
+            this.failure(parameters);
         }
     }
 
@@ -287,26 +307,27 @@ export default class AdvancedURI extends Plugin {
 
         if (parameters.mode === "overwrite") {
             this.writeAndOpenFile(path, parameters.data, parameters);
-
+            this.success(parameters);
         } else if (parameters.mode === "prepend") {
             if (file instanceof TFile) {
                 this.prepend(file, parameters);
             } else {
                 this.prepend(path, parameters);
             }
-
+            this.success(parameters);
         } else if (parameters.mode === "append") {
             if (file instanceof TFile) {
                 this.append(file, parameters);
             } else {
                 this.append(path, parameters);
             }
-
+            this.success(parameters);
         } else if (!createdDailyNote && file instanceof TFile) {
             new Notice("File already exists");
-
+            this.failure(parameters);
         } else {
             this.writeAndOpenFile(path, parameters.data, parameters);
+            this.success(parameters);
         }
     }
 
@@ -324,6 +345,7 @@ export default class AdvancedURI extends Plugin {
         if (!fileIsAlreadyOpened)
             await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
         await this.setCursor(parameters.mode);
+        this.success(parameters);
     }
 
     async append(file: TFile | string, parameters: Parameters) {
@@ -480,11 +502,12 @@ export default class AdvancedURI extends Plugin {
         };
     }
 
-    handleOpenSettings(id: string) {
+    handleOpenSettings(parameters: Parameters) {
         if ((this.app as any).setting.containerEl.parentElement === null) {
             (this.app as any).setting.open();
         }
-        (this.app as any).setting.openTabById(id);
+        (this.app as any).setting.openTabById(parameters.settingid);
+        this.success(parameters);
     }
 
     async copyURI(parameters: Parameters) {
