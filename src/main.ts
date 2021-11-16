@@ -41,6 +41,7 @@ interface Parameters {
     settingid?: string;
     "x-success"?: string;
     "x-error"?: string;
+    saveworkspace?: string;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -141,7 +142,7 @@ export default class AdvancedURI extends Plugin {
                 }
             }
 
-            if (parameters.workspace) {
+            if (parameters.workspace || parameters.saveworkspace == "true") {
                 this.handleWorkspace(parameters);
 
             } else if (parameters.commandname || parameters.commandid) {
@@ -208,7 +209,15 @@ export default class AdvancedURI extends Plugin {
             new Notice("Cannot find Workspaces plugin. Please file an issue.");
             this.failure(parameters);
         } else if (workspaces.enabled) {
-            workspaces.instance.loadWorkspace(parameters.workspace);
+            if (parameters.saveworkspace == "true") {
+                const active = workspaces.instance.activeWorkspace;
+                console.log(active);
+
+                workspaces.instance.saveWorkspace(active);
+            }
+            if (parameters.workspace != undefined) {
+                workspaces.instance.loadWorkspace(parameters.workspace);
+            }
             this.success(parameters);
         } else {
             new Notice("Workspaces plugin is not enabled");
