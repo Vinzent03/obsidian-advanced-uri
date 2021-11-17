@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.15.1...1.15.2) (2021-11-17)
+
+
+### Bug Fixes
+
+* workspace documentation and add notice on workspace save ([a8d0c16](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a8d0c165a6807497db968b31d48bb0e3d51333a8))
+
 ### [1.15.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.15.0...1.15.1) (2021-11-16)
 
 
