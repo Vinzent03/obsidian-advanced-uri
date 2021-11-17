@@ -41,8 +41,8 @@ interface Parameters {
     settingid?: string;
     "x-success"?: string;
     "x-error"?: string;
-    saveworkspace?: string;
-    updateplugins?: string;
+    saveworkspace?: "true";
+    updateplugins?: "true";
 }
 
 export default class AdvancedURI extends Plugin {
@@ -214,9 +214,8 @@ export default class AdvancedURI extends Plugin {
         } else if (workspaces.enabled) {
             if (parameters.saveworkspace == "true") {
                 const active = workspaces.instance.activeWorkspace;
-                console.log(active);
-
                 workspaces.instance.saveWorkspace(active);
+                new Notice(`Saved current workspace to ${active}`);
             }
             if (parameters.workspace != undefined) {
                 workspaces.instance.loadWorkspace(parameters.workspace);

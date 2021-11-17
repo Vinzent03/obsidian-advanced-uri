@@ -62,7 +62,7 @@ The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 | /                      | parameters                 | explanation                                                                                                                      |
 | ---------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | workspace              | workspace                  | Opens the workspace called `workspace`                                                                                           |
-| save current workspace | saveworkspace              | Saves the current workspace. (Can be combined with `workspace` to open a new workspace afterwards)                               |
+| save current workspace | saveworkspace=true         | Saves the current workspace. (Can be combined with `workspace` to open a new workspace afterwards)                               |
 | heading                | <identification\>, heading | Opens the `heading` in `filepath`                                                                                                |
 | block reference        | <identification\>, block   | Opens the `block` in `filepath`                                                                                                  |
 | settings tab           | settingid                  | Opens a settings tab by id, all plugins are supported (e.g. `editor`, `community-plugins`, `plugin-browser`, `theme-browser`...) |
