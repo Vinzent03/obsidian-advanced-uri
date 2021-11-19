@@ -156,10 +156,10 @@ export default class AdvancedURI extends Plugin {
                 this.handleWrite(parameters, createdDailyNote);
 
             } else if (parameters.filepath && parameters.heading) {
-                this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+                this.handleOpen(parameters);
 
             } else if (parameters.filepath && parameters.block) {
-                this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+                this.handleOpen(parameters);
 
             } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
                 this.handleSearchAndReplace(parameters);
@@ -347,15 +347,40 @@ export default class AdvancedURI extends Plugin {
         this.app.workspace.iterateAllLeaves(leaf => {
             if ((leaf.view as any).file?.path === parameters.filepath) {
                 fileIsAlreadyOpened = true;
-                let viewState = leaf.getViewState();
-                viewState.state.mode = parameters.viewmode;
                 this.app.workspace.setActiveLeaf(leaf, true, true);
-                leaf.setViewState(viewState);
             }
         });
-        if (!fileIsAlreadyOpened)
-            await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
-        await this.setCursor(parameters.mode);
+        if (fileIsAlreadyOpened) {
+            const leaf = this.app.workspace.activeLeaf;
+            if (parameters.viewmode != undefined) {
+                let viewState = leaf.getViewState();
+                viewState.state.mode = parameters.viewmode;
+                await leaf.setViewState(viewState);
+            }
+        }
+        if (parameters.heading != undefined) {
+            await this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (!view) return;
+            const cache = this.app.metadataCache.getFileCache(view.file);
+            const heading = cache.headings.find((e) => e.heading === parameters.heading);
+            view.editor.setCursor({ line: heading.position.start.line + 1, ch: 0 });
+        }
+        else if (parameters.block != undefined) {
+            await this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (!view) return;
+            const cache = this.app.metadataCache.getFileCache(view.file);
+            const block = cache.blocks[parameters.block];
+            view.editor.setCursor({ line: block.position.start.line, ch: 0 });
+        }
+        else {
+            if (!fileIsAlreadyOpened)
+                await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+        }
+        if (parameters.mode != undefined) {
+            await this.setCursor(parameters.mode);
+        }
         this.success(parameters);
     }
 
@@ -587,7 +612,7 @@ export default class AdvancedURI extends Plugin {
     };
 
     getViewStateFromMode(parameters: Parameters) {
-        return { state: { mode: parameters.viewmode } };
+        return parameters.viewmode ? { state: { mode: parameters.viewmode } } : undefined;
     }
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
