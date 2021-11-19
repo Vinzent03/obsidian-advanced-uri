@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.15.2...1.16.0) (2021-11-19)
+
+
+### Features
+
+* set cursor to specific line ([35b8455](https://github.com/Vinzent03/obsidian-advanced-uri/commit/35b84557e27a8a252454a95ca5115d951d6e34e9))
+
+
+### Bug Fixes
+
+* place cursor below heading and in block ([7bc7471](https://github.com/Vinzent03/obsidian-advanced-uri/commit/7bc7471dcb2a5ca370b1d0022108a1275ee98fd2))
+
 ### [1.15.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.15.1...1.15.2) (2021-11-17)
 
 
