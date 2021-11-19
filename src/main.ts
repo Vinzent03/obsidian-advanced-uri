@@ -43,6 +43,7 @@ interface Parameters {
     "x-error"?: string;
     saveworkspace?: "true";
     updateplugins?: "true";
+    line?: number;
 }
 
 export default class AdvancedURI extends Plugin {
@@ -364,6 +365,7 @@ export default class AdvancedURI extends Plugin {
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
             const heading = cache.headings.find((e) => e.heading === parameters.heading);
+            view.editor.focus();
             view.editor.setCursor({ line: heading.position.start.line + 1, ch: 0 });
         }
         else if (parameters.block != undefined) {
@@ -372,11 +374,19 @@ export default class AdvancedURI extends Plugin {
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
             const block = cache.blocks[parameters.block];
+            view.editor.focus();
             view.editor.setCursor({ line: block.position.start.line, ch: 0 });
         }
         else {
             if (!fileIsAlreadyOpened)
                 await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+            if (parameters.line != undefined) {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (!view) return;
+                const line = Math.min(parameters.line - 1, view.editor.lineCount() - 1);
+                view.editor.focus();
+                view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
+            }
         }
         if (parameters.mode != undefined) {
             await this.setCursor(parameters.mode);
