@@ -441,15 +441,27 @@ export default class AdvancedURI extends Plugin {
             }
 
         } else {
-            let fileData: string;
             if (file instanceof TFile) {
-                fileData = await this.app.vault.read(file);
+                const fileData = await this.app.vault.read(file);
+                const cache = this.app.metadataCache.getFileCache(file);
+                console.log(cache);
+
+                if (cache.frontmatter) {
+                    const line = cache.frontmatter.position.end.line;
+                    const first = fileData.split("\n").slice(0, line + 1).join("\n");
+                    const last = fileData.split("\n").slice(line + 1).join("\n");
+                    console.log(first);
+                    console.log(last);
+                    dataToWrite = first + "\n" + parameters.data + "\n" + last;
+
+                } else {
+                    dataToWrite = parameters.data + "\n" + fileData;
+                }
                 path = file.path;
             } else {
                 path = file;
-                fileData = "";
+                dataToWrite = parameters.data;
             }
-            dataToWrite = parameters.data + "\n" + fileData;
         }
         this.writeAndOpenFile(path, dataToWrite, parameters);
     }
