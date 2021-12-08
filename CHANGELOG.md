@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.16.0...1.16.1) (2021-12-08)
+
+
+### Bug Fixes
+
+* prepand after frontmatter ([6fd80dc](https://github.com/Vinzent03/obsidian-advanced-uri/commit/6fd80dc84c2a2433777c4bade39aeb7feb8d9318)), closes [#36](https://github.com/Vinzent03/obsidian-advanced-uri/issues/36)
+
 ## [1.16.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.15.2...1.16.0) (2021-11-19)
 
 
