@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.16.1...1.17.0) (2022-01-04)
+
+
+### Features
+
+* support live preview as view mode ([786fcff](https://github.com/Vinzent03/obsidian-advanced-uri/commit/786fcff1d45a171adf39589c1f215409f993ed90))
+
+
+### Bug Fixes
+
+* call checkCallback correctly ([9cb2c21](https://github.com/Vinzent03/obsidian-advanced-uri/commit/9cb2c2152daef069d2f25a2ea863f41f1757c5d0))
+* support line parameter for writing too ([b5f6508](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b5f65089ecc172c9017f2b40cf0df7e2411c0666)), closes [#39](https://github.com/Vinzent03/obsidian-advanced-uri/issues/39)
+
 ### [1.16.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.16.0...1.16.1) (2021-12-08)
 
 
