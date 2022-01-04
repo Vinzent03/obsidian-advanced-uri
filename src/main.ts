@@ -37,7 +37,7 @@ interface Parameters {
     uid?: string;
     filename?: string;
     exists?: string;
-    viewmode?: "source" | "preview";
+    viewmode?: "source" | "preview" | "live";
     settingid?: string;
     "x-success"?: string;
     "x-error"?: string;
@@ -356,6 +356,8 @@ export default class AdvancedURI extends Plugin {
             if (parameters.viewmode != undefined) {
                 let viewState = leaf.getViewState();
                 viewState.state.mode = parameters.viewmode;
+                if (viewState.state.source != undefined)
+                    viewState.state.source = parameters.viewmode == "source";
                 await leaf.setViewState(viewState);
             }
         }

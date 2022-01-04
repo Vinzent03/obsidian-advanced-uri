@@ -38,10 +38,9 @@ Uses the current daily note. If it doesn't exists already, it will be created. F
 
 ## View mode
 Every action opening or focusing a pane supports the parameter `viewmode`. Accepted values: 
-- `source`: Sets the editor to edit/source mode
+- `source`: Sets the editor to reading:source mode
+- `live`: Sets the editor to reading:live mode
 - `preview`: Sets the editor to preview mode
-
-I am not using a boolean value to better support upcoming WYSIWYG mode.
 
 ## Actions
 `<identification>` needs to be replaced by an option listed [above](https://github.com/Vinzent03/obsidian-advanced-uri#types-of-file-identification).
