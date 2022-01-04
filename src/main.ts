@@ -208,7 +208,7 @@ export default class AdvancedURI extends Plugin {
     }
 
     handleWorkspace(parameters: Parameters) {
-        const workspaces = (this.app as any)?.internalPlugins?.plugins?.workspaces;
+        const workspaces = this.app.internalPlugins?.plugins?.workspaces;
         if (!workspaces) {
             new Notice("Cannot find Workspaces plugin. Please file an issue.");
             this.failure(parameters);
@@ -254,15 +254,15 @@ export default class AdvancedURI extends Plugin {
             }
         }
         if (parameters.commandid) {
-            (this.app as any).commands.executeCommandById(parameters.commandid);
+            this.app.commands.executeCommandById(parameters.commandid);
         } else if (parameters.commandname) {
-            const rawCommands = (this.app as any).commands.commands;
+            const rawCommands = this.app.commands.commands;
             for (const command in rawCommands) {
                 if (rawCommands[command].name === parameters.commandname) {
                     if (rawCommands[command].callback) {
                         rawCommands[command].callback();
                     } else {
-                        rawCommands[command].checkCallback();
+                        rawCommands[command].checkCallback(false);
                     }
                     break;
                 }
@@ -346,7 +346,7 @@ export default class AdvancedURI extends Plugin {
     async handleOpen(parameters: Parameters) {
         let fileIsAlreadyOpened = false;
         this.app.workspace.iterateAllLeaves(leaf => {
-            if ((leaf.view as any).file?.path === parameters.filepath) {
+            if (leaf.view.file?.path === parameters.filepath) {
                 fileIsAlreadyOpened = true;
                 this.app.workspace.setActiveLeaf(leaf, true, true);
             }
@@ -471,7 +471,7 @@ export default class AdvancedURI extends Plugin {
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
             this.app.workspace.iterateAllLeaves(leaf => {
-                if ((leaf.view as any).file?.path === outputFileName) {
+                if (leaf.view.file?.path === outputFileName) {
                     fileIsAlreadyOpened = true;
                     this.app.workspace.setActiveLeaf(leaf, true, true);
                 }
@@ -561,17 +561,17 @@ export default class AdvancedURI extends Plugin {
     }
 
     handleOpenSettings(parameters: Parameters) {
-        if ((this.app as any).setting.containerEl.parentElement === null) {
-            (this.app as any).setting.open();
+        if (this.app.setting.containerEl.parentElement === null) {
+            this.app.setting.open();
         }
         if (parameters.settingid == "plugin-browser") {
-            (this.app as any).setting.openTabById("community-plugins");
-            (this.app as any).setting.activeTab.containerEl.find(".mod-cta").click();
+            this.app.setting.openTabById("community-plugins");
+            this.app.setting.activeTab.containerEl.find(".mod-cta").click();
         } else if (parameters.settingid == "theme-browser") {
-            (this.app as any).setting.openTabById("appearance");
-            (this.app as any).setting.activeTab.containerEl.find(".mod-cta").click();
+            this.app.setting.openTabById("appearance");
+            this.app.setting.activeTab.containerEl.find(".mod-cta").click();
         } else {
-            (this.app as any).setting.openTabById(parameters.settingid);
+            this.app.setting.openTabById(parameters.settingid);
         }
         this.success(parameters);
     }
@@ -579,12 +579,12 @@ export default class AdvancedURI extends Plugin {
     async handleUpdatePlugins(parameters: Parameters) {
         parameters.settingid = "community-plugins";
         this.handleOpenSettings(parameters);
-        (this.app as any).setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+        this.app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
         new Notice("Waiting 10 seconds");
         await new Promise(resolve => setTimeout(resolve, 10 * 1000));
 
         if (Object.keys((this.app as any).plugins.updates).length !== 0) {
-            (this.app as any).setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+            this.app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
         }
         this.success(parameters);
     }
@@ -822,7 +822,7 @@ class CommandModal extends FuzzySuggestModal<Command> {
     }
 
     getItems(): Command[] {
-        const rawCommands = (this.app as any).commands.commands;
+        const rawCommands = this.app.commands.commands;
         const commands: Command[] = Object.keys(rawCommands).map(e => {
             return { id: rawCommands[e].id, name: rawCommands[e].name };
         });
