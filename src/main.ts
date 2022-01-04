@@ -381,11 +381,7 @@ export default class AdvancedURI extends Plugin {
             if (!fileIsAlreadyOpened)
                 await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
             if (parameters.line != undefined) {
-                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (!view) return;
-                const line = Math.min(parameters.line - 1, view.editor.lineCount() - 1);
-                view.editor.focus();
-                view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
+                this.setCursorInLine(parameters.line);
             }
         }
         if (parameters.mode != undefined) {
@@ -444,14 +440,11 @@ export default class AdvancedURI extends Plugin {
             if (file instanceof TFile) {
                 const fileData = await this.app.vault.read(file);
                 const cache = this.app.metadataCache.getFileCache(file);
-                console.log(cache);
 
                 if (cache.frontmatter) {
                     const line = cache.frontmatter.position.end.line;
                     const first = fileData.split("\n").slice(0, line + 1).join("\n");
                     const last = fileData.split("\n").slice(line + 1).join("\n");
-                    console.log(first);
-                    console.log(last);
                     dataToWrite = first + "\n" + parameters.data + "\n" + last;
 
                 } else {
@@ -477,7 +470,10 @@ export default class AdvancedURI extends Plugin {
                 }
             });
             if (!fileIsAlreadyOpened)
-                this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
+                await this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
+            if (parameters.line != undefined) {
+                this.setCursorInLine(parameters.line);
+            }
         }
     }
 
@@ -522,6 +518,14 @@ export default class AdvancedURI extends Plugin {
                 editor.setCursor({ ch: 0, line: 0 });
             }
         }
+    }
+
+    setCursorInLine(rawLine: number) {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (!view) return;
+        const line = Math.min(rawLine - 1, view.editor.lineCount() - 1);
+        view.editor.focus();
+        view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
     }
 
     handleCopyFileURI() {
