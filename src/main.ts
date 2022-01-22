@@ -1,7 +1,8 @@
-import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, request, Setting, SuggestModal, TFile } from "obsidian";
+import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, ObsidianProtocolData, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, request, Setting, SuggestModal, TFile } from "obsidian";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
 import { getDailyNotePath } from "./daily_note_utils";
+import * as http from "http";
 
 const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileOnWrite: true,
@@ -10,6 +11,8 @@ const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileWithoutWriteInNewPane: false,
     idField: "id",
     useUID: false,
+    serverEnabled: false,
+    serverPort: 27124
 };
 
 interface AdvancedURISettings {
@@ -19,6 +22,8 @@ interface AdvancedURISettings {
     openFileWithoutWriteInNewPane: boolean;
     idField: string;
     useUID: boolean;
+    serverEnabled: boolean;
+    serverPort: number;
 }
 
 interface Parameters {
@@ -48,6 +53,8 @@ interface Parameters {
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
+
+    server: http.Server | null = null;
 
     async onload() {
         await this.loadSettings();
@@ -95,84 +102,7 @@ export default class AdvancedURI extends Plugin {
         });
 
 
-        this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
-            const parameters = e as unknown as Parameters;
-
-            /** Allows writing to new created daily note without any `Parameters.mode` */
-            let createdDailyNote = false;
-            for (const parameter in parameters) {
-                (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
-            }
-            if (parameters.uid) {
-                parameters.filepath = this.getFileFromUID(parameters.uid)?.path;
-
-            }
-            else if (parameters.filename) {
-                let file = this.app.metadataCache.getFirstLinkpathDest(parameters.filename, "");
-                if (!file) {
-                    file = this.app.vault.getMarkdownFiles().find(file => parseFrontMatterAliases(this.app.metadataCache.getFileCache(file).frontmatter)?.includes(parameters.filename));
-                }
-                parameters.filepath = file?.path ?? normalizePath(parameters.filename);
-            }
-            else if (parameters.filepath) {
-                parameters.filepath = normalizePath(parameters.filepath);
-                const index = parameters.filepath.lastIndexOf(".");
-                const extension = parameters.filepath.substring(index < 0 ? parameters.filepath.length : index);
-
-                if (extension === "") {
-                    parameters.filepath = parameters.filepath + ".md";
-                }
-            } else if (parameters.daily === "true") {
-                if (!appHasDailyNotesPluginLoaded()) {
-                    new Notice("Daily notes plugin is not loaded");
-                    return;
-                }
-                const moment = (window as any).moment(Date.now());
-                const allDailyNotes = getAllDailyNotes();
-                let dailyNote = getDailyNote(moment, allDailyNotes);
-                if (!dailyNote) {
-                    /// Prevent daily note from being created on existing check
-                    if (parameters.exists === "true") {
-                        parameters.filepath = await getDailyNotePath(moment);
-                    } else {
-                        dailyNote = await createDailyNote(moment);
-                        createdDailyNote = true;
-                    }
-                }
-                if (dailyNote !== undefined) {
-                    parameters.filepath = dailyNote.path;
-                }
-            }
-
-            if (parameters.workspace || parameters.saveworkspace == "true") {
-                this.handleWorkspace(parameters);
-
-            } else if (parameters.commandname || parameters.commandid) {
-                this.handleCommand(parameters);
-
-            } else if (parameters.filepath && parameters.exists === "true") {
-                this.handleDoesFileExist(parameters);
-
-            } else if (parameters.filepath && parameters.data) {
-                this.handleWrite(parameters, createdDailyNote);
-
-            } else if (parameters.filepath && parameters.heading) {
-                this.handleOpen(parameters);
-
-            } else if (parameters.filepath && parameters.block) {
-                this.handleOpen(parameters);
-
-            } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
-                this.handleSearchAndReplace(parameters);
-
-            } else if (parameters.filepath) {
-                this.handleOpen(parameters);
-            } else if (parameters.settingid) {
-                this.handleOpenSettings(parameters);
-            } else if (parameters.updateplugins) {
-                this.handleUpdatePlugins(parameters);
-            }
-        });
+        this.registerObsidianProtocolHandler("advanced-uri", this.handleUriAction);
 
         this.registerEvent(
             this.app.workspace.on('file-menu', (menu, _, source) => {
@@ -189,6 +119,129 @@ export default class AdvancedURI extends Plugin {
                         .onClick((_) => this.handleCopyFileURI());
                 });
             }));
+
+        this.refreshServerState()
+    }
+
+    async handleUriAction(e: ObsidianProtocolData) {
+        const parameters = e as unknown as Parameters;
+
+        /** Allows writing to new created daily note without any `Parameters.mode` */
+        let createdDailyNote = false;
+        for (const parameter in parameters) {
+            (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
+        }
+        if (parameters.uid) {
+            parameters.filepath = this.getFileFromUID(parameters.uid)?.path;
+
+        }
+        else if (parameters.filename) {
+            let file = this.app.metadataCache.getFirstLinkpathDest(parameters.filename, "");
+            if (!file) {
+                file = this.app.vault.getMarkdownFiles().find(file => parseFrontMatterAliases(this.app.metadataCache.getFileCache(file).frontmatter)?.includes(parameters.filename));
+            }
+            parameters.filepath = file?.path ?? normalizePath(parameters.filename);
+        }
+        else if (parameters.filepath) {
+            parameters.filepath = normalizePath(parameters.filepath);
+            const index = parameters.filepath.lastIndexOf(".");
+            const extension = parameters.filepath.substring(index < 0 ? parameters.filepath.length : index);
+
+            if (extension === "") {
+                parameters.filepath = parameters.filepath + ".md";
+            }
+        } else if (parameters.daily === "true") {
+            if (!appHasDailyNotesPluginLoaded()) {
+                new Notice("Daily notes plugin is not loaded");
+                return;
+            }
+            const moment = (window as any).moment(Date.now());
+            const allDailyNotes = getAllDailyNotes();
+            let dailyNote = getDailyNote(moment, allDailyNotes);
+            if (!dailyNote) {
+                /// Prevent daily note from being created on existing check
+                if (parameters.exists === "true") {
+                    parameters.filepath = await getDailyNotePath(moment);
+                } else {
+                    dailyNote = await createDailyNote(moment);
+                    createdDailyNote = true;
+                }
+            }
+            if (dailyNote !== undefined) {
+                parameters.filepath = dailyNote.path;
+            }
+        }
+
+        if (parameters.workspace || parameters.saveworkspace == "true") {
+            this.handleWorkspace(parameters);
+
+        } else if (parameters.commandname || parameters.commandid) {
+            this.handleCommand(parameters);
+
+        } else if (parameters.filepath && parameters.exists === "true") {
+            this.handleDoesFileExist(parameters);
+
+        } else if (parameters.filepath && parameters.data) {
+            this.handleWrite(parameters, createdDailyNote);
+
+        } else if (parameters.filepath && parameters.heading) {
+            this.handleOpen(parameters);
+
+        } else if (parameters.filepath && parameters.block) {
+            this.handleOpen(parameters);
+
+        } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
+            this.handleSearchAndReplace(parameters);
+
+        } else if (parameters.filepath) {
+            this.handleOpen(parameters);
+        } else if (parameters.settingid) {
+            this.handleOpenSettings(parameters);
+        } else if (parameters.updateplugins) {
+            this.handleUpdatePlugins(parameters);
+        }
+    }
+
+    async requestListener(request: http.IncomingMessage, response: http.ServerResponse) {
+        try {
+            const params: ObsidianProtocolData = {
+                action: 'advanced-uri'
+            }
+
+            const url = new URL(`http://127.0.0.1${request.url}`)
+            url.searchParams.forEach((v, k) => {
+                params[k] = v
+            })
+
+            await this.handleUriAction(params)
+
+            response.writeHead(200, "OK")
+            response.end()
+        } catch(e) {
+            response.writeHead(500, "Server Error")
+            response.end()
+        }
+    }
+
+    refreshServerState() {
+        // We may have changed port settings; so always close the server
+        // when refreshing server state if the server was created.
+        if(this.server) {
+            this.server.close()
+            this.server = null
+        }
+
+        if(this.settings.serverEnabled) {
+            this.server = http.createServer(this.requestListener.bind(this))
+            this.server.listen(this.settings.serverPort, '127.0.0.1')
+        }
+    }
+
+    onunload(): void {
+        if(this.server) {
+            this.server.close()
+            this.server = null
+        }
     }
 
     success(parameters: Parameters) {
@@ -704,6 +757,28 @@ class SettingsTab extends PluginSettingTab {
                 this.plugin.settings.idField = value;
                 this.plugin.saveSettings();
             }).setValue(this.plugin.settings.idField));
+
+        new Setting(containerEl)
+            .setName("Enable HTTP service")
+            .setDesc(`
+                Enabling this setting will start a service on
+                localhost that can receive advanced URI requests directly.
+                This is intended for use in situations where the custom URI
+                scheme (obsidian://) is either not available or disallowed.
+            `)
+            .addToggle(cb => cb.onChange(value => {
+                this.plugin.settings.serverEnabled = value
+                this.plugin.saveSettings()
+                this.plugin.refreshServerState()
+            }).setValue(this.plugin.settings.serverEnabled));
+
+        new Setting(containerEl)
+            .setName("HTTP service port")
+            .addText(cb => cb.onChange(value => {
+                this.plugin.settings.serverPort = parseInt(value, 10)
+                this.plugin.saveSettings()
+                this.plugin.refreshServerState()
+            }).setValue(this.plugin.settings.serverPort.toString()))
 
     }
 }
