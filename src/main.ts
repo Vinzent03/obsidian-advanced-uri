@@ -203,6 +203,17 @@ export default class AdvancedURI extends Plugin {
     }
 
     async requestListener(request: http.IncomingMessage, response: http.ServerResponse) {
+        if(request.method === 'GET') {
+            this.handleRequestMethodGet(request, response)
+        } else if(request.method === 'OPTIONS') {
+            this.handleRequestMethodOptions(request, response)
+        } else {
+            response.writeHead(405, "Method Not Allowed")
+            response.end()
+        }
+    }
+
+    async handleRequestMethodGet(request: http.IncomingMessage, response: http.ServerResponse) {
         try {
             const params: ObsidianProtocolData = {
                 action: 'advanced-uri'
@@ -215,12 +226,23 @@ export default class AdvancedURI extends Plugin {
 
             await this.handleUriAction(params)
 
-            response.writeHead(200, "OK")
+            response.writeHead(204, "OK", {
+                "Access-Control-Allow-Origin": "*"
+            })
             response.end()
         } catch(e) {
             response.writeHead(500, "Server Error")
             response.end()
         }
+    }
+
+    async handleRequestMethodOptions(request: http.IncomingMessage, response: http.ServerResponse) {
+        response.writeHead(204, "OK", {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        })
+        response.end()
     }
 
     refreshServerState() {
