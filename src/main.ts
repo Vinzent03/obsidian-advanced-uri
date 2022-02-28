@@ -46,6 +46,11 @@ interface Parameters {
     line?: number;
 }
 
+interface HookParameters {
+    "x-success": string;
+    "x-error": string;
+
+}
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
 
@@ -173,6 +178,35 @@ export default class AdvancedURI extends Plugin {
                 this.handleUpdatePlugins(parameters);
             }
         });
+        this.registerObsidianProtocolHandler(
+            "hook-get-advanced-uri",
+            async (e) => {
+                const parameters = e as unknown as HookParameters;
+                for (const parameter in parameters) {
+                    (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
+                }
+                const activeLeaf = this.app.workspace.activeLeaf;
+                const file = activeLeaf.view.file;
+                if (activeLeaf && file) {
+                    const url = new URL(parameters["x-success"]);
+                    let title: string;
+                    if (file.extension == "md") {
+                        title = file.basename;
+                    } else {
+                        title = file.name;
+                    }
+                    url.searchParams.set("title", title);
+                    url.searchParams.set("advanceduri", await this.generateURI({ filepath: file.path }));
+                    url.searchParams.set("urlkey", "advanceduri");
+
+                    window.open(url.toString());
+                } else {
+                    const url = new URL(parameters["x-error"]);
+                    url.searchParams.set("errorMessage", "No file opened");
+
+                    window.open(url.toString());
+                }
+            });
 
         this.registerEvent(
             this.app.workspace.on('file-menu', (menu, _, source) => {
@@ -595,12 +629,12 @@ export default class AdvancedURI extends Plugin {
         this.success(parameters);
     }
 
-    async copyURI(parameters: Parameters) {
+    async generateURI(parameters: Parameters) {
         let uri = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
         const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
         if (this.settings.useUID && file instanceof TFile) {
             parameters.filepath = undefined;
-            parameters.uid = await this.getURIFromFile(file);
+            parameters.uid = await this.getUIDFromFile(file);
         }
         for (const parameter in parameters) {
 
@@ -608,6 +642,11 @@ export default class AdvancedURI extends Plugin {
                 uri = uri + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
             }
         }
+        return uri;
+    }
+
+    async copyURI(parameters: Parameters) {
+        const uri = await this.generateURI(parameters);
         await this.copyText(encodeURI(uri));
 
         new Notice("Advanced URI copied to your clipboard");
@@ -617,7 +656,7 @@ export default class AdvancedURI extends Plugin {
         return navigator.clipboard.writeText(text);
     };
 
-    async getURIFromFile(file: TFile): Promise<string> {
+    async getUIDFromFile(file: TFile): Promise<string> {
         const fileContent: string = await this.app.vault.read(file);
         const frontmatter = this.app.metadataCache.getFileCache(file).frontmatter;
         let uid = parseFrontMatterEntry(frontmatter, this.settings.idField);
