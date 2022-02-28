@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.17.0...1.18.0) (2022-02-28)
+
+
+### Features
+
+* add Hook support ([daf9d56](https://github.com/Vinzent03/obsidian-advanced-uri/commit/daf9d56fe6317f3e1e6e5bea3b74abd69d5ef793)), closes [#46](https://github.com/Vinzent03/obsidian-advanced-uri/issues/46)
+
 ## [1.17.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.16.1...1.17.0) (2022-01-04)
 
 
