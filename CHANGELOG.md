@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.19.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.18.0...1.19.0) (2022-03-02)
+
+
+### Features
+
+* Hook to new support ([b2b7108](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b2b71084c36fe0d7970cd781fbef269621a7f2c7))
+
+
+### Bug Fixes
+
+* append to heading of daily note ([015bd7c](https://github.com/Vinzent03/obsidian-advanced-uri/commit/015bd7c35315f24f5cdac79adf98d875dbb17731)), closes [#48](https://github.com/Vinzent03/obsidian-advanced-uri/issues/48)
+
 ## [1.18.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.17.0...1.18.0) (2022-02-28)
 
 
