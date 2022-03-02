@@ -141,6 +141,10 @@ export default class AdvancedURI extends Plugin {
                         parameters.filepath = await getDailyNotePath(moment);
                     } else {
                         dailyNote = await createDailyNote(moment);
+
+                        // delay to let Obsidian index and generate CachedMetadata
+                        await new Promise(r => setTimeout(r, 500));
+
                         createdDailyNote = true;
                     }
                 }
