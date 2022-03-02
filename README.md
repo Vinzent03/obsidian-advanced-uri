@@ -47,12 +47,13 @@ Every action opening or focusing a pane supports the parameter `viewmode`. Accep
 
 ### Writing
 
-| /         | parameters                              | explanation                                                       |
-| --------- | --------------------------------------- | ----------------------------------------------------------------- |
-| write     | <identification\>, data                 | Only writes `data` to the file if the file is not already present |
-| overwrite | <identification\>, data, mode=overwrite | Writes `data` to `filepath` even if the file already exists       |
-| append    | <identification\>, data, mode=append    | Only appends `data` to the file                                   |
-| prepend   | <identification\>, data, mode=prepend   | Only prepends `data` to the file                                  |
+| /         | parameters                              | explanation                                                                                     |
+| --------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| write     | <identification\>, data                 | Only writes `data` to the file if the file is not already present                               |
+| overwrite | <identification\>, data, mode=overwrite | Writes `data` to `filepath` even if the file already exists                                     |
+| append    | <identification\>, data, mode=append    | Only appends `data` to the file                                                                 |
+| prepend   | <identification\>, data, mode=prepend   | Only prepends `data` to the file                                                                |
+| new       | filepath, data, mode=new                | Definetely creates a new file. If `filepath` already exists, an incrementing number is appended |
 
 The `heading` parameter is for `mode=append` and `mode=prepend` supported too.
 

@@ -1,4 +1,5 @@
-import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, request, Setting, SuggestModal, TFile } from "obsidian";
+import { App, Command, FuzzySuggestModal, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, PluginSettingTab, Setting, SuggestModal, TFile } from "obsidian";
+import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
 import { getDailyNotePath } from "./daily_note_utils";
@@ -26,7 +27,7 @@ interface Parameters {
     filepath?: string;
     daily?: "true";
     data?: string;
-    mode?: "overwrite" | "append" | "prepend";
+    mode?: "overwrite" | "append" | "prepend" | "new";
     heading?: string;
     block?: string;
     commandname?: string,
@@ -192,25 +193,14 @@ export default class AdvancedURI extends Plugin {
                 const activeLeaf = this.app.workspace.activeLeaf;
                 const file = activeLeaf.view.file;
                 if (activeLeaf && file) {
-                    const url = new URL(parameters["x-success"]);
-                    let title: string;
-                    if (file.extension == "md") {
-                        title = file.basename;
-                    } else {
-                        title = file.name;
-                    }
-                    url.searchParams.set("title", title);
-                    url.searchParams.set("advanceduri", await this.generateURI({ filepath: file.path }));
-                    url.searchParams.set("urlkey", "advanceduri");
-
-                    window.open(url.toString());
+                    this.hookSuccess(parameters, file);
                 } else {
-                    const url = new URL(parameters["x-error"]);
-                    url.searchParams.set("errorMessage", "No file opened");
 
-                    window.open(url.toString());
+                    this.failure(parameters, { errorMessage: "No file opened" });
                 }
             });
+
+
 
         this.registerEvent(
             this.app.workspace.on('file-menu', (menu, _, source) => {
@@ -229,14 +219,34 @@ export default class AdvancedURI extends Plugin {
             }));
     }
 
-    success(parameters: Parameters) {
-        if (parameters["x-success"])
-            request({ url: parameters["x-success"], });
+    async hookSuccess(parameters: Parameters, file: TFile): Promise<void> {
+        if (!parameters["x-success"]) return;
+        const options = {
+            title: stripMD(file.name),
+            advanceduri: await this.generateURI({ filepath: file.path }),
+            urlkey: "advanceduri"
+        };
+        this.success(parameters, options);
     }
 
-    failure(parameters: Parameters) {
-        if (parameters["x-error"])
-            request({ url: parameters["x-error"] });
+    success(parameters: Parameters, options?: Record<string, any>): void {
+        if (parameters["x-success"]) {
+            const url = new URL(parameters["x-success"]);
+            for (const param in options) {
+                url.searchParams.set(param, options[param]);
+            }
+            window.open(url.toString());
+        }
+    }
+
+    failure(parameters: Parameters, options?: Record<string, any>): void {
+        if (parameters["x-error"]) {
+            const url = new URL(parameters["x-error"]);
+            for (const param in options) {
+                url.searchParams.set(param, options[param]);
+            }
+            window.open(url.toString());
+        }
     }
 
     getFileFromUID(uid: string): TFile | undefined {
@@ -372,6 +382,14 @@ export default class AdvancedURI extends Plugin {
                 this.append(path, parameters);
             }
             this.success(parameters);
+        } else if (parameters.mode === "new") {
+            if (file instanceof TFile) {
+                const outFile = await this.writeAndOpenFile(this.getAlternativeFilePath(file), parameters.data, parameters);
+                this.hookSuccess(parameters, outFile);
+            } else {
+                const outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
+                this.hookSuccess(parameters, outFile);
+            }
         } else if (!createdDailyNote && file instanceof TFile) {
             new Notice("File already exists");
             this.failure(parameters);
@@ -496,10 +514,11 @@ export default class AdvancedURI extends Plugin {
                 dataToWrite = parameters.data;
             }
         }
+
         this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
-    async writeAndOpenFile(outputFileName: string, text: string, parameters: Parameters) {
+    async writeAndOpenFile(outputFileName: string, text: string, parameters: Parameters): Promise<TFile> {
         await this.app.vault.adapter.write(outputFileName, text);
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
@@ -515,6 +534,8 @@ export default class AdvancedURI extends Plugin {
                 this.setCursorInLine(parameters.line);
             }
         }
+
+        return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
     }
 
     getEndAndBeginningOfHeading(file: TFile, heading: string): { "lastLine": number, "firstLine": number; } {
@@ -631,6 +652,22 @@ export default class AdvancedURI extends Plugin {
             this.app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
         }
         this.success(parameters);
+    }
+
+    getAlternativeFilePath(file: TFile): string {
+        const dir = file.parent?.path;
+        const formattedDir = dir === "/" ? "" : dir;
+        const name = file.name;
+        for (let index = 1; index < 100; index++) {
+
+            const base = stripMD(name);
+            const alternative = base + ` ${index}.md`;
+
+            const exists = this.app.vault.getAbstractFileByPath(alternative) !== null;
+            if (!exists) {
+                return formattedDir + alternative;
+            }
+        }
     }
 
     async generateURI(parameters: Parameters) {
