@@ -110,17 +110,20 @@ export default class AdvancedURI extends Plugin {
                 (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
             }
             if (parameters.uid) {
-                parameters.filepath = this.getFileFromUID(parameters.uid)?.path;
+                const res = this.getFileFromUID(parameters.uid)?.path;
+                if (res != undefined) {
+                    parameters.filepath = res;
+                    parameters.uid = undefined;
+                }
 
-            }
-            else if (parameters.filename) {
+            } else if (parameters.filename) {
                 let file = this.app.metadataCache.getFirstLinkpathDest(parameters.filename, "");
                 if (!file) {
                     file = this.app.vault.getMarkdownFiles().find(file => parseFrontMatterAliases(this.app.metadataCache.getFileCache(file).frontmatter)?.includes(parameters.filename));
                 }
                 parameters.filepath = file?.path ?? normalizePath(parameters.filename);
             }
-            else if (parameters.filepath) {
+            if (parameters.filepath) {
                 parameters.filepath = normalizePath(parameters.filepath);
                 const index = parameters.filepath.lastIndexOf(".");
                 const extension = parameters.filepath.substring(index < 0 ? parameters.filepath.length : index);
@@ -177,10 +180,13 @@ export default class AdvancedURI extends Plugin {
 
             } else if (parameters.filepath) {
                 this.handleOpen(parameters);
+
             } else if (parameters.settingid) {
                 this.handleOpenSettings(parameters);
+
             } else if (parameters.updateplugins) {
                 this.handleUpdatePlugins(parameters);
+
             }
         });
         this.registerObsidianProtocolHandler(
@@ -364,38 +370,41 @@ export default class AdvancedURI extends Plugin {
     async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {
         const path = parameters.filepath;
         const file = this.app.vault.getAbstractFileByPath(path);
-
+        let outFile: TFile;
         if (parameters.mode === "overwrite") {
-            this.writeAndOpenFile(path, parameters.data, parameters);
+            outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
             this.success(parameters);
         } else if (parameters.mode === "prepend") {
             if (file instanceof TFile) {
-                this.prepend(file, parameters);
+                outFile = await this.prepend(file, parameters);
             } else {
-                this.prepend(path, parameters);
+                outFile = await this.prepend(path, parameters);
             }
             this.success(parameters);
         } else if (parameters.mode === "append") {
             if (file instanceof TFile) {
-                this.append(file, parameters);
+                outFile = await this.append(file, parameters);
             } else {
-                this.append(path, parameters);
+                outFile = await this.append(path, parameters);
             }
             this.success(parameters);
         } else if (parameters.mode === "new") {
             if (file instanceof TFile) {
-                const outFile = await this.writeAndOpenFile(this.getAlternativeFilePath(file), parameters.data, parameters);
+                outFile = await this.writeAndOpenFile(this.getAlternativeFilePath(file), parameters.data, parameters);
                 this.hookSuccess(parameters, outFile);
             } else {
-                const outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
+                outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
                 this.hookSuccess(parameters, outFile);
             }
         } else if (!createdDailyNote && file instanceof TFile) {
             new Notice("File already exists");
             this.failure(parameters);
         } else {
-            this.writeAndOpenFile(path, parameters.data, parameters);
+            outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
             this.success(parameters);
+        }
+        if (parameters.uid) {
+            this.writeUIDToFile(outFile, parameters.uid);
         }
     }
 
@@ -445,10 +454,15 @@ export default class AdvancedURI extends Plugin {
         if (parameters.mode != undefined) {
             await this.setCursor(parameters.mode);
         }
+        if (parameters.uid) {
+            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+            this.writeUIDToFile(view.file, parameters.uid);
+        }
         this.success(parameters);
     }
 
-    async append(file: TFile | string, parameters: Parameters) {
+    async append(file: TFile | string, parameters: Parameters): Promise<TFile> {
         let path: string;
         let dataToWrite: string;
         if (parameters.heading) {
@@ -475,10 +489,10 @@ export default class AdvancedURI extends Plugin {
             }
             dataToWrite = fileData + "\n" + parameters.data;
         }
-        this.writeAndOpenFile(path, dataToWrite, parameters);
+        return this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
-    async prepend(file: TFile | string, parameters: Parameters) {
+    async prepend(file: TFile | string, parameters: Parameters): Promise<TFile> {
         let path: string;
         let dataToWrite: string;
         if (parameters.heading) {
@@ -515,7 +529,7 @@ export default class AdvancedURI extends Plugin {
             }
         }
 
-        this.writeAndOpenFile(path, dataToWrite, parameters);
+        return this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
     async writeAndOpenFile(outputFileName: string, text: string, parameters: Parameters): Promise<TFile> {
@@ -698,12 +712,17 @@ export default class AdvancedURI extends Plugin {
     };
 
     async getUIDFromFile(file: TFile): Promise<string> {
-        const fileContent: string = await this.app.vault.read(file);
         const frontmatter = this.app.metadataCache.getFileCache(file).frontmatter;
         let uid = parseFrontMatterEntry(frontmatter, this.settings.idField);
-        if (uid) return uid;
+        if (uid) return;
+        return await this.writeUIDToFile(file, uuidv4());
+    };
+
+    async writeUIDToFile(file: TFile, uid: string): Promise<string> {
+
+        const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
+        const fileContent: string = await this.app.vault.read(file);
         const isYamlEmpty: boolean = ((!frontmatter || frontmatter.length === 0) && !fileContent.match(/^-{3}\s*\n*\r*-{3}/));
-        uid = uuidv4();
         let splitContent = fileContent.split("\n");
         if (isYamlEmpty) {
             splitContent.unshift("---");
@@ -717,7 +736,7 @@ export default class AdvancedURI extends Plugin {
         const newFileContent = splitContent.join("\n");
         await this.app.vault.modify(file, newFileContent);
         return uid;
-    };
+    }
 
     getViewStateFromMode(parameters: Parameters) {
         return parameters.viewmode ? { state: { mode: parameters.viewmode } } : undefined;
