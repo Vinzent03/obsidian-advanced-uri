@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.20.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.19.0...1.20.0) (2022-03-03)
+
+
+### Features
+
+* create file with uid when file doesn't exists ([367775a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/367775ac7cee2c576d2f986d9d4e61815e9602bc)), closes [#49](https://github.com/Vinzent03/obsidian-advanced-uri/issues/49)
+* return file uri on hook action ([a7378a1](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a7378a1d6f137a77a20ac2bfad234e3ae319e728))
+
 ## [1.19.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.18.0...1.19.0) (2022-03-02)
 
 
