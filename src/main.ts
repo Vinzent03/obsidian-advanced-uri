@@ -227,12 +227,25 @@ export default class AdvancedURI extends Plugin {
 
     async hookSuccess(parameters: Parameters, file: TFile): Promise<void> {
         if (!parameters["x-success"]) return;
+
         const options = {
             title: stripMD(file.name),
             advanceduri: await this.generateURI({ filepath: file.path }),
-            urlkey: "advanceduri"
+            urlkey: "advanceduri",
+            fileuri: this.getFileUri(file),
         };
         this.success(parameters, options);
+    }
+
+    getFileUri(file: TFile): string {
+        const url = new URL(this.app.vault.getResourcePath(file));
+        url.host = "localhosthostlocal";
+        url.protocol = "file";
+        url.search = "";
+
+        url.pathname = decodeURIComponent(url.pathname);
+        const res = url.toString().replace("/localhosthostlocal/", "/");
+        return res;
     }
 
     success(parameters: Parameters, options?: Record<string, any>): void {
