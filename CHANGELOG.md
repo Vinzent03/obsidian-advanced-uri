@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.20.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.20.0...1.20.1) (2022-03-09)
+
+
+### Bug Fixes
+
+* get uid from frontmatter ([12f8076](https://github.com/Vinzent03/obsidian-advanced-uri/commit/12f80761585d7c9bf71f4e3bfb438e739bba5b1a))
+
 ## [1.20.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.19.0...1.20.0) (2022-03-03)
 
 
