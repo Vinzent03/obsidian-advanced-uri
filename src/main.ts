@@ -700,6 +700,7 @@ export default class AdvancedURI extends Plugin {
     async generateURI(parameters: Parameters) {
         let uri = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
         const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
+
         if (this.settings.useUID && file instanceof TFile) {
             parameters.filepath = undefined;
             parameters.uid = await this.getUIDFromFile(file);
@@ -727,7 +728,7 @@ export default class AdvancedURI extends Plugin {
     async getUIDFromFile(file: TFile): Promise<string> {
         const frontmatter = this.app.metadataCache.getFileCache(file).frontmatter;
         let uid = parseFrontMatterEntry(frontmatter, this.settings.idField);
-        if (uid) return;
+        if (uid != undefined) return uid;
         return await this.writeUIDToFile(file, uuidv4());
     };
 
