@@ -716,7 +716,7 @@ export default class AdvancedURI extends Plugin {
 
     async copyURI(parameters: Parameters) {
         const uri = await this.generateURI(parameters);
-        await this.copyText(encodeURI(uri));
+        await this.copyText(uri);
 
         new Notice("Advanced URI copied to your clipboard");
     }
