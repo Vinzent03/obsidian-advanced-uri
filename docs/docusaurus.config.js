@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Obsidian Advanced URI',
   tagline: 'Control everything in Obsidian via URI',
-  url: 'https://vinzent03.github.io/obsidian-advanced-uri',
+  url: 'https://vinzent03.github.io',
   baseUrl: '/obsidian-advanced-uri/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
