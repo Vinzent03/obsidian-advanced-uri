@@ -4,16 +4,14 @@ sidebar_position: 2
 
 # Encoding
 
-Special characters like `?` and spaces need to be encoded.
-It might be strange, but they even have to be encoded twice.
-
-- First, the individual query parameter value must be encoded
-- Second, the whole uri must be encoded
+Special characters like `?` and spaces need to be encoded. There are many online encoders. An example is [this tool](https://www.urlencoder.io/). Simply enter the value of your parameters and use the encoded one.
 
 ## Example
 
 The key `myKey` and value `Hello World` need to be encoded like the following:
 
 ```uri
-obsidian://advanced-uri?myKey%253DHello%2520World
+obsidian://advanced-uri?myKey=Hello%20World
 ```
+
+You see spaces are replaced with `%20`.

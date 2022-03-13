@@ -4,6 +4,10 @@ sidebar_position: 2
 
 # Writing
 
+:::caution
+Make sure your values are properly [encoded](../concepts/encoding.md)
+:::
+
 | /         | parameters                              | explanation                                                                                     |
 | --------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | write     | <identification\>, data                 | Only writes `data` to the file if the file is not already present                               |
@@ -12,7 +16,7 @@ sidebar_position: 2
 | prepend   | <identification\>, data, mode=prepend   | Only prepends `data` to the file                                                                |
 | new       | filepath, data, mode=new                | Definitely creates a new file. If `filepath` already exists, an incrementing number is appended |
 
-:::info Example
+:::note Example
 **Write** "Hello World" to "my-file.md":
 ```uri
 obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World

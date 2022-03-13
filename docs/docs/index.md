@@ -5,6 +5,18 @@ slug: /
 
 # Obsidian Advanced URI
 
+## Overview
+
+[Obsidian Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) allows you to control many different features in Obsidian just by opening some URIs. Because they are just text and don't require any mouse clicks or keyboard inputs, they are perfect to automate your Obsidian workflow.
+
+You can for example 
+- [open files](actions/navigation.md)
+- [edit files](actions/writing.md)
+- [create files](actions/writing.md)
+- [open workspaces](actions/navigation.md)
+- [navigate to headings/blocks](actions/navigation.md)
+- [automated search and replace in a file](actions/search_replace.md)
+
 ## Motivation
 
 I created this [Obsidian](https://obsidian.md) plugin initially to load workspaces per URI.
@@ -20,6 +32,7 @@ As today, I don't even use this plugin anymore, but I'm very happy that **many**
 - [Shimmering Obsidian](https://github.com/chrisgrieser/shimmering-obsidian) an Alfred workflow using many Advanced URI features under the hood
 
 :::info Supporting
-If you want to support me you can support me on Ko-fi
+If you find this plugin useful and would like to support its development, you can support me on [Ko-fi](https://Ko-fi.com/Vinzent).
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F195IQ5)
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F195IQ5)
+:::

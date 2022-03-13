@@ -15,7 +15,7 @@ sidebar_position: 1
 | settings tab           | settingid                  | Opens a settings tab by id, all plugins are supported (e.g. `editor`, `community-plugins`, `plugin-browser`, `theme-browser`...) |
 
 
-:::info Example
+:::note Example
 
 Open **workspace** "main":
 ```uri

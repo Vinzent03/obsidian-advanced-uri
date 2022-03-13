@@ -10,6 +10,10 @@ There are multiple ways to identify a file:
 - [Daily note](#daily-note)
 - [Key in frontmatter](#key-in-frontmatter)
 
+:::caution
+Make sure your values are properly [encoded](encoding)
+:::
+
 ## File path
 
 - Key: `filepath`
