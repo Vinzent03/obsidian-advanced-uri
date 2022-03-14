@@ -46,3 +46,7 @@ Make sure your values are properly [encoded](encoding)
 :::info
 [Navigation](../actions/navigation.md) with `uid` is always supported and doesn't need the setting to be enabled.
 :::
+
+:::info
+By specifying `uid` and `filepath` it creates a new file, if no file with `uid` exists, at `filepath` and writes `uid` to the frontmatter.
+:::
