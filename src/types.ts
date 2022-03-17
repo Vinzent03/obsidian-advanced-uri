@@ -59,3 +59,61 @@ declare module 'obsidian' {
         file: TFile;
     }
 }
+
+export interface FileModalData {
+    source: string;
+    display: string;
+}
+
+export interface EnterData {
+    mode: string;
+    data: string,
+    display: string,
+    func: Function,
+}
+
+export interface AdvancedURISettings {
+    openFileOnWrite: boolean;
+    openFileOnWriteInNewPane: boolean;
+    openDailyInNewPane: boolean;
+    openFileWithoutWriteInNewPane: boolean;
+    idField: string;
+    useUID: boolean;
+}
+
+export interface Parameters {
+    workspace?: string;
+    filepath?: string;
+    daily?: "true";
+    data?: string;
+    mode?: "overwrite" | "append" | "prepend" | "new";
+    heading?: string;
+    block?: string;
+    commandname?: string,
+    commandid?: string,
+    search?: string,
+    searchregex?: string;
+    replace?: string;
+    uid?: string;
+    filename?: string;
+    exists?: string;
+    viewmode?: "source" | "preview" | "live";
+    settingid?: string;
+    "x-success"?: string;
+    "x-error"?: string;
+    saveworkspace?: "true";
+    updateplugins?: "true";
+    line?: number;
+}
+
+export interface HookParameters {
+    "x-success": string;
+    "x-error": string;
+
+}
+
+export interface SearchModalData {
+    source: string;
+    display: string;
+    isRegEx: boolean;
+}
