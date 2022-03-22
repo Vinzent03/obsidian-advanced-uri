@@ -33,6 +33,6 @@ obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345
 
 :::
 
-:::info
+:::tip
 You can specify a custom [view mode](../concepts/view_mode.md)
 :::
