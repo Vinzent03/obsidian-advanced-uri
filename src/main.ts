@@ -89,7 +89,9 @@ export default class AdvancedURI extends Plugin {
                 if (!file) {
                     file = this.app.vault.getMarkdownFiles().find(file => parseFrontMatterAliases(this.app.metadataCache.getFileCache(file).frontmatter)?.includes(parameters.filename));
                 }
-                parameters.filepath = file?.path ?? normalizePath(parameters.filename);
+                const parentFolder = this.app.fileManager.getNewFileParent(this.app.workspace.activeLeaf.view.file?.path);
+                const parentFolderPath = parentFolder.isRoot() ? "" : parentFolder.path + "/";
+                parameters.filepath = file?.path ?? (parentFolderPath + normalizePath(parameters.filename));
             }
             if (parameters.filepath) {
                 parameters.filepath = normalizePath(parameters.filepath);
