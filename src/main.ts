@@ -1,4 +1,4 @@
-import { MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
+import { CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
@@ -540,7 +540,6 @@ export default class AdvancedURI extends Plugin {
                     this.app.workspace.setActiveLeaf(leaf, true, true);
                 }
             });
-            console.log(parameters);
 
             if (!fileIsAlreadyOpened)
                 await this.app.workspace.openLinkText(outputFileName, "", parameters.newpane !== undefined ? parameters.newpane == "true" : this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
@@ -713,8 +712,16 @@ export default class AdvancedURI extends Plugin {
     };
 
     async getUIDFromFile(file: TFile): Promise<string> {
-        const frontmatter = this.app.metadataCache.getFileCache(file).frontmatter;
-        let uid = parseFrontMatterEntry(frontmatter, this.settings.idField);
+        let cache: CachedMetadata;
+
+        //await parsing of frontmatter
+        for (let i = 0; i <= 20; i++) {
+            cache = this.app.metadataCache.getFileCache(file);
+
+            if (cache !== undefined) break;
+            await new Promise(resolve => setTimeout(resolve, 150));
+        }
+        const uid = parseFrontMatterEntry(cache.frontmatter, this.settings.idField);
         if (uid != undefined) return uid;
         return await this.writeUIDToFile(file, uuidv4());
     };
