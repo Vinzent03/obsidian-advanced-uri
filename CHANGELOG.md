@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.21.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.20.1...1.21.0) (2022-03-24)
+
+
+### Features
+
+* add newpane parameter ([cf2dd3c](https://github.com/Vinzent03/obsidian-advanced-uri/commit/cf2dd3c29aebb0925e28861b7a35c684e3e81a66)), closes [#50](https://github.com/Vinzent03/obsidian-advanced-uri/issues/50)
+* file creation with filename follows user preferences ([b4682f7](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b4682f7e1dc9e96764a81eb73761905b1b43f21e))
+
+
+### Bug Fixes
+
+* don't encode the whole uri, instead just the values ([b0747b7](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b0747b779c4f7802175373008de946f1614b284a))
+* encode whole uri ([0940e3a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0940e3a05b10ff8f40c44a85d1341de30b15a67e))
+* write file in non existent sub folder ([f75713d](https://github.com/Vinzent03/obsidian-advanced-uri/commit/f75713dbbd9e027b7e144b48df2d96aed7e21b3a))
+
 ### [1.20.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.20.0...1.20.1) (2022-03-09)
 
 
