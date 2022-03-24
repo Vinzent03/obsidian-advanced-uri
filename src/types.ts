@@ -104,6 +104,7 @@ export interface Parameters {
     saveworkspace?: "true";
     updateplugins?: "true";
     line?: number;
+    newpane?: "true" | "false";
 }
 
 export interface HookParameters {

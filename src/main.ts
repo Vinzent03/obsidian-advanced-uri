@@ -407,8 +407,10 @@ export default class AdvancedURI extends Plugin {
                 await leaf.setViewState(viewState);
             }
         }
+
+        const openInNewPane = parameters.newpane !== undefined ? parameters.newpane == "true" : this.settings.openFileWithoutWriteInNewPane;
         if (parameters.heading != undefined) {
-            await this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+            await this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", openInNewPane, this.getViewStateFromMode(parameters));
             const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
@@ -417,7 +419,7 @@ export default class AdvancedURI extends Plugin {
             view.editor.setCursor({ line: heading.position.start.line + 1, ch: 0 });
         }
         else if (parameters.block != undefined) {
-            await this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+            await this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "", openInNewPane, this.getViewStateFromMode(parameters));
             const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
@@ -427,7 +429,7 @@ export default class AdvancedURI extends Plugin {
         }
         else {
             if (!fileIsAlreadyOpened)
-                await this.app.workspace.openLinkText(parameters.filepath, "", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+                await this.app.workspace.openLinkText(parameters.filepath, "", openInNewPane, this.getViewStateFromMode(parameters));
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
@@ -536,8 +538,10 @@ export default class AdvancedURI extends Plugin {
                     this.app.workspace.setActiveLeaf(leaf, true, true);
                 }
             });
+            console.log(parameters);
+
             if (!fileIsAlreadyOpened)
-                await this.app.workspace.openLinkText(outputFileName, "", this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
+                await this.app.workspace.openLinkText(outputFileName, "", parameters.newpane !== undefined ? parameters.newpane == "true" : this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
