@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.21.0...1.21.1) (2022-03-24)
+
+
+### Bug Fixes
+
+* race condition for frontmatter parsing ([5dbd063](https://github.com/Vinzent03/obsidian-advanced-uri/commit/5dbd063cac7900fea62808bdacd6e8d16910a437))
+
 ## [1.21.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.20.1...1.21.0) (2022-03-24)
 
 

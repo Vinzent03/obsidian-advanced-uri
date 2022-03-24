@@ -1,6 +1,6 @@
 {
     "name": "obsidian-advanced-uri",
-    "version": "1.21.0",
+    "version": "1.21.1",
     "description": "Advanced modes for Obsidian URI",
     "main": "main.js",
     "scripts": {
