@@ -1,4 +1,4 @@
-import { MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile } from "obsidian";
+import { MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
@@ -514,7 +514,20 @@ export default class AdvancedURI extends Plugin {
     }
 
     async writeAndOpenFile(outputFileName: string, text: string, parameters: Parameters): Promise<TFile> {
-        await this.app.vault.adapter.write(outputFileName, text);
+        const file = this.app.vault.getAbstractFileByPath(outputFileName);
+
+        if (file instanceof TFile) {
+            await this.app.vault.modify(file, text);
+        } else {
+            const parts = outputFileName.split("/");
+            const dir = parts.slice(0, parts.length - 1).join("/");
+            if (parts.length > 1 && !(this.app.vault.getAbstractFileByPath(dir) instanceof TFolder)) {
+                await this.app.vault.createFolder(dir);
+            }
+
+            await this.app.vault.create(outputFileName, text);
+        }
+
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
             this.app.workspace.iterateAllLeaves(leaf => {
@@ -656,11 +669,11 @@ export default class AdvancedURI extends Plugin {
         for (let index = 1; index < 100; index++) {
 
             const base = stripMD(name);
-            const alternative = base + ` ${index}.md`;
+            const alternative = formattedDir + (formattedDir == "" ? "" : "/") + base + ` ${index}.md`;
 
             const exists = this.app.vault.getAbstractFileByPath(alternative) !== null;
             if (!exists) {
-                return formattedDir + alternative;
+                return alternative;
             }
         }
     }
