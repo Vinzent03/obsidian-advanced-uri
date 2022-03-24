@@ -13,8 +13,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* don't encode the whole uri, instead just the values ([b0747b7](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b0747b779c4f7802175373008de946f1614b284a))
-* encode whole uri ([0940e3a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0940e3a05b10ff8f40c44a85d1341de30b15a67e))
 * write file in non existent sub folder ([f75713d](https://github.com/Vinzent03/obsidian-advanced-uri/commit/f75713dbbd9e027b7e144b48df2d96aed7e21b3a))
 
 ### [1.20.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.20.0...1.20.1) (2022-03-09)
