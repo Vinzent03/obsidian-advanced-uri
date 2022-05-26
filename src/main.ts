@@ -30,8 +30,14 @@ export default class AdvancedURI extends Plugin {
 
         this.addCommand({
             id: "copy-uri-current-file",
+            name: "copy URI for file with options",
+            callback: () => this.handleCopyFileURI(false)
+        });
+
+        this.addCommand({
+            id: "copy-uri-current-file-simple",
             name: "copy URI for file",
-            callback: () => this.handleCopyFileURI()
+            callback: () => this.handleCopyFileURI(true)
         });
 
         this.addCommand({
@@ -190,7 +196,7 @@ export default class AdvancedURI extends Plugin {
 
                 menu.addItem((item) => {
                     item.setTitle(`Copy Advanced URI`).setIcon('link')
-                        .onClick((_) => this.handleCopyFileURI());
+                        .onClick((_) => this.handleCopyFileURI(true));
                 });
             }));
     }
@@ -602,7 +608,7 @@ export default class AdvancedURI extends Plugin {
         view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
     }
 
-    handleCopyFileURI() {
+    handleCopyFileURI(withoutData: boolean) {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
 
@@ -634,7 +640,13 @@ export default class AdvancedURI extends Plugin {
         const fileModal = new FileModal(this, "Choose a file", false);
         fileModal.open();
         fileModal.onChooseItem = (item, _) => {
-            new EnterDataModal(this, item.source).open();
+            if (withoutData) {
+                this.copyURI({
+                    filepath: item.source,
+                });
+            } else {
+                new EnterDataModal(this, item.source).open();
+            }
         };
     }
 

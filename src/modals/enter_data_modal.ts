@@ -6,13 +6,11 @@ export class EnterDataModal extends SuggestModal<EnterData> {
     plugin: AdvancedURI;
     //null if for normal write mode, its not associated with a special mode like "append" or "prepend"
     modes = [null, "overwrite", "append", "prepend"];
-    file: string | undefined;
 
-    constructor(plugin: AdvancedURI, file?: string) {
+    constructor(plugin: AdvancedURI, private file?: string | undefined) {
         super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder("Type your data to be written to the file or leave it empty to just open it");
-        this.file = file;
     }
 
 
