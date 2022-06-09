@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.23.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.22.0...1.23.0) (2022-06-09)
+
+
+### Features
+
+* skip file selection in simple uri generation ([de2e904](https://github.com/Vinzent03/obsidian-advanced-uri/commit/de2e9041f5938214e22a6dfa2054a20eb3b50963))
+
 ## [1.22.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.21.1...1.22.0) (2022-05-26)
 
 
