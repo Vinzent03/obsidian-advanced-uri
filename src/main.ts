@@ -36,7 +36,7 @@ export default class AdvancedURI extends Plugin {
 
         this.addCommand({
             id: "copy-uri-current-file-simple",
-            name: "copy URI for file",
+            name: "copy URI for current file",
             callback: () => this.handleCopyFileURI(true)
         });
 
@@ -637,17 +637,26 @@ export default class AdvancedURI extends Plugin {
                 }
             }
         }
-        const fileModal = new FileModal(this, "Choose a file", false);
-        fileModal.open();
-        fileModal.onChooseItem = (item, _) => {
-            if (withoutData) {
-                this.copyURI({
-                    filepath: item.source,
-                });
-            } else {
-                new EnterDataModal(this, item.source).open();
+
+        if (withoutData) {
+            const file = this.app.workspace.getActiveFile();
+            if (!file) {
+                new Notice("No file opened");
+                return;
             }
-        };
+            this.copyURI({
+                filepath: file.path,
+            });
+        } else {
+            const fileModal = new FileModal(this, "Choose a file", false);
+            fileModal.open();
+            fileModal.onChooseItem = (item, _) => {
+
+                new EnterDataModal(this, item.source).open();
+
+            };
+        }
+
     }
 
     handleOpenSettings(parameters: Parameters) {
