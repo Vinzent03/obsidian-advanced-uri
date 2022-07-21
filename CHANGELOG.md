@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.24.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.23.0...1.24.0) (2022-07-21)
+
+
+### Features
+
+* write content from clipboard ([07ed921](https://github.com/Vinzent03/obsidian-advanced-uri/commit/07ed92195c06c6c3e6acf381360fb08fc06792dd))
+
 ## [1.23.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.22.0...1.23.0) (2022-06-09)
 
 
