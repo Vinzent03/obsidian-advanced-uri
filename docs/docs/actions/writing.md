@@ -8,6 +8,10 @@ sidebar_position: 2
 Make sure your values are properly [encoded](../concepts/encoding.md)
 :::
 
+:::info
+The `data` parameter can be replaced with `clipboard=true` to get the content from the clipboard.
+:::
+
 | /         | parameters                              | explanation                                                                                     |
 | --------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | write     | <identification\>, data                 | Only writes `data` to the file if the file is not already present                               |
@@ -30,6 +34,11 @@ obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=This%2520text%2
 **Append** "Hello World" to today's **daily note**:
 ```uri
 obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%2520World&mode=append
+```
+
+**Append** content from the **clipboard** to today's **daily note**:
+```uri
+obsidian://advanced-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
 ```
 :::
 

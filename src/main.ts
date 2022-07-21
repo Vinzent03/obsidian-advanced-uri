@@ -1,5 +1,5 @@
 import { CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
-import { stripMD } from "obsidian-community-lib";
+import { base64ToArrayBuffer, stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
 import { getDailyNotePath } from "./daily_note_utils";
@@ -131,6 +131,9 @@ export default class AdvancedURI extends Plugin {
                 if (dailyNote !== undefined) {
                     parameters.filepath = dailyNote.path;
                 }
+            }
+            if (parameters.clipboard === "true") {
+                parameters.data = await navigator.clipboard.readText();
             }
 
             if (parameters.workspace || parameters.saveworkspace == "true") {
@@ -534,8 +537,12 @@ export default class AdvancedURI extends Plugin {
             if (parts.length > 1 && !(this.app.vault.getAbstractFileByPath(dir) instanceof TFolder)) {
                 await this.app.vault.createFolder(dir);
             }
-
-            await this.app.vault.create(outputFileName, text);
+            const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+            if (base64regex.test(text)) {
+                await this.app.vault.createBinary(outputFileName, base64ToArrayBuffer(text));
+            } else {
+                await this.app.vault.create(outputFileName, text);
+            }
         }
 
         if (this.settings.openFileOnWrite) {

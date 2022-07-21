@@ -105,6 +105,7 @@ export interface Parameters {
     updateplugins?: "true";
     line?: number;
     newpane?: "true" | "false";
+    clipboard?: "true";
 }
 
 export interface HookParameters {
