@@ -136,6 +136,10 @@ export default class AdvancedURI extends Plugin {
                 parameters.data = await navigator.clipboard.readText();
             }
 
+            if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
+                this.handlePluginManagement(parameters);
+            }
+
             if (parameters.workspace || parameters.saveworkspace == "true") {
                 this.handleWorkspace(parameters);
 
@@ -271,6 +275,14 @@ export default class AdvancedURI extends Plugin {
         } else {
             new Notice("Workspaces plugin is not enabled");
             this.failure(parameters);
+        }
+    }
+
+    handlePluginManagement(parameters: Parameters): void {
+        if (parameters["enable-plugin"]) {
+            this.app.plugins.enablePlugin(parameters["enable-plugin"]);
+        } else if (parameters["disable-plugin"]) {
+            this.app.plugins.disablePlugin(parameters["disable-plugin"]);
         }
     }
 

@@ -30,6 +30,8 @@ declare module 'obsidian' {
             plugins: {
                 [key: string]: PluginManifest;
             };
+            enablePlugin(plugin: string): void;
+            disablePlugin(plugin: string): void;
         };
         internalPlugins: {
             plugins: {
@@ -106,6 +108,8 @@ export interface Parameters {
     line?: number;
     newpane?: "true" | "false";
     clipboard?: "true";
+    "enable-plugin"?: string;
+    "disable-plugin"?: string;
 }
 
 export interface HookParameters {
