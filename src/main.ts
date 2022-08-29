@@ -372,14 +372,14 @@ export default class AdvancedURI extends Plugin {
     }
 
     async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {
-        let file: TAbstractFile;
+        let file: TAbstractFile | null;
         if (parameters.filepath) {
             file = this.app.vault.getAbstractFileByPath(parameters.filepath);
         } else {
             file = this.app.workspace.getActiveFile();
         }
 
-        if (file) {
+        if (parameters.filepath || file) {
             let outFile: TFile;
             let path = parameters.filepath ?? file.path;
             if (parameters.mode === "overwrite") {
