@@ -1,4 +1,4 @@
-import { CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
+import { CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import { base64ToArrayBuffer, stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
@@ -149,7 +149,7 @@ export default class AdvancedURI extends Plugin {
             } else if (parameters.filepath && parameters.exists === "true") {
                 this.handleDoesFileExist(parameters);
 
-            } else if (parameters.filepath && parameters.data) {
+            } else if (parameters.data) {
                 this.handleWrite(parameters, createdDailyNote);
 
             } else if (parameters.filepath && parameters.heading) {
@@ -372,43 +372,54 @@ export default class AdvancedURI extends Plugin {
     }
 
     async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {
-        const path = parameters.filepath;
-        const file = this.app.vault.getAbstractFileByPath(path);
-        let outFile: TFile;
-        if (parameters.mode === "overwrite") {
-            outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
-            this.success(parameters);
-        } else if (parameters.mode === "prepend") {
-            if (file instanceof TFile) {
-                outFile = await this.prepend(file, parameters);
-            } else {
-                outFile = await this.prepend(path, parameters);
-            }
-            this.success(parameters);
-        } else if (parameters.mode === "append") {
-            if (file instanceof TFile) {
-                outFile = await this.append(file, parameters);
-            } else {
-                outFile = await this.append(path, parameters);
-            }
-            this.success(parameters);
-        } else if (parameters.mode === "new") {
-            if (file instanceof TFile) {
-                outFile = await this.writeAndOpenFile(this.getAlternativeFilePath(file), parameters.data, parameters);
-                this.hookSuccess(parameters, outFile);
+        let file: TAbstractFile;
+        if (parameters.filepath) {
+            file = this.app.vault.getAbstractFileByPath(parameters.filepath);
+        } else {
+            file = this.app.workspace.getActiveFile();
+        }
+
+        if (file) {
+            let outFile: TFile;
+            let path = parameters.filepath ?? file.path;
+            if (parameters.mode === "overwrite") {
+                outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
+                this.success(parameters);
+            } else if (parameters.mode === "prepend") {
+                if (file instanceof TFile) {
+                    outFile = await this.prepend(file, parameters);
+                } else {
+                    outFile = await this.prepend(path, parameters);
+                }
+                this.success(parameters);
+            } else if (parameters.mode === "append") {
+                if (file instanceof TFile) {
+                    outFile = await this.append(file, parameters);
+                } else {
+                    outFile = await this.append(path, parameters);
+                }
+                this.success(parameters);
+            } else if (parameters.mode === "new") {
+                if (file instanceof TFile) {
+                    outFile = await this.writeAndOpenFile(this.getAlternativeFilePath(file), parameters.data, parameters);
+                    this.hookSuccess(parameters, outFile);
+                } else {
+                    outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
+                    this.hookSuccess(parameters, outFile);
+                }
+            } else if (!createdDailyNote && file instanceof TFile) {
+                new Notice("File already exists");
+                this.failure(parameters);
             } else {
                 outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
-                this.hookSuccess(parameters, outFile);
+                this.success(parameters);
             }
-        } else if (!createdDailyNote && file instanceof TFile) {
-            new Notice("File already exists");
-            this.failure(parameters);
+            if (parameters.uid) {
+                this.writeUIDToFile(outFile, parameters.uid);
+            }
         } else {
-            outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
-            this.success(parameters);
-        }
-        if (parameters.uid) {
-            this.writeUIDToFile(outFile, parameters.uid);
+            new Notice("Cannot find file");
+            this.failure(parameters);
         }
     }
 
