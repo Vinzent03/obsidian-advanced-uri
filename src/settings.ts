@@ -56,5 +56,11 @@ export class SettingsTab extends PluginSettingTab {
                 this.plugin.saveSettings();
             }).setValue(this.plugin.settings.idField));
 
+        new Setting(containerEl)
+            .setName('Donate')
+            .setDesc('If you like this Plugin, consider donating to support continued development.')
+            .addButton((bt) => {
+                bt.buttonEl.outerHTML = "<a href='https://ko-fi.com/F1F195IQ5' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>";
+            });
     }
 }
