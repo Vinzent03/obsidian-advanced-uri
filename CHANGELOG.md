@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.25.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.24.0...1.25.0) (2022-09-06)
+
+
+### Features
+
+* donate button in settings ([4352657](https://github.com/Vinzent03/obsidian-advanced-uri/commit/43526578acb3d2aaa5d98b48e80c630146910a50))
+* enable and disable plugin ([35f685b](https://github.com/Vinzent03/obsidian-advanced-uri/commit/35f685b1000ef3cda6f9b56f40de64f94ef31846))
+
+
+### Bug Fixes
+
+* copy uri in file menu obs 0.16 ([d766f05](https://github.com/Vinzent03/obsidian-advanced-uri/commit/d766f05eb49f915b9e75f7d869266c735362eb21)), closes [#72](https://github.com/Vinzent03/obsidian-advanced-uri/issues/72)
+
 ## [1.24.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.23.0...1.24.0) (2022-07-21)
 
 
