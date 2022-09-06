@@ -1,5 +1,5 @@
-import { CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
-import { base64ToArrayBuffer, stripMD } from "obsidian-community-lib";
+import { base64ToArrayBuffer, CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
 import { getDailyNotePath } from "./daily_note_utils";
