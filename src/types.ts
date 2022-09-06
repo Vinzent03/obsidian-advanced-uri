@@ -30,8 +30,8 @@ declare module 'obsidian' {
             plugins: {
                 [key: string]: PluginManifest;
             };
-            enablePlugin(plugin: string): void;
-            disablePlugin(plugin: string): void;
+            enablePluginAndSave(plugin: string): void;
+            disablePluginAndSave(plugin: string): void;
         };
         internalPlugins: {
             plugins: {
