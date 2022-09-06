@@ -189,21 +189,22 @@ export default class AdvancedURI extends Plugin {
                 }
             });
 
-
-
         this.registerEvent(
-            this.app.workspace.on('file-menu', (menu, _, source) => {
-                if (source !== "pane-more-options") {
+            this.app.workspace.on('file-menu', (menu, file, source) => {
+                if (!(source === "pane-more-options" || source === "tab-header" || source == "file-explorer-context-menu")) {
                     return;
                 }
-                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (!view) {
+
+                if (!(file instanceof TFile)) {
                     return;
                 }
 
                 menu.addItem((item) => {
-                    item.setTitle(`Copy Advanced URI`).setIcon('link')
-                        .onClick((_) => this.handleCopyFileURI(true));
+                    item
+                        .setTitle(`Copy Advanced URI`)
+                        .setIcon('link')
+                        .setSection("info")
+                        .onClick((_) => this.handleCopyFileURI(true, file));
                 });
             }));
     }
@@ -638,44 +639,45 @@ export default class AdvancedURI extends Plugin {
         view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
     }
 
-    handleCopyFileURI(withoutData: boolean) {
+    handleCopyFileURI(withoutData: boolean, file?: TFile) {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (!view) return;
-
-        const pos = view.editor.getCursor();
-        const cache = this.app.metadataCache.getFileCache(view.file);
-        if (cache.headings) {
-            for (const heading of cache.headings) {
-                if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
-                    this.copyURI({
-                        filepath: view.file.path,
-                        heading: heading.heading
-                    });
-                    return;
+        if (!view && !file) return;
+        if (view) {
+            const pos = view.editor.getCursor();
+            const cache = this.app.metadataCache.getFileCache(view.file);
+            if (cache.headings) {
+                for (const heading of cache.headings) {
+                    if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
+                        this.copyURI({
+                            filepath: view.file.path,
+                            heading: heading.heading
+                        });
+                        return;
+                    }
                 }
             }
-        }
-        if (cache.blocks) {
-            for (const blockID of Object.keys(cache.blocks)) {
-                const block = cache.blocks[blockID];
-                if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
-                    this.copyURI({
-                        filepath: view.file.path,
-                        block: blockID
-                    });
-                    return;
+            if (cache.blocks) {
+                for (const blockID of Object.keys(cache.blocks)) {
+                    const block = cache.blocks[blockID];
+                    if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
+                        this.copyURI({
+                            filepath: view.file.path,
+                            block: blockID
+                        });
+                        return;
+                    }
                 }
             }
         }
 
         if (withoutData) {
-            const file = this.app.workspace.getActiveFile();
+            const file2 = file ?? this.app.workspace.getActiveFile();
             if (!file) {
                 new Notice("No file opened");
                 return;
             }
             this.copyURI({
-                filepath: file.path,
+                filepath: file2.path,
             });
         } else {
             const fileModal = new FileModal(this, "Choose a file", false);
