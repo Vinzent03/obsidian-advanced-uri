@@ -281,9 +281,13 @@ export default class AdvancedURI extends Plugin {
 
     handlePluginManagement(parameters: Parameters): void {
         if (parameters["enable-plugin"]) {
-            this.app.plugins.enablePlugin(parameters["enable-plugin"]);
+            const pluginId = parameters["enable-plugin"];
+            this.app.plugins.enablePluginAndSave(pluginId);
+            new Notice (`Enabled ${pluginId}`);
         } else if (parameters["disable-plugin"]) {
-            this.app.plugins.disablePlugin(parameters["disable-plugin"]);
+            const pluginId = parameters["disable-plugin"];
+            this.app.plugins.disablePluginAndSave(pluginId);
+            new Notice (`Disabled ${pluginId}`);
         }
     }
 
