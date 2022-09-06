@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.26.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.25.1...1.26.0) (2022-09-06)
+
+
+### Features
+
+* copy frontmatter value to clipboard ([64b0596](https://github.com/Vinzent03/obsidian-advanced-uri/commit/64b0596b866b05e21a9f5cf2638682a7cb20c602)), closes [#68](https://github.com/Vinzent03/obsidian-advanced-uri/issues/68)
+
 ### [1.25.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.25.0...1.25.1) (2022-09-06)
 
 ## [1.25.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.24.0...1.25.0) (2022-09-06)
