@@ -110,6 +110,7 @@ export interface Parameters {
     clipboard?: "true";
     "enable-plugin"?: string;
     "disable-plugin"?: string;
+    frontmatterkey?: string;
 }
 
 export interface HookParameters {

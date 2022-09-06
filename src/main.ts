@@ -138,9 +138,11 @@ export default class AdvancedURI extends Plugin {
 
             if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
                 this.handlePluginManagement(parameters);
-            }
 
-            if (parameters.workspace || parameters.saveworkspace == "true") {
+            } else if (parameters.frontmatterkey) {
+                this.handleFrontmatterKey(parameters);
+
+            } else if (parameters.workspace || parameters.saveworkspace == "true") {
                 this.handleWorkspace(parameters);
 
             } else if (parameters.commandname || parameters.commandid) {
@@ -256,6 +258,33 @@ export default class AdvancedURI extends Plugin {
         const files = this.app.vault.getFiles();
         const idKey = this.settings.idField;
         return files.find(file => parseFrontMatterEntry(this.app.metadataCache.getFileCache(file)?.frontmatter, idKey) == uid);
+    }
+
+    handleFrontmatterKey(parameters: Parameters) {
+        const key = parameters.frontmatterkey;
+        const frontmatter = this.app.metadataCache.getCache(parameters.filepath ?? this.app.workspace.getActiveFile().path).frontmatter;
+
+        let res: string;
+        if (key.startsWith("[") && key.endsWith("]")) {
+            const list = key.substring(1, key.length - 1).split(",");
+            let cache: any = frontmatter;
+            for (const item of list) {
+                if (cache instanceof Array) {
+                    const index = parseInt(item);
+                    if (index == NaN) {
+                        cache = cache.find((e) => e == item);
+                    }
+                    cache = cache[parseInt(item)];
+                } else {
+                    cache = cache[item];
+                }
+            }
+            res = cache;
+        } else {
+            res = frontmatter[key];
+        }
+
+        this.copyText(res);
     }
 
     handleWorkspace(parameters: Parameters) {
@@ -672,7 +701,7 @@ export default class AdvancedURI extends Plugin {
 
         if (withoutData) {
             const file2 = file ?? this.app.workspace.getActiveFile();
-            if (!file) {
+            if (!file2) {
                 new Notice("No file opened");
                 return;
             }
