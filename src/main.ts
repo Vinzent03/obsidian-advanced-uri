@@ -312,11 +312,11 @@ export default class AdvancedURI extends Plugin {
         if (parameters["enable-plugin"]) {
             const pluginId = parameters["enable-plugin"];
             this.app.plugins.enablePluginAndSave(pluginId);
-            new Notice (`Enabled ${pluginId}`);
+            new Notice(`Enabled ${pluginId}`);
         } else if (parameters["disable-plugin"]) {
             const pluginId = parameters["disable-plugin"];
             this.app.plugins.disablePluginAndSave(pluginId);
-            new Notice (`Disabled ${pluginId}`);
+            new Notice(`Disabled ${pluginId}`);
         }
     }
 
@@ -341,6 +341,11 @@ export default class AdvancedURI extends Plugin {
                         editor.setValue("");
                     }
                 }
+            } else if (parameters.line) {
+                await this.app.workspace.openLinkText(parameters.filepath, "/", undefined, {
+                    state: { mode: "source" }
+                });
+                this.setCursorInLine(parameters.line);
             } else {
                 await this.app.workspace.openLinkText(parameters.filepath, "/", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
             }

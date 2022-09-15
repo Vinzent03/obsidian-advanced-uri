@@ -18,6 +18,7 @@ In the following `<command>` can be replaced with either `commandname` or `comma
 | --------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | <command\>                                    | Executes command by its name                                                                    |
 | <command\>, <identification\>                 | Opens file and then executes command by its name                                                |
+| <command\>, <identification\>, line=myline    | Opens file, sets the curosor to myline and then executes command by its name                    | 
 | <command\>, <identification\>, mode=append    | Opens file, adds empty line at the end and sets cursor, then executes command by its name       |
 | <command\>, <identification\>, mode=prepend   | Opens file, adds empty line at the beginning and sets cursor, then executes command by its name |
 | <command\>, <identification\>, mode=overwrite | Opens file, clears the file, then executes command by its name                                  |
