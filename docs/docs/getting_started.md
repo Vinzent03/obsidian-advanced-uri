@@ -48,7 +48,7 @@ xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
 ```
 
 #### Mac
-You can use mac shell command `open` to launch obsidian, and with `--background` let obsidian run in background
+You can use Mac shell command `open` to launch Obsidian, and with `--background` let Obsidian run in background.
 
 ```bash
 open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=my-data"
