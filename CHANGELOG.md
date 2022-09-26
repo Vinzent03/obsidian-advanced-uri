@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.27.0...1.27.1) (2022-09-26)
+
+
+### Bug Fixes
+
+* support mode=new on ([14736c1](https://github.com/Vinzent03/obsidian-advanced-uri/commit/14736c12dd4cfde084a0acb4cecccd4519278c84)), closes [#71](https://github.com/Vinzent03/obsidian-advanced-uri/issues/71)
+
 ## [1.27.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.26.1...1.27.0) (2022-09-15)
 
 
