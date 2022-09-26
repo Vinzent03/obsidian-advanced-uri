@@ -112,7 +112,7 @@ export default class AdvancedURI extends Plugin {
                     new Notice("Daily notes plugin is not loaded");
                     return;
                 }
-                const moment = (window as any).moment(Date.now());
+                const moment = window.moment(Date.now());
                 const allDailyNotes = getAllDailyNotes();
                 let dailyNote = getDailyNote(moment, allDailyNotes);
                 if (!dailyNote) {
@@ -323,6 +323,12 @@ export default class AdvancedURI extends Plugin {
     async handleCommand(parameters: Parameters) {
         if (parameters.filepath) {
             if (parameters.mode) {
+                if (parameters.mode == "new") {
+                    const file = this.app.metadataCache.getFirstLinkpathDest(parameters.filepath, "/");
+                    if (file instanceof TFile) {
+                        parameters.filepath = this.getAlternativeFilePath(file);
+                    }
+                }
                 await this.app.workspace.openLinkText(parameters.filepath, "/", undefined, {
                     state: { mode: "source" }
                 });
