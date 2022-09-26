@@ -46,3 +46,10 @@ For `xdg-open` the whole uri has to be encoded twice. See [encoding](concepts/en
 ```bash
 xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
 ```
+
+#### Mac
+You can use Mac shell command `open` to launch Obsidian, and with `--background` let Obsidian run in background.
+
+```bash
+open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=my-data"
+```
