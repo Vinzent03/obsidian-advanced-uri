@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.27.1...1.27.2) (2022-09-28)
+
+
+### Bug Fixes
+
+* set cursor in already opened pane ([c51d3ef](https://github.com/Vinzent03/obsidian-advanced-uri/commit/c51d3ef03c67e4aa8e0f656c92043506b10ec12d)), closes [#81](https://github.com/Vinzent03/obsidian-advanced-uri/issues/81)
+
 ### [1.27.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.27.0...1.27.1) (2022-09-26)
 
 
