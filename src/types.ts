@@ -60,6 +60,9 @@ declare module 'obsidian' {
     interface View {
         file: TFile;
     }
+    interface WorkspaceLeaf {
+        width: number;
+    }
 }
 
 export interface FileModalData {

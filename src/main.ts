@@ -471,7 +471,7 @@ export default class AdvancedURI extends Plugin {
     async handleOpen(parameters: Parameters) {
         let fileIsAlreadyOpened = false;
         this.app.workspace.iterateAllLeaves(leaf => {
-            if (leaf.view.file?.path === parameters.filepath) {
+            if (leaf.view.file?.path === parameters.filepath && leaf.width > 0) {
                 fileIsAlreadyOpened = true;
                 this.app.workspace.setActiveLeaf(leaf, true, true);
             }
