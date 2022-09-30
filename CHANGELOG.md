@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.28.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.27.2...1.28.0) (2022-09-30)
+
+
+### Features
+
+* cache last uri parameters ([825150c](https://github.com/Vinzent03/obsidian-advanced-uri/commit/825150c2fd018265f400fa712b1a933303b3557f)), closes [#77](https://github.com/Vinzent03/obsidian-advanced-uri/issues/77)
+
 ### [1.27.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.27.1...1.27.2) (2022-09-28)
 
 
