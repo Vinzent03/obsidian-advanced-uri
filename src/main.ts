@@ -22,6 +22,7 @@ const DEFAULT_SETTINGS: AdvancedURISettings = {
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
+    lastParameters?: Object;
 
     async onload() {
         await this.loadSettings();
@@ -83,6 +84,7 @@ export default class AdvancedURI extends Plugin {
             for (const parameter in parameters) {
                 (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
             }
+            this.lastParameters = { ...parameters };
             if (parameters.uid) {
                 const res = this.getFileFromUID(parameters.uid)?.path;
                 if (res != undefined) {
