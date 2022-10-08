@@ -1,15 +1,15 @@
 # Hook
 
-[Hook](https://hookproductivity.com) manages links to various third party applications. Since version 3.4.3 they support [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) to get `file://` links, robust `obsidian://` links and create new files via URI.
+[Hook](https://hookproductivity.com) 管理指向各种第三方应用程序的链接。从 3.4.3 版本开始，它们支持 [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) 以通过 URI 获取`file:///`链接、强大的`obsidian://`链接以及创建新文件。
 
-See [their documentation](https://hookproductivity.com/help/integration/using-hook-with-obsidian/#advanced) for a detailed explanation.
+阅读 [他们的文档](https://hookproductivity.com/help/integration/using-hook-with-obsidian/#advanced) 来获得详细的说明。
 
 ## Get `file://` and `obsidian://` URIs
 
-That as today, the only action not starting with `advanced-uri`. Instead it uses `hook-get-advanced-uri`.
+截止到现在，他们唯一的动作不是 `advanced-uri`。 而是使用 `hook-get-advanced-uri`。
 
-It requires the `x-success` parameter and optionally the `x-error` parameter. It appends an `obsidian://advanced-uri` URI via the parameter `advanceduri` and an `file://` URI via the `fileuri` parameter to the `x-success` uri and launches that URI.
+需要设置`x-success` 及 `x-error` 参数。 他通过参数 `advanceduri`支持 `obsidian://advanced-uri` URI 通过`fileuri`参数支持 `file://` URI 传递给 `x-success` URI 并启动该 URI.
 
 :::info
-The benefit of this plugin over the default Obsidian URI is the feature of using robust links via frontmatter keys. By enabling `Use UID instead of file paths` in the plugin's settings, it creates those IDs automatically for `obsidian://advanced-uri` URIs.
+这款插件与默认的 Obsidian URI 相比优势在于具有使用强大的基于 frontmatter 的链接功能。通过在插件设置中启用`Use UID instead of file paths`它可以自动为`obsidian://advanced-uri`创建 UID
 :::
