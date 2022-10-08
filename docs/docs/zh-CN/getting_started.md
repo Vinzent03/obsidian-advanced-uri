@@ -1,54 +1,56 @@
 ---
 sidebar_position: 3
 ---
-# Getting Started
 
-We are going through the whole workflow of creating and launching an URI to open a note.
+# 开始使用
 
-## Create URI
+这里，我们讲解通过创建并启动 URI 来打开笔记的完整的工作流。
 
-### Collect parameters
+## 创建 URI
 
-Let's say we want to open the file `Home Index/today.md`. By looking at the [navigation action](actions/navigation.md) the only parameter we need is a file [identification](concepts/file_identifiers.md). Since we want to create a new file, we use the `filepath` parameter.
+### 收集参数
 
-As you can see, our file path includes a space and a slash. We have to [encode](concepts/encoding.md) special characters. By entering `Home Index/today` (You can omit the file extension) in an [online url encoder](https://www.urlencoder.io/) you get `Home%20Index%2Ftoday` as an output. Now we have the parameter key `filepath` and the parameter value `Home%20Index%2Ftoday`.
+假设我们想要打开文件`Home Index/today.md`。通过查看 [操作导航](actions/navigation.md) 得知我们唯一需要的参数是一个文件的 [识别符](concepts/file_identifiers.md)。因此我们我们可以使用`filepath`参数来创建一个新的文件。
 
-### Construct URI
+如你所见，我们的文件地址包括了一个空格和一个斜线。因此，我们必须对特殊符号进行 [编码](concepts/encoding.md)。通过在 [在线 url 编码](https://www.urlencoder.io/) 输入`Home Index/today`（你可以忽略掉文件的拓展名），你获得了`Home%20Index%2Ftoday`的输出。现在我们有了参数键`filepath`和参数值`Home%20Index%2Ftoday`。
 
-As stated in the [schema](concepts/schema.md) every URI has to start with `obsidian://advanced-uri`. Please refer to the [schema](concepts/schema.md) for more detailed explanation. Our final URI is the following.
+### 构建 URI
+
+如 [架构](concepts/schema.md) 中所述，每个 URI 都必须以 `obsidian://advanced-uri`开头。有关更详细的说明，请参阅 [架构](concepts/schema.md)。我们最终得到的 URI 如下所示。
 
 ```uri
 obsidian://advanced-uri?filepath=Home%20Index%2Ftoday
 ```
 
-## Launch URI
+## 启动 URI
 
-There are **many** ways to launch an URI. I'm just listing the most common
+有**很多**种启动 URI 的方式。我仅仅列出最常见的部分
 
-### Browser
+### 浏览器
 
-You can simply enter the URI into the search bar. It will ask you to confirm the execution.
+你可以简单的在搜索栏输入 URI。他将询问你是否拉起外部应用。
 
-### Link in Obsidian
+### Obsidian 内部链接
 
-You can launch an Obsidian URI from Obsidian itself. Because `obsidian://` is a more custom protocol, it doesn't recognize it as a link directly. To fix this, wrap it in a markdown link.
+你可以在 Obsidian 内部启动一个 ObsidianURI. 因为`obsidian://`是一个自定义的连接方式，它不会被直接认为是一个链接。我们可以通过将他涵盖在一个 markdown 链接里来修复这一点。
 
 ```md
 [This here is shown](obsidian://advanced-uri?filepath=Home%20Index%2Ftoday)
 ```
 
-### Terminal
+### 终端
 
 #### Linux
 
-For `xdg-open` the whole uri has to be encoded twice. See [encoding](concepts/encoding.md) for more details.
+对于`xdg-open`来说整个 URI 编码需要编译两次.查看[编码](concepts/encoding.md)来获得更多信息
 
 ```bash
 xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
 ```
 
 #### Mac
-You can use Mac shell command `open` to launch Obsidian, and with `--background` let Obsidian run in background.
+
+你可以使用 Mac 的 shell 命令`open`来启动 Obsidian，并使用`--background`参数来让 Obsidian 在后台运行。
 
 ```bash
 open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=my-data"
