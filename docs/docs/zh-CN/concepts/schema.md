@@ -2,33 +2,37 @@
 sidebar_position: 1
 ---
 
-# Schema
+# 框架
 
-Passing values to the URI is handled like every other URL.
-(Almost) every URI starts with `obsidian://advanced-uri`. Values are set in key value pairs `key=value` separated from the start with `?`. The key value pairs itself are separated with `&`.
+传递值给 URI 的方式与其他 URL 方式类似
 
-An example URI looks like the following:
+几乎每一个 URI 都开始于`obsidian://advanced-uri`。值被设置在`?`后的键值对`key=value`中。键值对本身由`&`进行分割
+
+例如下面的示例 URI：
 
 ```url
 obsidian://advanced-uri?key1=value1&key2=value2
 ```
 
 :::caution
-Make sure your values are properly [encoded](encoding)
+确保你的值被完整的 [编码](encoding)
 :::
 
-## Vault parameter
+## 库参数
 
-**Every** Obsidian URI supports the `vault` parameter to specify the vault in which to execute the URI. By leaving it empty, your last used vault is used.
+**每一个** Obsidian URI 都支持`vault`参数来定义执行 URI 的目标库。如果将其置空，则将使用你最近一次使用的库。
 
 :::note Example
-Specific vault:
+特定库:
+
 ```uri
 obsidian://advanced-uri?vault=myVault&key1=value1
 ```
 
-Last used vault:
+最近使用的库:
+
 ```uri
 obsidian://advanced-uri?key1=value1
 ```
+
 :::

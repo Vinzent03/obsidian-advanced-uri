@@ -2,25 +2,26 @@
 sidebar_position: 2
 ---
 
-# Encoding
+# 编码
 
-Special characters like `?` and spaces need to be encoded. There are many online encoders. An example is [this tool](https://www.urlencoder.io/). Simply enter the value of your parameters and use the encoded one.
+特殊符号如`?`和空格需要被编码。有一些在线编码网站例如 [此工具](https://www.urlencoder.io/)。只需简单地输入你得参数值再编码即可
 
-Some encoding examples:
-- space → `%20`
+一些编码示例：
+
+- 空格 → `%20`
 - `/` → `%2F`
 - `%` → `%25`
 
-The key `myKey` and value `Hello World` need to be encoded like the following:
+键值对`myKey=Hello World` 需要被编码如下：
 
 ```uri
 obsidian://advanced-uri?myKey=Hello%20World
 ```
 
-To launch that URI from terminal with `xdg-open` you have to encode the value twice
+如需使用`xdg-open`启动 URI，你需要将值编码两次
 
 ```uri
 obsidian://advanced-uri?myKey=Hello%2520World
 ```
 
-As you can see `%` gets replaced with `%25`.
+可以注意到，此处`%`被`%25`取代了

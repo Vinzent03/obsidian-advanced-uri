@@ -2,21 +2,22 @@
 sidebar_position: 4
 ---
 
-# Navigation Parameters
+# 导航参数
 
-## View mode
+## 视图模式
 
-Every action opening or focusing a pane supports the parameter `viewmode`. Accepted values: 
-- `source`: Sets the editor to reading:source mode
-- `live`: Sets the editor to reading:live mode
-- `preview`: Sets the editor to preview mode
+每一个打开或聚焦到一个分栏的动作都支持`viewmode`参数。接受如下值：
 
-## New pane
+- `source`：设置编辑器为源码模式。
+- `preview`：设置编辑器为阅读模式。
+- `live`：设置编辑器为实时阅览模式。
 
-Every action opening a pane supports the parameter `newpane`. Accepted values:
-- `true` opens file in a new pane if not already opened
-- `false` opens file in current pane if not already opened
+## 新分栏
 
-If the file is already opened in another pane, it gets focused.
+每一个打开分栏的动作都支持`newpane`参数。接受如下值：
 
-You can set a default value in the plugin's settings. The value from the setting gets overwritten by specifying it in the URI.
+- `true` 如果未打开当前文件则在新分栏中打开。
+- `false` 如果未打开当前文件则在当前分栏中打开。
+- 如果文件已经在另一分栏中打开，则切换焦点到该分栏。
+
+你可以在插件设置中设置默认值。当在 URI 中定义该值时将替代默认值
