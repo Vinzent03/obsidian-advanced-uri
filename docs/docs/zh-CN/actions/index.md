@@ -1,7 +1,7 @@
-# Actions
+# 动作
 
-Actions are combinations of different parameters.
-For example if you pass a file path and content, it writes the content to the file.
+动作是不同参数的组合。
+例如如果你键入了一个文件路径及内容，他将把内容写入到文件中
 
 :::info
-The `<identification>` key should be replaced by your chosen identification as described in [File Identifiers](../concepts/file_identifiers.md) 
+`<identification>` 键应被你按照 [文件识别符](../concepts/file_identifiers.md) 选择的识别符替换掉

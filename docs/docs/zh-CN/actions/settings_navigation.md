@@ -2,53 +2,52 @@
 sidebar_position: 5
 ---
 
-# Settings Navigation
-
+# 导航设置
 
 :::info
-The settings tab of every community plugin can be opened by the plugin's id. The id can be found in `<your-vault>/.obsidian/plugins/<your-plugin>/manifest.json`.
+每个设置的选项卡都可以通过插件 ID 来打开。可以在`<your-vault>/.obsidian/plugins/<your-plugin>/manifest.json`找到对应的 ID 值。
 :::
 
-## Obsidian settings
+## Obsidian 设置
 
-| id                | Meaning           |
-| ----------------- | ----------------- |
-| editor            | Editor            |
-| file              | File  & Links     |
-| appearance        | Appearance        |
-| hotkeys           | Hotkeys           |
-| about             | About             |
-| account           | Account           |
-| core-plugins      | Core plugins      |
-| community-plugins | Community plugins |
+| id                | 含义       |
+| ----------------- | ---------- |
+| editor            | 编辑器     |
+| file              | 文件及链接 |
+| appearance        | 外观       |
+| hotkeys           | 快捷键     |
+| about             | 关于       |
+| account           | 账户       |
+| core-plugins      | 核心插件   |
+| community-plugins | 第三方插件 |
 
-## Obsidian stores
+## Obsidian 二级页面
 
-| id             | Meaning        |
-| -------------- | -------------- |
-| theme-browser  | Theme browser  |
-| plugin-browser | Plugin browser | 
+| id             | 含义     |
+| -------------- | -------- |
+| theme-browser  | 主题浏览 |
+| plugin-browser | 插件浏览 |
 
+## 核心插件设置
 
-## Core plugin settings
-
-| id              | Meaning         |
-| --------------- | --------------- |
-| note-composer   | Note composer   |
-| backlink        | Backlink        | 
-| switcher        | Quick Switcher  |
-| command-palette | Command palette |
-| daily-notes     | Daily notes     |
-| file-recovery   | File recovery   |
-| page-preview    | Page Preview    |
-
+| id              | 含义     |
+| --------------- | -------- |
+| note-composer   | 笔记重组 |
+| backlink        | 反链     |
+| switcher        | 快速切换 |
+| command-palette | 命令面板 |
+| daily-notes     | 日记     |
+| file-recovery   | 文件恢复 |
+| page-preview    | 页面预览 |
 
 :::note Example
+
 ```uri
 obsidian://advanced-uri?vault=<your-vault>&settingid=editor
 ```
+
 :::
 
 :::note Source
-Thanks to [hyaray](https://github.com/hyaray) for collecting all setting ids on the [Obsidian forum](https://forum-zh.obsidian.md/t/topic/7365)
+感谢 [hyaray](https://github.com/hyaray) 收集了 [Obsidian forum](https://forum-zh.obsidian.md/t/topic/7365) 的全部插件 ID。
 :::
