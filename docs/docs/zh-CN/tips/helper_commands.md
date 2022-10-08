@@ -2,9 +2,8 @@
 sidebar_position: 1
 ---
 
-# Helper commands
+# 辅助命令
 
-There are multiple helper commands to generate the URI for you.
 这里是几个可以为您生成 URI 的辅助程序命令
 
 - `Copy URI for file`复制文件 URI
