@@ -1,18 +1,17 @@
-# Tips and Tricks
+# 使用提示及技巧
 
-## Insert templates ([Templater](https://github.com/SilentVoid13/Templater) supported)
+## 支持插入 [Templater](https://github.com/SilentVoid13/Templater) 模板
 
-I suggest you using my [hotkeys for templates](https://github.com/Vinzent03/obsidian-hotkeys-for-templates) plugin. Just enable your templates and insert them by calling the command via URI. 
-- Command id for core templates: `obsidian-hotkeys-for-templates:<filepath.md>`
-- Command id for Templater templates: `obsidian-hotkeys-for-templates:templater:<filepath.md>`
+建议使用我的 [快捷键模板](https://github.com/Vinzent03/obsidian-hotkeys-for-templates) 插件。它可以支持通过 URI 拉起并插入模板。
 
-## Open starred notes
+- 核心插件命令 ID`obsidian-hotkeys-for-templates:<filepath.md>`
+- Templater 模板命令 ID`obsidian-hotkeys-for-templates:templater:<filepath.md>`
 
-I suggest you using my [Hotkeys for starred files](https://github.com/Vinzent03/obsidian-shortcuts-for-starred-files) plugin.
+## 打开星标文档
 
-Same as for the templates. Just call the commands.
-- Command id to open file in current pane: `obsidian-shortcuts-for-starred-files:open-file-<index>`
-- Command id to open file in a new pane: `obsidian-shortcuts-for-starred-files:open-file-in-new-pane-<index>`
+建议使用我的 [星标文件快捷键](https://github.com/Vinzent03/obsidian-shortcuts-for-starred-files) 插件。
 
+与模板相同，这里是拉起的命令
 
-
+- 在当前面板打开`obsidian-shortcuts-for-starred-files:open-file-<index>`
+- 在新面板中打开`obsidian-shortcuts-for-starred-files:open-file-in-new-pane-<index>`
