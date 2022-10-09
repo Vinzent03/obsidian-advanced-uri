@@ -1,0 +1,26 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.sidebar.category.Obsidian Advanced URI": {
+    "message": "Obsidian Advanced URI",
+    "description": "The label for category Obsidian Advanced URI in sidebar sidebar"
+  },
+  "sidebar.sidebar.category.Core Concepts": {
+    "message": "Core Concepts",
+    "description": "The label for category Core Concepts in sidebar sidebar"
+  },
+  "sidebar.sidebar.category.Actions": {
+    "message": "Actions",
+    "description": "The label for category Actions in sidebar sidebar"
+  },
+  "sidebar.sidebar.category.Tips and Tricks": {
+    "message": "Tips and Tricks",
+    "description": "The label for category Tips and Tricks in sidebar sidebar"
+  },
+  "sidebar.sidebar.category.External": {
+    "message": "External",
+    "description": "The label for category External in sidebar sidebar"
+  }
+}
