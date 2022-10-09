@@ -783,7 +783,7 @@ export default class AdvancedURI extends Plugin {
     }
 
     async generateURI(parameters: Parameters) {
-        let uri = `obsidian://advanced-uri?vault=${this.app.vault.getName()}`;
+        let uri = `obsidian://advanced-uri?vault=${encodeURIComponent(this.app.vault.getName())}`;
         const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
 
         if (this.settings.useUID && file instanceof TFile) {
