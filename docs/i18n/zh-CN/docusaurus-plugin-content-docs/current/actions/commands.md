@@ -6,8 +6,8 @@ sidebar_position: 3
 
 有两种方式来识别命令
 
-- `commandname` That's the one you see when searching in Obsidian's command palette
-- `commandid` That's invisible to the user, but can be read from the plugin's source code
+- `commandname` 你可以在Obsidian命令面板中看到这些值
+- `commandid` 虽然这对用户来说是不可见的，但你可以从插件的源码中获取该值
 
 :::info
 强烈推荐使用命令 ID，因为它似乎不会改变 使用 [辅助命令](../tips/helper_commands.md) 将自动获取命令 ID.

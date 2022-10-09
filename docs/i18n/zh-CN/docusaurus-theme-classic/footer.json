@@ -1,30 +1,30 @@
 {
   "link.title.Contact": {
-    "message": "Contact",
-    "description": "The title of the footer links column with title=Contact in the footer"
+    "message": "联系",
+    "description": "标题为Contact的页脚链接"
   },
   "link.title.More": {
-    "message": "More",
-    "description": "The title of the footer links column with title=More in the footer"
+    "message": "更多",
+    "description": "标题为More的页脚链接"
   },
   "link.item.label.Support Me": {
-    "message": "Support Me",
-    "description": "The label of footer link with label=Support Me linking to https://ko-fi.com/vinzent"
+    "message": "支持我",
+    "description": "标签为支持我的连接到 <https://ko-fi.com/vinzent> 的页脚链接"
   },
   "link.item.label.GitHub": {
     "message": "GitHub",
-    "description": "The label of footer link with label=GitHub linking to https://github.com/Vinzent03/obsidian-advanced-uri"
+    "description": "标签为 GitHub 的链接到 <https://github.com/Vinzent03/obsidian-advanced-uri> 的页脚链接"
   },
   "link.item.label.Twitter": {
     "message": "Twitter",
-    "description": "The label of footer link with label=Twitter linking to https://twitter.com/Vinzent03_"
+    "description": "标签为 Twitter 的链接到 <https://twitter.com/Vinzent03_> 的页脚链接"
   },
   "link.item.label.Feature Request": {
-    "message": "Feature Request",
-    "description": "The label of footer link with label=Feature Request linking to https://github.com/Vinzent03/obsidian-advanced-uri/issues"
+    "message": "功能建议",
+    "description": "标签为 功能建议 的链接到 <https://github.com/Vinzent03/obsidian-advanced-uri/issues> 的页脚链接"
   },
   "link.item.label.Bug Report": {
-    "message": "Bug Report",
-    "description": "The label of footer link with label=Bug Report linking to https://github.com/Vinzent03/obsidian-advanced-uri/issues"
+    "message": "Bug反馈",
+    "description": "标签为 Bug反馈 的链接到 <https://github.com/Vinzent03/obsidian-advanced-uri/issues> 的页脚链接"
   }
 }
