@@ -48,6 +48,10 @@ const config = {
             label: 'GitHub',
             position: 'right',
           },
+          {
+            type: 'localeDropdown',
+            position: 'left',
+          },
         ],
       },
       footer: {
@@ -95,6 +99,19 @@ const config = {
         additionalLanguages: ["uri"]
       },
     }),
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'zh-CN'],
+    localeConfigs: {
+      en: {
+        htmlLang: 'en-GB',
+      },
+      // You can omit a locale (e.g. fr) if you don't need to override the defaults
+      "zh-CN": {
+        htmlLang: "zh-CN",
+      },
+    },
+  },
 };
 
 module.exports = config;
