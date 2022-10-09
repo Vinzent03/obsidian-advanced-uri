@@ -1,0 +1,30 @@
+{
+  "link.title.Contact": {
+    "message": "Contact",
+    "description": "The title of the footer links column with title=Contact in the footer"
+  },
+  "link.title.More": {
+    "message": "More",
+    "description": "The title of the footer links column with title=More in the footer"
+  },
+  "link.item.label.Support Me": {
+    "message": "Support Me",
+    "description": "The label of footer link with label=Support Me linking to https://ko-fi.com/vinzent"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/Vinzent03/obsidian-advanced-uri"
+  },
+  "link.item.label.Twitter": {
+    "message": "Twitter",
+    "description": "The label of footer link with label=Twitter linking to https://twitter.com/Vinzent03_"
+  },
+  "link.item.label.Feature Request": {
+    "message": "Feature Request",
+    "description": "The label of footer link with label=Feature Request linking to https://github.com/Vinzent03/obsidian-advanced-uri/issues"
+  },
+  "link.item.label.Bug Report": {
+    "message": "Bug Report",
+    "description": "The label of footer link with label=Bug Report linking to https://github.com/Vinzent03/obsidian-advanced-uri/issues"
+  }
+}
