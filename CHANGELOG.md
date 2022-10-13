@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.28.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.28.0...1.28.1) (2022-10-13)
+
+
+### Bug Fixes
+
+* encode vault parameter ([a683686](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a6836868b20f78ce65ffbac6b7f17e9ff445b2f0)), closes [#62](https://github.com/Vinzent03/obsidian-advanced-uri/issues/62)
+
 ## [1.28.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.27.2...1.28.0) (2022-09-30)
 
 
