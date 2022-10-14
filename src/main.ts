@@ -218,7 +218,7 @@ export default class AdvancedURI extends Plugin {
 
         const options = {
             title: stripMD(file.name),
-            advanceduri: await this.generateURI({ filepath: file.path }),
+            advanceduri: await this.generateURI({ filepath: file.path }, false),
             urlkey: "advanceduri",
             fileuri: this.getFileUri(file),
         };
@@ -782,8 +782,9 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    async generateURI(parameters: Parameters) {
-        let uri = `obsidian://advanced-uri?vault=${encodeURIComponent(this.app.vault.getName())}`;
+    async generateURI(parameters: Parameters, doubleEncode: boolean) {
+        const prefix = `obsidian://advanced-uri?vault=${encodeURIComponent(this.app.vault.getName())}`;
+        let suffix = "";
         const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
 
         if (this.settings.useUID && file instanceof TFile) {
@@ -793,15 +794,19 @@ export default class AdvancedURI extends Plugin {
         for (const parameter in parameters) {
 
             if ((parameters as any)[parameter] != undefined) {
-                uri = uri + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
+                suffix = suffix + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
             }
         }
-        return uri;
+        if (doubleEncode) {
+            return prefix + encodeURI(suffix);
+        } else {
+            return prefix + suffix;
+        }
     }
 
     async copyURI(parameters: Parameters) {
-        const uri = await this.generateURI(parameters);
-        await this.copyText(encodeURI(uri));
+        const uri = await this.generateURI(parameters, true);
+        await this.copyText(uri);
 
         new Notice("Advanced URI copied to your clipboard");
     }
