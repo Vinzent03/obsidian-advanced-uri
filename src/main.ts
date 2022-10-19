@@ -81,9 +81,6 @@ export default class AdvancedURI extends Plugin {
 
             /** Allows writing to new created daily note without any `Parameters.mode` */
             let createdDailyNote = false;
-            for (const parameter in parameters) {
-                (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
-            }
             this.lastParameters = { ...parameters };
             if (parameters.uid) {
                 const res = this.getFileFromUID(parameters.uid)?.path;
@@ -180,9 +177,6 @@ export default class AdvancedURI extends Plugin {
             "hook-get-advanced-uri",
             async (e) => {
                 const parameters = e as unknown as HookParameters;
-                for (const parameter in parameters) {
-                    (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
-                }
                 const activeLeaf = this.app.workspace.activeLeaf;
                 const file = activeLeaf.view.file;
                 if (activeLeaf && file) {
