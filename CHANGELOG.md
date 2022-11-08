@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.29.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.28.2...1.29.0) (2022-11-08)
+
+
+### Features
+
+* specify openmode ([dfc8f6b](https://github.com/Vinzent03/obsidian-advanced-uri/commit/dfc8f6bebe5a6de244e6b1f98cc4febf9f84b800)), closes [#79](https://github.com/Vinzent03/obsidian-advanced-uri/issues/79)
+
 ### [1.28.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.28.1...1.28.2) (2022-10-14)
 
 
