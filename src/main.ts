@@ -453,6 +453,7 @@ export default class AdvancedURI extends Plugin {
                 }
             } else if (!createdDailyNote && file instanceof TFile) {
                 new Notice("File already exists");
+                this.openExistingFileAndSetCursor(file.path, parameters);
                 this.failure(parameters);
             } else {
                 outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
@@ -624,24 +625,28 @@ export default class AdvancedURI extends Plugin {
                 await this.app.vault.create(outputFileName, text);
             }
         }
+        this.openExistingFileAndSetCursor(outputFileName, parameters);
 
+
+        return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
+    }
+
+    async openExistingFileAndSetCursor(file: string, parameters: Parameters) {
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
             this.app.workspace.iterateAllLeaves(leaf => {
-                if (leaf.view.file?.path === outputFileName) {
+                if (leaf.view.file?.path === file) {
                     fileIsAlreadyOpened = true;
                     this.app.workspace.setActiveLeaf(leaf, { focus: true });
                 }
             });
 
             if (!fileIsAlreadyOpened)
-                await this.open({ file: outputFileName, setting: this.settings.openFileOnWriteInNewPane, parameters });
+                await this.open({ file: file, setting: this.settings.openFileOnWriteInNewPane, parameters });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
         }
-
-        return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
     }
 
     open({ file, setting, parameters, supportPopover, mode }: { file: string | TFile, setting?: boolean, parameters: Parameters, supportPopover?: boolean, mode?: "source"; }): Promise<void> {
