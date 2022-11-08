@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.29.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.29.0...1.29.1) (2022-11-08)
+
+
+### Bug Fixes
+
+* open file when writing to existing file ([4bf9e97](https://github.com/Vinzent03/obsidian-advanced-uri/commit/4bf9e972b350f5a0413cbbb7c29d3f2e00922c58)), closes [#88](https://github.com/Vinzent03/obsidian-advanced-uri/issues/88)
+
 ## [1.29.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.28.2...1.29.0) (2022-11-08)
 
 
