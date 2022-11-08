@@ -1,4 +1,4 @@
-import { PluginManifest } from "obsidian";
+import { PaneType } from "obsidian";
 
 declare module 'obsidian' {
     interface App {
@@ -8,9 +8,6 @@ declare module 'obsidian' {
             pluginTabs: Array<{
                 id: string;
                 name: string;
-                plugin: {
-                    [key: string]: PluginManifest;
-                };
                 instance?: {
                     description: string;
                     id: string;
@@ -28,7 +25,11 @@ declare module 'obsidian' {
         };
         plugins: {
             plugins: {
-                [key: string]: PluginManifest;
+                [key: string]: { manifest: PluginManifest; };
+                "obsidian-hover-editor": {
+                    spawnPopover(initiatingEl?: HTMLElement, onShowCallback?: () => unknown): WorkspaceLeaf;
+                    manifest: PluginManifest;
+                };
             };
             enablePluginAndSave(plugin: string): void;
             disablePluginAndSave(plugin: string): void;
@@ -103,18 +104,24 @@ export interface Parameters {
     filename?: string;
     exists?: string;
     viewmode?: "source" | "preview" | "live";
+    openmode?: OpenMode;
     settingid?: string;
     "x-success"?: string;
     "x-error"?: string;
     saveworkspace?: "true";
     updateplugins?: "true";
     line?: number;
+    /**
+     * @deprecated Use "openMode" instead
+    */
     newpane?: "true" | "false";
     clipboard?: "true";
     "enable-plugin"?: string;
     "disable-plugin"?: string;
     frontmatterkey?: string;
 }
+
+export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";
 
 export interface HookParameters {
     "x-success": string;

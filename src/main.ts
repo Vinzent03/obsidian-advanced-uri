@@ -9,7 +9,7 @@ import { FileModal } from "./modals/file_modal";
 import { ReplaceModal } from "./modals/replace_modal";
 import { SearchModal } from "./modals/search_modal";
 import { SettingsTab } from "./settings";
-import { AdvancedURISettings, FileModalData, HookParameters, Parameters, SearchModalData } from "./types";
+import { AdvancedURISettings, FileModalData, HookParameters, OpenMode, Parameters, SearchModalData } from "./types";
 
 const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileOnWrite: true,
@@ -331,9 +331,7 @@ export default class AdvancedURI extends Plugin {
                         parameters.filepath = this.getAlternativeFilePath(file);
                     }
                 }
-                await this.app.workspace.openLinkText(parameters.filepath, "/", undefined, {
-                    state: { mode: "source" }
-                });
+                await this.open({ file: parameters.filepath, mode: "source", parameters: parameters });
                 const view = this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
                     const editor = view.editor;
@@ -350,12 +348,11 @@ export default class AdvancedURI extends Plugin {
                     }
                 }
             } else if (parameters.line) {
-                await this.app.workspace.openLinkText(parameters.filepath, "/", undefined, {
-                    state: { mode: "source" }
-                });
+                await this.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+
                 this.setCursorInLine(parameters.line);
             } else {
-                await this.app.workspace.openLinkText(parameters.filepath, "/", this.settings.openFileWithoutWriteInNewPane, this.getViewStateFromMode(parameters));
+                await this.open({ file: parameters.filepath, setting: this.settings.openFileWithoutWriteInNewPane, parameters: parameters });
             }
         }
         if (parameters.commandid) {
@@ -489,9 +486,13 @@ export default class AdvancedURI extends Plugin {
             }
         }
 
-        const openInNewPane = parameters.newpane !== undefined ? parameters.newpane == "true" : this.settings.openFileWithoutWriteInNewPane;
         if (parameters.heading != undefined) {
-            await this.app.workspace.openLinkText(parameters.filepath + "#" + parameters.heading, "", openInNewPane, this.getViewStateFromMode(parameters));
+            await this.open({
+                file: parameters.filepath + "#" + parameters.heading,
+                setting: this.settings.openFileWithoutWriteInNewPane,
+                parameters: parameters,
+                supportPopover: false,
+            });
             const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
@@ -500,7 +501,12 @@ export default class AdvancedURI extends Plugin {
             view.editor.setCursor({ line: heading.position.start.line + 1, ch: 0 });
         }
         else if (parameters.block != undefined) {
-            await this.app.workspace.openLinkText(parameters.filepath + "#^" + parameters.block, "", openInNewPane, this.getViewStateFromMode(parameters));
+            await this.open({
+                file: parameters.filepath + "#^" + parameters.block,
+                setting: this.settings.openFileWithoutWriteInNewPane,
+                parameters: parameters,
+                supportPopover: false,
+            });
             const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
@@ -510,7 +516,11 @@ export default class AdvancedURI extends Plugin {
         }
         else {
             if (!fileIsAlreadyOpened)
-                await this.app.workspace.openLinkText(parameters.filepath, "", openInNewPane, this.getViewStateFromMode(parameters));
+                await this.open({
+                    file: parameters.filepath,
+                    setting: this.settings.openFileWithoutWriteInNewPane,
+                    parameters: parameters, supportPopover: false
+                });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
@@ -620,12 +630,12 @@ export default class AdvancedURI extends Plugin {
             this.app.workspace.iterateAllLeaves(leaf => {
                 if (leaf.view.file?.path === outputFileName) {
                     fileIsAlreadyOpened = true;
-                    this.app.workspace.setActiveLeaf(leaf, true, true);
+                    this.app.workspace.setActiveLeaf(leaf, { focus: true });
                 }
             });
 
             if (!fileIsAlreadyOpened)
-                await this.app.workspace.openLinkText(outputFileName, "", parameters.newpane !== undefined ? parameters.newpane == "true" : this.settings.openFileOnWriteInNewPane, this.getViewStateFromMode(parameters));
+                await this.open({ file: outputFileName, setting: this.settings.openFileOnWriteInNewPane, parameters });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
@@ -634,6 +644,40 @@ export default class AdvancedURI extends Plugin {
         return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
     }
 
+    open({ file, setting, parameters, supportPopover, mode }: { file: string | TFile, setting?: boolean, parameters: Parameters, supportPopover?: boolean, mode?: "source"; }): Promise<void> {
+        if (parameters.openmode == "popover" && (supportPopover ?? true)) {
+
+            const hoverEditor = this.app.plugins.plugins["obsidian-hover-editor"];
+            if (!hoverEditor) {
+                new Notice("Cannot find Workspaces plugin. Please file an issue.");
+                this.failure(parameters);
+            }
+
+            const leaf = hoverEditor.spawnPopover(undefined, () => {
+                this.app.workspace.setActiveLeaf(leaf, { focus: true });
+            });
+            const tfile = file instanceof TFile ? file : this.app.vault.getAbstractFileByPath(file) as TFile;
+            leaf.openFile(tfile);
+        } else {
+            let openMode: OpenMode | boolean = setting;
+            if (parameters.newpane !== undefined) {
+                openMode = parameters.newpane == "true";
+            }
+            if (parameters.openmode !== undefined) {
+                if (parameters.openmode == "true" || parameters.openmode == "false") {
+                    openMode = parameters.openmode == "true";
+                } else if (parameters.openmode == "popover") {
+                    openMode = false;
+                } else {
+                    openMode = parameters.openmode;
+                }
+            }
+            if (openMode == "silent") {
+                return;
+            }
+            return this.app.workspace.openLinkText(file instanceof TFile ? file.path : file, "", openMode, mode != undefined ? { state: { mode: mode } } : this.getViewStateFromMode(parameters));
+        }
+    }
     getEndAndBeginningOfHeading(file: TFile, heading: string): { "lastLine": number, "firstLine": number; } {
         const cache = this.app.metadataCache.getFileCache(file);
         const sections = cache.sections;
