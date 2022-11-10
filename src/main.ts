@@ -520,7 +520,7 @@ export default class AdvancedURI extends Plugin {
                 await this.open({
                     file: parameters.filepath,
                     setting: this.settings.openFileWithoutWriteInNewPane,
-                    parameters: parameters, supportPopover: false
+                    parameters: parameters,
                 });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
