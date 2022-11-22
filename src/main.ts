@@ -2,6 +2,7 @@ import { base64ToArrayBuffer, CachedMetadata, MarkdownView, normalizePath, Notic
 import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
+import { BlockUtils } from "./block_utils";
 import { getDailyNotePath } from "./daily_note_utils";
 import { CommandModal } from "./modals/command_modal";
 import { EnterDataModal } from "./modals/enter_data_modal";
@@ -75,6 +76,21 @@ export default class AdvancedURI extends Plugin {
             }
         });
 
+        this.addCommand({
+            id: "copy-uri-block",
+            name: "copy URI for current block",
+            checkCallback: (checking) => {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (checking) return view != undefined;
+                const id = BlockUtils.getBlockId();
+                if (id) {
+                    this.copyURI({
+                        filepath: view.file.path,
+                        block: id
+                    });
+                }
+            }
+        });
 
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
