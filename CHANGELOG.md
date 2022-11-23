@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.30.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.29.2...1.30.0) (2022-11-23)
+
+
+### Features
+
+* add filepath when using uid ([eca15a2](https://github.com/Vinzent03/obsidian-advanced-uri/commit/eca15a2efa3a83c64583e849fef43998dcf632c3)), closes [#86](https://github.com/Vinzent03/obsidian-advanced-uri/issues/86)
+* create block reference via command ([f7f37cb](https://github.com/Vinzent03/obsidian-advanced-uri/commit/f7f37cb64ff2f1e379ff1f64e0c19b1e990e181b)), closes [#89](https://github.com/Vinzent03/obsidian-advanced-uri/issues/89)
+
 ### [1.29.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.29.1...1.29.2) (2022-11-10)
 
 
