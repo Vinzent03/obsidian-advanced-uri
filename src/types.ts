@@ -85,6 +85,7 @@ export interface AdvancedURISettings {
     openFileWithoutWriteInNewPane: boolean;
     idField: string;
     useUID: boolean;
+    addFilepathWhenUsingUID: boolean;
 }
 
 export interface Parameters {

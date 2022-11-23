@@ -15,46 +15,71 @@ export class SettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("Open file on write")
-            .addToggle(cb => cb.onChange(value => {
-                this.plugin.settings.openFileOnWrite = value;
-                this.plugin.saveSettings();
-            }).setValue(this.plugin.settings.openFileOnWrite));
+            .addToggle(cb => cb
+                .setValue(this.plugin.settings.openFileOnWrite)
+                .onChange(value => {
+                    this.plugin.settings.openFileOnWrite = value;
+                    this.plugin.saveSettings();
+                }));
 
         new Setting(containerEl)
             .setName("Open file on write in a new pane")
             .setDisabled(this.plugin.settings.openFileOnWrite)
-            .addToggle(cb => cb.onChange(value => {
-                this.plugin.settings.openFileOnWriteInNewPane = value;
-                this.plugin.saveSettings();
-            }).setValue(this.plugin.settings.openFileOnWriteInNewPane));
+            .addToggle(cb => cb
+                .setValue(this.plugin.settings.openFileOnWriteInNewPane)
+                .onChange(value => {
+                    this.plugin.settings.openFileOnWriteInNewPane = value;
+                    this.plugin.saveSettings();
+                }));
 
         new Setting(containerEl)
             .setName("Open daily note in a new pane")
-            .addToggle(cb => cb.onChange(value => {
-                this.plugin.settings.openDailyInNewPane = value;
-                this.plugin.saveSettings();
-            }).setValue(this.plugin.settings.openDailyInNewPane));
+            .addToggle(cb => cb
+                .setValue(this.plugin.settings.openDailyInNewPane)
+                .onChange(value => {
+                    this.plugin.settings.openDailyInNewPane = value;
+                    this.plugin.saveSettings();
+                }));
 
         new Setting(containerEl)
             .setName("Open file without write in new pane")
-            .addToggle(cb => cb.onChange(value => {
-                this.plugin.settings.openFileWithoutWriteInNewPane = value;
-                this.plugin.saveSettings();
-            }).setValue(this.plugin.settings.openFileWithoutWriteInNewPane));
+            .addToggle(cb => cb
+                .setValue(this.plugin.settings.openFileWithoutWriteInNewPane)
+                .onChange(value => {
+                    this.plugin.settings.openFileWithoutWriteInNewPane = value;
+                    this.plugin.saveSettings();
+                }));
 
         new Setting(containerEl)
             .setName("Use UID instead of file paths")
-            .addToggle(cb => cb.onChange(value => {
-                this.plugin.settings.useUID = value;
-                this.plugin.saveSettings();
-            }).setValue(this.plugin.settings.useUID));
+            .addToggle(cb => cb
+                .setValue(this.plugin.settings.useUID)
+                .onChange(value => {
+                    this.plugin.settings.useUID = value;
+                    this.plugin.saveSettings();
+                    this.display();
+                })
+            );
 
+        if (this.plugin.settings.useUID) {
+            new Setting(containerEl)
+                .setName("Add filepath parameter")
+                .setDesc("When using UID instead of file paths, you can still add the filepath parameter to know what this URI is about. It's NOT actually used.")
+                .addToggle(cb => cb
+                    .setValue(this.plugin.settings.addFilepathWhenUsingUID)
+                    .onChange(value => {
+                        this.plugin.settings.addFilepathWhenUsingUID = value;
+                        this.plugin.saveSettings();
+                    }));
+        }
         new Setting(containerEl)
             .setName("UID field in frontmatter")
-            .addText(cb => cb.onChange(value => {
-                this.plugin.settings.idField = value;
-                this.plugin.saveSettings();
-            }).setValue(this.plugin.settings.idField));
+            .addText(cb => cb
+                .setValue(this.plugin.settings.idField)
+                .onChange(value => {
+                    this.plugin.settings.idField = value;
+                    this.plugin.saveSettings();
+                }));
 
         new Setting(containerEl)
             .setName('Donate')

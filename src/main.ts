@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS: AdvancedURISettings = {
     openFileWithoutWriteInNewPane: false,
     idField: "id",
     useUID: false,
+    addFilepathWhenUsingUID: false,
 };
 
 export default class AdvancedURI extends Plugin {
@@ -853,7 +854,8 @@ export default class AdvancedURI extends Plugin {
         const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
 
         if (this.settings.useUID && file instanceof TFile) {
-            parameters.filepath = undefined;
+            if (!this.settings.addFilepathWhenUsingUID)
+                parameters.filepath = undefined;
             parameters.uid = await this.getUIDFromFile(file);
         }
         for (const parameter in parameters) {
