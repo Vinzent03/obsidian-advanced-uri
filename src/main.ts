@@ -538,6 +538,7 @@ export default class AdvancedURI extends Plugin {
                     file: parameters.filepath,
                     setting: this.settings.openFileWithoutWriteInNewPane,
                     parameters: parameters,
+                    mode: parameters.line != undefined ? "source" : undefined
                 });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
@@ -746,6 +747,12 @@ export default class AdvancedURI extends Plugin {
     setCursorInLine(rawLine: number) {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
+        const viewState = view.leaf.getViewState();
+        if (viewState.state.mode !== "source") {
+            viewState.state.mode = "source";
+            view.leaf.setViewState(viewState);
+        }
+
         const line = Math.min(rawLine - 1, view.editor.lineCount() - 1);
         view.editor.focus();
         view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
