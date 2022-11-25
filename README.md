@@ -12,7 +12,7 @@ You can for example
 - [create files](https://vinzent03.github.io/obsidian-advanced-uri/actions/writing)
 - [open workspaces](https://vinzent03.github.io/obsidian-advanced-uri/actions/navigation)
 - [navigate to headings/blocks](https://vinzent03.github.io/obsidian-advanced-uri/actions/navigation)
-- [automated search and replace in a file](https://vinzent03.github.io/obsidian-advanced-uri/actions/search_replace)
+- [automated search and replace in a file](https://vinzent03.github.io/obsidian-advanced-uri/actions/search)
 
 Please read the [documentation](https://vinzent03.github.io/obsidian-advanced-uri) for a detailed explanation.
 

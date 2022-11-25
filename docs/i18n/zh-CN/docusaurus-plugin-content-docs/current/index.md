@@ -18,7 +18,7 @@ slug: /
 - [创建文件](actions/writing.md)
 - [打开工作区](actions/navigation.md)
 - [定位到标题/区块](actions/navigation.md)
-- [文件内自动搜索替换](actions/search_replace.md)
+- [文件内自动搜索替换](actions/search.md)
 
 ## 开发目的
 

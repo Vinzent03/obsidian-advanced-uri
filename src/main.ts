@@ -1,4 +1,4 @@
-import { base64ToArrayBuffer, CachedMetadata, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import { base64ToArrayBuffer, CachedMetadata, FileView, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
 import { v4 as uuidv4 } from 'uuid';
@@ -181,6 +181,9 @@ export default class AdvancedURI extends Plugin {
 
             } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
                 this.handleSearchAndReplace(parameters);
+
+            } else if (parameters.search) {
+                this.handleSearch(parameters);
 
             } else if (parameters.filepath) {
                 this.handleOpen(parameters);
@@ -430,6 +433,17 @@ export default class AdvancedURI extends Plugin {
             new Notice("Cannot find file");
             this.failure(parameters);
         }
+    }
+
+    async handleSearch(parameters: Parameters) {
+        if (parameters.filepath) {
+            await this.open({ file: parameters.filepath, parameters: parameters });
+        }
+        const view = this.app.workspace.getActiveViewOfType(FileView);
+        view.currentMode.showSearch();
+        const search = view.currentMode.search;
+        search.searchInputEl.value = parameters.search;
+        search.searchInputEl.dispatchEvent(new Event("input"));
     }
 
     async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {

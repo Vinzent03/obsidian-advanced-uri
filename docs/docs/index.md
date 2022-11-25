@@ -15,7 +15,7 @@ You can for example
 - [create files](actions/writing.md)
 - [open workspaces](actions/navigation.md)
 - [navigate to headings/blocks](actions/navigation.md)
-- [automated search and replace in a file](actions/search_replace.md)
+- [automated search and replace in a file](actions/search.md)
 
 ## Motivation
 

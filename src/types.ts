@@ -60,6 +60,15 @@ declare module 'obsidian' {
     }
     interface View {
         file: TFile;
+
+    }
+    interface FileView {
+        currentMode: {
+            showSearch(): void;
+            search: {
+                searchInputEl: HTMLInputElement;
+            };
+        };
     }
     interface WorkspaceLeaf {
         width: number;
