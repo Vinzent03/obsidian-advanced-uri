@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.31.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.30.0...1.31.0) (2022-11-25)
+
+
+### Features
+
+* search ([52a2f4c](https://github.com/Vinzent03/obsidian-advanced-uri/commit/52a2f4c6b9ba382b54a8b272c39aa217c275e56b)), closes [#90](https://github.com/Vinzent03/obsidian-advanced-uri/issues/90)
+
+
+### Bug Fixes
+
+* set source mode line navigation ([e1079a3](https://github.com/Vinzent03/obsidian-advanced-uri/commit/e1079a395ce5e296b7d2a71118a209041fcdb95f)), closes [#91](https://github.com/Vinzent03/obsidian-advanced-uri/issues/91)
+
 ## [1.30.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.29.2...1.30.0) (2022-11-23)
 
 
