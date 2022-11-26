@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.31.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.31.0...1.31.1) (2022-11-26)
+
+
+### Bug Fixes
+
+* block ref creation for list items ([49d2714](https://github.com/Vinzent03/obsidian-advanced-uri/commit/49d2714e8023e9bb6a7c0fa7fe3c62c16c0eefa6)), closes [#89](https://github.com/Vinzent03/obsidian-advanced-uri/issues/89)
+
 ## [1.31.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.30.0...1.31.0) (2022-11-25)
 
 
