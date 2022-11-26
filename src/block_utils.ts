@@ -1,21 +1,30 @@
-import { Editor, EditorPosition, MarkdownView, SectionCache, TFile } from "obsidian";
+import { Editor, ListItemCache, MarkdownView, SectionCache, TFile } from "obsidian";
 
 export abstract class BlockUtils {
-    private static getBlock(editor: Editor, file: TFile): SectionCache | undefined {
+    private static getBlock(editor: Editor, file: TFile): (SectionCache | ListItemCache) | undefined {
         const cursor = editor.getCursor("to");
         const fileCache = app.metadataCache.getFileCache(file);
 
-        const currentBlock =
+        let currentBlock: SectionCache | ListItemCache =
             fileCache?.sections?.find((section) =>
                 section.position.start.line <= cursor.line &&
                 section.position.end.line >= cursor.line
             );
+
+        if (currentBlock.type == "list") {
+            currentBlock = fileCache.listItems?.find((list) => {
+                if (list.position.start.line <= cursor.line &&
+                    list.position.end.line >= cursor.line) {
+                    return list;
+                }
+            });
+        }
         return currentBlock;
     }
 
     private static getIdOfBlock(
         editor: Editor,
-        block: SectionCache,
+        block: SectionCache | ListItemCache,
     ): string {
         const blockId = block.id;
 
@@ -25,7 +34,7 @@ export abstract class BlockUtils {
 
         // Add a block id
         const sectionEnd = block.position.end;
-        const end: EditorPosition = {
+        const pos = {
             ch: sectionEnd.col,
             line: sectionEnd.line,
         };
@@ -33,12 +42,12 @@ export abstract class BlockUtils {
         const newId = Math.random().toString(36).substring(2, 8);
         const spacer = BlockUtils.shouldInsertAfter(block) ? "\n\n" : " ";
 
-        editor.replaceRange(`${spacer}^${newId}`, end);
+        editor.replaceRange(`${spacer}^${newId}`, pos);
         return newId;
     }
 
-    private static shouldInsertAfter(block: SectionCache): boolean {
-        if (block.type) {
+    private static shouldInsertAfter(block: SectionCache | ListItemCache): boolean {
+        if ((block as any).type) {
             return [
                 "blockquote",
                 "code",
@@ -46,7 +55,7 @@ export abstract class BlockUtils {
                 "heading",
                 "comment",
                 "footnoteDefinition",
-            ].includes(block.type);
+            ].includes((block as any).type);
         }
     }
 
