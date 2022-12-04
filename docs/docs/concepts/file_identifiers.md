@@ -50,3 +50,22 @@ Make sure your values are properly [encoded](encoding)
 :::info
 By specifying `uid` and `filepath` it creates a new file, if no file with `uid` exists, at `filepath` and writes `uid` to the frontmatter.
 :::
+
+## Examples
+1)
+obsidian://advanced-uri?&filepath=Inbox
+this will open a note "Inbox" in your obsidian vault if there is no inbox note
+
+2)
+obsidian://advanced-uri?daily=true&heading=Inbox
+this will open your daily note and place the cursor under Inbox heading if there is one.
+Sample image: [image](https://user-images.githubusercontent.com/95166364/205477904-dc974487-65e7-4480-a99b-d9ab0b1a2536.png)
+
+3)
+Suppose you have note called inbox which has a alias "Brain Dumps" . Now comes the use case for filename.
+Use this command
+obsidian://advanced-uri?filename=Brain%20Dumps
+Example : [image](https://user-images.githubusercontent.com/95166364/205478454-b6949bf6-cf8c-4218-abaa-3d1bf22bfc1e.png)
+
+
+
