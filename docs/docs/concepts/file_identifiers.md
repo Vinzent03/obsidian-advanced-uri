@@ -54,7 +54,7 @@ By specifying `uid` and `filepath` it creates a new file, if no file with `uid` 
 ## Examples
 1)
 (obsidian://advanced-uri?&filepath=Inbox)
-this will open a note "Inbox" in your obsidian vault if there is no inbox note
+This will open a note "Inbox" in your obsidian vault even If there is no inbox note present in your vault.If present this command will open the note specified.
 
 2)
 (obsidian://advanced-uri?daily=true&heading=Inbox)
