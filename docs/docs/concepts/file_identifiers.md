@@ -62,7 +62,7 @@ this will open your daily note and place the cursor under Inbox heading if there
 Sample image: [image](https://user-images.githubusercontent.com/95166364/205477904-dc974487-65e7-4480-a99b-d9ab0b1a2536.png)
 
 3)
-Suppose you have note called inbox which has a alias "Brain Dumps" . Now comes the use case for filename.
+Suppose you have a note called inbox which has an alias "Brain Dumps". Now comes the use case for filename.
 Use this command
 obsidian://advanced-uri?filename=Brain%20Dumps
 Example : [image](https://user-images.githubusercontent.com/95166364/205478454-b6949bf6-cf8c-4218-abaa-3d1bf22bfc1e.png)
