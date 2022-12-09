@@ -53,18 +53,18 @@ By specifying `uid` and `filepath` it creates a new file, if no file with `uid` 
 
 ## Examples
 1)
-(obsidian://advanced-uri?&filepath=Inbox)
+`obsidian://advanced-uri?&filepath=Inbox`
 This will open a note "Inbox" in your obsidian vault even If there is no inbox note present in your vault.If present this command will open the note specified.
 
 2)
-(obsidian://advanced-uri?daily=true&heading=Inbox)
+`obsidian://advanced-uri?daily=true&heading=Inbox`
 this will open your daily note and place the cursor under Inbox heading if there is one.
 Sample image: [image](https://user-images.githubusercontent.com/95166364/205477904-dc974487-65e7-4480-a99b-d9ab0b1a2536.png)
 
 3)
 Suppose you have a note called inbox which has an alias "Brain Dumps". Now comes the use case for filename.
 Use this command
-(obsidian://advanced-uri?filename=Brain%20Dumps)
+`obsidian://advanced-uri?filename=Brain%20Dumps`
 Example : [image](https://user-images.githubusercontent.com/95166364/205478454-b6949bf6-cf8c-4218-abaa-3d1bf22bfc1e.png)
 
 
