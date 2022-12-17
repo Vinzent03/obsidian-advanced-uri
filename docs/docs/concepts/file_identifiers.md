@@ -58,7 +58,7 @@ This will open a note "Inbox" in your obsidian vault even If there is no inbox n
 
 2)
 `obsidian://advanced-uri?daily=true&heading=Inbox`
-this will open your daily note and place the cursor under Inbox heading if there is one.
+This will open your daily note and place the cursor under Inbox heading if there is one.
 Sample image: [image](https://user-images.githubusercontent.com/95166364/205477904-dc974487-65e7-4480-a99b-d9ab0b1a2536.png)
 
 3)
