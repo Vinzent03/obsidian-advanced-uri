@@ -293,7 +293,7 @@ export default class AdvancedURI extends Plugin {
             for (const item of list) {
                 if (cache instanceof Array) {
                     const index = parseInt(item);
-                    if (index == NaN) {
+                    if (Number.isNaN(index)) {
                         cache = cache.find((e) => e == item);
                     }
                     cache = cache[parseInt(item)];
@@ -773,9 +773,9 @@ export default class AdvancedURI extends Plugin {
     }
 
     handleCopyFileURI(withoutData: boolean, file?: TFile) {
-        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const view = this.app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
-        if (view) {
+        if (view instanceof MarkdownView) {
             const pos = view.editor.getCursor();
             const cache = this.app.metadataCache.getFileCache(view.file);
             if (cache.headings) {
