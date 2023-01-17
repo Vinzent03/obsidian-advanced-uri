@@ -41,7 +41,7 @@ You can launch an Obsidian URI from Obsidian itself. Because `obsidian://` is a 
 
 #### Linux
 
-For `xdg-open` the whole uri has to be encoded twice. See [encoding](concepts/encoding.md) for more details.
+For `xdg-open` the whole URI has to be encoded twice. See [encoding](concepts/encoding.md) for more details.
 
 ```bash
 xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
@@ -52,4 +52,11 @@ You can use Mac shell command `open` to launch Obsidian, and with `--background`
 
 ```bash
 open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=my-data"
+```
+
+#### Windows PowerShell
+You can use the PowerShell command `Start-Process` to launch an Obsidian URI.
+
+```bash
+Start-Process "obsidian://advanced-uri?&filepath=test"
 ```
