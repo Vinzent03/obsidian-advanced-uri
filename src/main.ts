@@ -1,30 +1,26 @@
-import { base64ToArrayBuffer, CachedMetadata, FileView, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import { base64ToArrayBuffer, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
-import { v4 as uuidv4 } from 'uuid';
 import { BlockUtils } from "./block_utils";
+import { DEFAULT_SETTINGS } from "./constants";
 import { getDailyNotePath } from "./daily_note_utils";
+import Handlers from "./handlers";
 import { CommandModal } from "./modals/command_modal";
 import { EnterDataModal } from "./modals/enter_data_modal";
 import { FileModal } from "./modals/file_modal";
 import { ReplaceModal } from "./modals/replace_modal";
 import { SearchModal } from "./modals/search_modal";
 import { SettingsTab } from "./settings";
+import Tools from "./tools";
 import { AdvancedURISettings, FileModalData, HookParameters, OpenMode, Parameters, SearchModalData } from "./types";
+import { getEndAndBeginningOfHeading, getFileUri, getViewStateFromMode } from "./utils";
 
-const DEFAULT_SETTINGS: AdvancedURISettings = {
-    openFileOnWrite: true,
-    openDailyInNewPane: false,
-    openFileOnWriteInNewPane: false,
-    openFileWithoutWriteInNewPane: false,
-    idField: "id",
-    useUID: false,
-    addFilepathWhenUsingUID: false,
-};
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
     lastParameters?: Object;
+    handlers = new Handlers(this);
+    tools = new Tools(this);
 
     async onload() {
         await this.loadSettings();
@@ -34,13 +30,13 @@ export default class AdvancedURI extends Plugin {
         this.addCommand({
             id: "copy-uri-current-file",
             name: "copy URI for file with options",
-            callback: () => this.handleCopyFileURI(false)
+            callback: () => this.handlers.handleCopyFileURI(false)
         });
 
         this.addCommand({
             id: "copy-uri-current-file-simple",
             name: "copy URI for current file",
-            callback: () => this.handleCopyFileURI(true)
+            callback: () => this.handlers.handleCopyFileURI(true)
         });
 
         this.addCommand({
@@ -85,7 +81,7 @@ export default class AdvancedURI extends Plugin {
                 if (checking) return view != undefined;
                 const id = BlockUtils.getBlockId();
                 if (id) {
-                    this.copyURI({
+                    this.tools.copyURI({
                         filepath: view.file.path,
                         block: id
                     });
@@ -156,43 +152,43 @@ export default class AdvancedURI extends Plugin {
             }
 
             if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
-                this.handlePluginManagement(parameters);
+                this.handlers.handlePluginManagement(parameters);
 
             } else if (parameters.frontmatterkey) {
-                this.handleFrontmatterKey(parameters);
+                this.handlers.handleFrontmatterKey(parameters);
 
             } else if (parameters.workspace || parameters.saveworkspace == "true") {
-                this.handleWorkspace(parameters);
+                this.handlers.handleWorkspace(parameters);
 
             } else if (parameters.commandname || parameters.commandid) {
-                this.handleCommand(parameters);
+                this.handlers.handleCommand(parameters);
 
             } else if (parameters.filepath && parameters.exists === "true") {
-                this.handleDoesFileExist(parameters);
+                this.handlers.handleDoesFileExist(parameters);
 
             } else if (parameters.data) {
-                this.handleWrite(parameters, createdDailyNote);
+                this.handlers.handleWrite(parameters, createdDailyNote);
 
             } else if (parameters.filepath && parameters.heading) {
-                this.handleOpen(parameters);
+                this.handlers.handleOpen(parameters);
 
             } else if (parameters.filepath && parameters.block) {
-                this.handleOpen(parameters);
+                this.handlers.handleOpen(parameters);
 
             } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
-                this.handleSearchAndReplace(parameters);
+                this.handlers.handleSearchAndReplace(parameters);
 
             } else if (parameters.search) {
-                this.handleSearch(parameters);
+                this.handlers.handleSearch(parameters);
 
             } else if (parameters.filepath) {
-                this.handleOpen(parameters);
+                this.handlers.handleOpen(parameters);
 
             } else if (parameters.settingid) {
-                this.handleOpenSettings(parameters);
+                this.handlers.handleOpenSettings(parameters);
 
             } else if (parameters.updateplugins) {
-                this.handleUpdatePlugins(parameters);
+                this.handlers.handleUpdatePlugins(parameters);
 
             }
         });
@@ -228,7 +224,7 @@ export default class AdvancedURI extends Plugin {
                         .setTitle(`Copy Advanced URI`)
                         .setIcon('link')
                         .setSection("info")
-                        .onClick((_) => this.handleCopyFileURI(true, file));
+                        .onClick((_) => this.handlers.handleCopyFileURI(true, file));
                 });
             }));
     }
@@ -238,23 +234,13 @@ export default class AdvancedURI extends Plugin {
 
         const options = {
             title: stripMD(file.name),
-            advanceduri: await this.generateURI({ filepath: file.path }, false),
+            advanceduri: await this.tools.generateURI({ filepath: file.path }, false),
             urlkey: "advanceduri",
-            fileuri: this.getFileUri(file),
+            fileuri: getFileUri(file),
         };
         this.success(parameters, options);
     }
 
-    getFileUri(file: TFile): string {
-        const url = new URL(this.app.vault.getResourcePath(file));
-        url.host = "localhosthostlocal";
-        url.protocol = "file";
-        url.search = "";
-
-        url.pathname = decodeURIComponent(url.pathname);
-        const res = url.toString().replace("/localhosthostlocal/", "/");
-        return res;
-    }
 
     success(parameters: Parameters, options?: Record<string, any>): void {
         if (parameters["x-success"]) {
@@ -282,292 +268,6 @@ export default class AdvancedURI extends Plugin {
         return files.find(file => parseFrontMatterEntry(this.app.metadataCache.getFileCache(file)?.frontmatter, idKey) == uid);
     }
 
-    handleFrontmatterKey(parameters: Parameters) {
-        const key = parameters.frontmatterkey;
-        const frontmatter = this.app.metadataCache.getCache(parameters.filepath ?? this.app.workspace.getActiveFile().path).frontmatter;
-
-        let res: string;
-        if (key.startsWith("[") && key.endsWith("]")) {
-            const list = key.substring(1, key.length - 1).split(",");
-            let cache: any = frontmatter;
-            for (const item of list) {
-                if (cache instanceof Array) {
-                    const index = parseInt(item);
-                    if (Number.isNaN(index)) {
-                        cache = cache.find((e) => e == item);
-                    }
-                    cache = cache[parseInt(item)];
-                } else {
-                    cache = cache[item];
-                }
-            }
-            res = cache;
-        } else {
-            res = frontmatter[key];
-        }
-
-        this.copyText(res);
-    }
-
-    handleWorkspace(parameters: Parameters) {
-        const workspaces = this.app.internalPlugins?.plugins?.workspaces;
-        if (!workspaces) {
-            new Notice("Cannot find Workspaces plugin. Please file an issue.");
-            this.failure(parameters);
-        } else if (workspaces.enabled) {
-            if (parameters.saveworkspace == "true") {
-                const active = workspaces.instance.activeWorkspace;
-                workspaces.instance.saveWorkspace(active);
-                new Notice(`Saved current workspace to ${active}`);
-            }
-            if (parameters.workspace != undefined) {
-                workspaces.instance.loadWorkspace(parameters.workspace);
-            }
-            this.success(parameters);
-        } else {
-            new Notice("Workspaces plugin is not enabled");
-            this.failure(parameters);
-        }
-    }
-
-    handlePluginManagement(parameters: Parameters): void {
-        if (parameters["enable-plugin"]) {
-            const pluginId = parameters["enable-plugin"];
-            this.app.plugins.enablePluginAndSave(pluginId);
-            new Notice(`Enabled ${pluginId}`);
-        } else if (parameters["disable-plugin"]) {
-            const pluginId = parameters["disable-plugin"];
-            this.app.plugins.disablePluginAndSave(pluginId);
-            new Notice(`Disabled ${pluginId}`);
-        }
-    }
-
-    async handleCommand(parameters: Parameters) {
-        if (parameters.filepath) {
-            if (parameters.mode) {
-                if (parameters.mode == "new") {
-                    const file = this.app.metadataCache.getFirstLinkpathDest(parameters.filepath, "/");
-                    if (file instanceof TFile) {
-                        parameters.filepath = this.getAlternativeFilePath(file);
-                    }
-                }
-                await this.open({ file: parameters.filepath, mode: "source", parameters: parameters });
-                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (view) {
-                    const editor = view.editor;
-                    const data = editor.getValue();
-                    if (parameters.mode === "append") {
-                        editor.setValue(data + "\n");
-                        const lines = editor.lineCount();
-                        editor.setCursor({ ch: 0, line: lines });
-                    } else if (parameters.mode === "prepend") {
-                        editor.setValue("\n" + data);
-                        editor.setCursor({ ch: 0, line: 0 });
-                    } else if (parameters.mode === "overwrite") {
-                        editor.setValue("");
-                    }
-                }
-            } else if (parameters.line) {
-                await this.open({ file: parameters.filepath, mode: "source", parameters: parameters });
-
-                this.setCursorInLine(parameters.line);
-            } else {
-                await this.open({ file: parameters.filepath, setting: this.settings.openFileWithoutWriteInNewPane, parameters: parameters });
-            }
-        }
-        if (parameters.commandid) {
-            this.app.commands.executeCommandById(parameters.commandid);
-        } else if (parameters.commandname) {
-            const rawCommands = this.app.commands.commands;
-            for (const command in rawCommands) {
-                if (rawCommands[command].name === parameters.commandname) {
-                    if (rawCommands[command].callback) {
-                        rawCommands[command].callback();
-                    } else {
-                        rawCommands[command].checkCallback(false);
-                    }
-                    break;
-                }
-            }
-        }
-        this.success(parameters);
-    }
-    async handleDoesFileExist(parameters: Parameters) {
-        const exists = await this.app.vault.adapter.exists(parameters.filepath);
-
-        this.copyText((exists ? 1 : 0).toString());
-        this.success(parameters);
-
-    }
-    async handleSearchAndReplace(parameters: Parameters) {
-        let file: TFile;
-        if (parameters.filepath) {
-
-            const abstractFile = this.app.vault.getAbstractFileByPath(parameters.filepath);
-            if (abstractFile instanceof TFile) {
-                file = abstractFile;
-            }
-        } else {
-            file = this.app.workspace.getActiveFile();
-        }
-
-        if (file) {
-            let data = await this.app.vault.read(file);
-            if (parameters.searchregex) {
-                try {
-                    const [, , pattern, flags] = parameters.searchregex.match(/(\/?)(.+)\1([a-z]*)/i);
-                    const regex = new RegExp(pattern, flags);
-                    data = data.replace(regex, parameters.replace);
-                    this.success(parameters);
-                } catch (error) {
-                    new Notice(`Can't parse ${parameters.searchregex} as RegEx`);
-                    this.failure(parameters);
-                }
-            } else {
-                data = data.replaceAll(parameters.search, parameters.replace);
-                this.success(parameters);
-            }
-
-            await this.writeAndOpenFile(file.path, data, parameters);
-        } else {
-            new Notice("Cannot find file");
-            this.failure(parameters);
-        }
-    }
-
-    async handleSearch(parameters: Parameters) {
-        if (parameters.filepath) {
-            await this.open({ file: parameters.filepath, parameters: parameters });
-        }
-        const view = this.app.workspace.getActiveViewOfType(FileView);
-        view.currentMode.showSearch();
-        const search = view.currentMode.search;
-        search.searchInputEl.value = parameters.search;
-        search.searchInputEl.dispatchEvent(new Event("input"));
-    }
-
-    async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {
-        let file: TAbstractFile | null;
-        if (parameters.filepath) {
-            file = this.app.vault.getAbstractFileByPath(parameters.filepath);
-        } else {
-            file = this.app.workspace.getActiveFile();
-        }
-
-        if (parameters.filepath || file) {
-            let outFile: TFile;
-            let path = parameters.filepath ?? file.path;
-            if (parameters.mode === "overwrite") {
-                outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
-                this.success(parameters);
-            } else if (parameters.mode === "prepend") {
-                if (file instanceof TFile) {
-                    outFile = await this.prepend(file, parameters);
-                } else {
-                    outFile = await this.prepend(path, parameters);
-                }
-                this.success(parameters);
-            } else if (parameters.mode === "append") {
-                if (file instanceof TFile) {
-                    outFile = await this.append(file, parameters);
-                } else {
-                    outFile = await this.append(path, parameters);
-                }
-                this.success(parameters);
-            } else if (parameters.mode === "new") {
-                if (file instanceof TFile) {
-                    outFile = await this.writeAndOpenFile(this.getAlternativeFilePath(file), parameters.data, parameters);
-                    this.hookSuccess(parameters, outFile);
-                } else {
-                    outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
-                    this.hookSuccess(parameters, outFile);
-                }
-            } else if (!createdDailyNote && file instanceof TFile) {
-                new Notice("File already exists");
-                this.openExistingFileAndSetCursor(file.path, parameters);
-                this.failure(parameters);
-            } else {
-                outFile = await this.writeAndOpenFile(path, parameters.data, parameters);
-                this.success(parameters);
-            }
-            if (parameters.uid) {
-                this.writeUIDToFile(outFile, parameters.uid);
-            }
-        } else {
-            new Notice("Cannot find file");
-            this.failure(parameters);
-        }
-    }
-
-    async handleOpen(parameters: Parameters) {
-        let fileIsAlreadyOpened = false;
-        this.app.workspace.iterateAllLeaves(leaf => {
-            if (leaf.view.file?.path === parameters.filepath && leaf.width > 0) {
-                fileIsAlreadyOpened = true;
-                this.app.workspace.setActiveLeaf(leaf, true, true);
-            }
-        });
-        if (fileIsAlreadyOpened) {
-            const leaf = this.app.workspace.activeLeaf;
-            if (parameters.viewmode != undefined) {
-                let viewState = leaf.getViewState();
-                viewState.state.mode = parameters.viewmode;
-                if (viewState.state.source != undefined)
-                    viewState.state.source = parameters.viewmode == "source";
-                await leaf.setViewState(viewState);
-            }
-        }
-
-        if (parameters.heading != undefined) {
-            await this.open({
-                file: parameters.filepath + "#" + parameters.heading,
-                setting: this.settings.openFileWithoutWriteInNewPane,
-                parameters: parameters,
-                supportPopover: false,
-            });
-            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-            if (!view) return;
-            const cache = this.app.metadataCache.getFileCache(view.file);
-            const heading = cache.headings.find((e) => e.heading === parameters.heading);
-            view.editor.focus();
-            view.editor.setCursor({ line: heading.position.start.line + 1, ch: 0 });
-        }
-        else if (parameters.block != undefined) {
-            await this.open({
-                file: parameters.filepath + "#^" + parameters.block,
-                setting: this.settings.openFileWithoutWriteInNewPane,
-                parameters: parameters,
-                supportPopover: false,
-            });
-            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-            if (!view) return;
-            const cache = this.app.metadataCache.getFileCache(view.file);
-            const block = cache.blocks[parameters.block];
-            view.editor.focus();
-            view.editor.setCursor({ line: block.position.start.line, ch: 0 });
-        }
-        else {
-            if (!fileIsAlreadyOpened)
-                await this.open({
-                    file: parameters.filepath,
-                    setting: this.settings.openFileWithoutWriteInNewPane,
-                    parameters: parameters,
-                    mode: parameters.line != undefined ? "source" : undefined
-                });
-            if (parameters.line != undefined) {
-                this.setCursorInLine(parameters.line);
-            }
-        }
-        if (parameters.mode != undefined) {
-            await this.setCursor(parameters.mode);
-        }
-        if (parameters.uid) {
-            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-
-            this.writeUIDToFile(view.file, parameters.uid);
-        }
-        this.success(parameters);
-    }
 
     async append(file: TFile | string, parameters: Parameters): Promise<TFile> {
         let path: string;
@@ -575,7 +275,7 @@ export default class AdvancedURI extends Plugin {
         if (parameters.heading) {
             if (file instanceof TFile) {
                 path = file.path;
-                const line = this.getEndAndBeginningOfHeading(file, parameters.heading)?.lastLine;
+                const line = getEndAndBeginningOfHeading(file, parameters.heading)?.lastLine;
                 if (line === undefined) return;
 
                 const data = await this.app.vault.read(file);
@@ -605,7 +305,7 @@ export default class AdvancedURI extends Plugin {
         if (parameters.heading) {
             if (file instanceof TFile) {
                 path = file.path;
-                const line = this.getEndAndBeginningOfHeading(file, parameters.heading)?.firstLine;
+                const line = getEndAndBeginningOfHeading(file, parameters.heading)?.firstLine;
                 if (line === undefined) return;
 
                 const data = await this.app.vault.read(file);
@@ -712,27 +412,7 @@ export default class AdvancedURI extends Plugin {
             if (openMode == "silent") {
                 return;
             }
-            return this.app.workspace.openLinkText(file instanceof TFile ? file.path : file, "", openMode, mode != undefined ? { state: { mode: mode } } : this.getViewStateFromMode(parameters));
-        }
-    }
-    getEndAndBeginningOfHeading(file: TFile, heading: string): { "lastLine": number, "firstLine": number; } {
-        const cache = this.app.metadataCache.getFileCache(file);
-        const sections = cache.sections;
-        const foundHeading = cache.headings?.find(e => e.heading === heading);
-
-
-        if (foundHeading) {
-            const foundSectionIndex = sections.findIndex(section => section.type === "heading" && section.position.start.line === foundHeading.position.start.line);
-            const restSections = sections.slice(foundSectionIndex + 1);
-
-            const nextHeadingIndex = restSections?.findIndex(e => e.type === "heading");
-
-            const lastSection = restSections[(nextHeadingIndex !== -1 ? nextHeadingIndex : restSections.length) - 1] ?? sections[foundSectionIndex];
-            const lastLine = lastSection.position.end.line + 1;
-
-            return { "lastLine": lastLine, "firstLine": sections[foundSectionIndex].position.end.line + 1 };
-        } else {
-            new Notice("Can't find heading");
+            return this.app.workspace.openLinkText(file instanceof TFile ? file.path : file, "", openMode, mode != undefined ? { state: { mode: mode } } : getViewStateFromMode(parameters));
         }
     }
 
@@ -772,175 +452,6 @@ export default class AdvancedURI extends Plugin {
         view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
     }
 
-    handleCopyFileURI(withoutData: boolean, file?: TFile) {
-        const view = this.app.workspace.getActiveViewOfType(FileView);
-        if (!view && !file) return;
-        if (view instanceof MarkdownView) {
-            const pos = view.editor.getCursor();
-            const cache = this.app.metadataCache.getFileCache(view.file);
-            if (cache.headings) {
-                for (const heading of cache.headings) {
-                    if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
-                        this.copyURI({
-                            filepath: view.file.path,
-                            heading: heading.heading
-                        });
-                        return;
-                    }
-                }
-            }
-            if (cache.blocks) {
-                for (const blockID of Object.keys(cache.blocks)) {
-                    const block = cache.blocks[blockID];
-                    if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
-                        this.copyURI({
-                            filepath: view.file.path,
-                            block: blockID
-                        });
-                        return;
-                    }
-                }
-            }
-        }
-
-        if (withoutData) {
-            const file2 = file ?? this.app.workspace.getActiveFile();
-            if (!file2) {
-                new Notice("No file opened");
-                return;
-            }
-            this.copyURI({
-                filepath: file2.path,
-            });
-        } else {
-            const fileModal = new FileModal(this, "Choose a file", false);
-            fileModal.open();
-            fileModal.onChooseItem = (item, _) => {
-
-                new EnterDataModal(this, item.source).open();
-
-            };
-        }
-
-    }
-
-    handleOpenSettings(parameters: Parameters) {
-        if (this.app.setting.containerEl.parentElement === null) {
-            this.app.setting.open();
-        }
-        if (parameters.settingid == "plugin-browser") {
-            this.app.setting.openTabById("community-plugins");
-            this.app.setting.activeTab.containerEl.find(".mod-cta").click();
-        } else if (parameters.settingid == "theme-browser") {
-            this.app.setting.openTabById("appearance");
-            this.app.setting.activeTab.containerEl.find(".mod-cta").click();
-        } else {
-            this.app.setting.openTabById(parameters.settingid);
-        }
-        this.success(parameters);
-    }
-
-    async handleUpdatePlugins(parameters: Parameters) {
-        parameters.settingid = "community-plugins";
-        this.handleOpenSettings(parameters);
-        this.app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
-        new Notice("Waiting 10 seconds");
-        await new Promise(resolve => setTimeout(resolve, 10 * 1000));
-
-        if (Object.keys((this.app as any).plugins.updates).length !== 0) {
-            this.app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
-        }
-        this.success(parameters);
-    }
-
-    getAlternativeFilePath(file: TFile): string {
-        const dir = file.parent?.path;
-        const formattedDir = dir === "/" ? "" : dir;
-        const name = file.name;
-        for (let index = 1; index < 100; index++) {
-
-            const base = stripMD(name);
-            const alternative = formattedDir + (formattedDir == "" ? "" : "/") + base + ` ${index}.md`;
-
-            const exists = this.app.vault.getAbstractFileByPath(alternative) !== null;
-            if (!exists) {
-                return alternative;
-            }
-        }
-    }
-
-    async generateURI(parameters: Parameters, doubleEncode: boolean) {
-        const prefix = `obsidian://advanced-uri?vault=${encodeURIComponent(this.app.vault.getName())}`;
-        let suffix = "";
-        const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
-
-        if (this.settings.useUID && file instanceof TFile) {
-            if (!this.settings.addFilepathWhenUsingUID)
-                parameters.filepath = undefined;
-            parameters.uid = await this.getUIDFromFile(file);
-        }
-        for (const parameter in parameters) {
-
-            if ((parameters as any)[parameter] != undefined) {
-                suffix = suffix + `&${parameter}=${encodeURIComponent((parameters as any)[parameter])}`;
-            }
-        }
-        if (doubleEncode) {
-            return prefix + encodeURI(suffix);
-        } else {
-            return prefix + suffix;
-        }
-    }
-
-    async copyURI(parameters: Parameters) {
-        const uri = await this.generateURI(parameters, true);
-        await this.copyText(uri);
-
-        new Notice("Advanced URI copied to your clipboard");
-    }
-
-    copyText(text: string) {
-        return navigator.clipboard.writeText(text);
-    };
-
-    async getUIDFromFile(file: TFile): Promise<string> {
-        let cache: CachedMetadata;
-
-        //await parsing of frontmatter
-        for (let i = 0; i <= 20; i++) {
-            cache = this.app.metadataCache.getFileCache(file);
-
-            if (cache !== undefined) break;
-            await new Promise(resolve => setTimeout(resolve, 150));
-        }
-        const uid = parseFrontMatterEntry(cache.frontmatter, this.settings.idField);
-        if (uid != undefined) return uid;
-        return await this.writeUIDToFile(file, uuidv4());
-    };
-
-    async writeUIDToFile(file: TFile, uid: string): Promise<string> {
-
-        const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
-        const fileContent: string = await this.app.vault.read(file);
-        const isYamlEmpty: boolean = ((!frontmatter || frontmatter.length === 0) && !fileContent.match(/^-{3}\s*\n*\r*-{3}/));
-        let splitContent = fileContent.split("\n");
-        if (isYamlEmpty) {
-            splitContent.unshift("---");
-            splitContent.unshift(`${this.settings.idField}: ${uid}`);
-            splitContent.unshift("---");
-        }
-        else {
-            splitContent.splice(1, 0, `${this.settings.idField}: ${uid}`);
-        }
-
-        const newFileContent = splitContent.join("\n");
-        await this.app.vault.modify(file, newFileContent);
-        return uid;
-    }
-
-    getViewStateFromMode(parameters: Parameters) {
-        return parameters.viewmode ? { state: { mode: parameters.viewmode } } : undefined;
-    }
     async loadSettings() {
         this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
     }
