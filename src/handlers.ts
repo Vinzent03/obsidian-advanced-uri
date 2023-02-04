@@ -233,9 +233,11 @@ export default class Handlers {
     async handleOpen(parameters: Parameters) {
         let fileIsAlreadyOpened = false;
         app.workspace.iterateAllLeaves(leaf => {
-            if (leaf.view.file?.path === parameters.filepath && leaf.width > 0) {
+            if (leaf.view.file?.path === parameters.filepath) {
+                if (fileIsAlreadyOpened && leaf.width == 0) return;
                 fileIsAlreadyOpened = true;
-                app.workspace.setActiveLeaf(leaf, true, true);
+
+                app.workspace.setActiveLeaf(leaf, { focus: true });
             }
         });
         if (fileIsAlreadyOpened) {
