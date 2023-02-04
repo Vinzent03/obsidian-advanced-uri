@@ -366,6 +366,7 @@ export default class AdvancedURI extends Plugin {
     }
 
     async openExistingFileAndSetCursor(file: string, parameters: Parameters) {
+        if (parameters.openmode == "silent") return;
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
             this.app.workspace.iterateAllLeaves(leaf => {
@@ -388,7 +389,7 @@ export default class AdvancedURI extends Plugin {
 
             const hoverEditor = this.app.plugins.plugins["obsidian-hover-editor"];
             if (!hoverEditor) {
-                new Notice("Cannot find Workspaces plugin. Please file an issue.");
+                new Notice("Cannot find Hover Editor plugin. Please file an issue.");
                 this.failure(parameters);
             }
 
