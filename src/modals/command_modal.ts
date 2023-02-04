@@ -23,7 +23,7 @@ export class CommandModal extends FuzzySuggestModal<Command> {
     }
 
     onChooseItem(item: Command, _: MouseEvent | KeyboardEvent): void {
-        this.plugin.copyURI({
+        this.plugin.tools.copyURI({
             filepath: this.file,
             commandid: item.id
         });

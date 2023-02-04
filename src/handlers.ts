@@ -2,12 +2,18 @@ import { FileView, MarkdownView, Notice, TAbstractFile, TFile } from "obsidian";
 import AdvancedURI from "./main";
 import { EnterDataModal } from "./modals/enter_data_modal";
 import { FileModal } from "./modals/file_modal";
+import Tools from "./tools";
 import { Parameters } from "./types";
 import { copyText, getAlternativeFilePath } from "./utils";
 export default class Handlers {
     constructor(private readonly plugin: AdvancedURI) {
-
     }
+
+
+    public get tools(): Tools {
+        return this.plugin.tools;
+    }
+
     handlePluginManagement(parameters: Parameters): void {
         if (parameters["enable-plugin"]) {
             const pluginId = parameters["enable-plugin"];
@@ -216,7 +222,7 @@ export default class Handlers {
                 this.plugin.success(parameters);
             }
             if (parameters.uid) {
-                this.plugin.writeUIDToFile(outFile, parameters.uid);
+                this.tools.writeUIDToFile(outFile, parameters.uid);
             }
         } else {
             new Notice("Cannot find file");
@@ -289,7 +295,7 @@ export default class Handlers {
         if (parameters.uid) {
             const view = app.workspace.getActiveViewOfType(MarkdownView);
 
-            this.plugin.writeUIDToFile(view.file, parameters.uid);
+            this.tools.writeUIDToFile(view.file, parameters.uid);
         }
         this.plugin.success(parameters);
     }
@@ -305,7 +311,7 @@ export default class Handlers {
             if (cache.headings) {
                 for (const heading of cache.headings) {
                     if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
-                        this.plugin.copyURI({
+                        this.tools.copyURI({
                             filepath: view.file.path,
                             heading: heading.heading
                         });
@@ -317,7 +323,7 @@ export default class Handlers {
                 for (const blockID of Object.keys(cache.blocks)) {
                     const block = cache.blocks[blockID];
                     if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
-                        this.plugin.copyURI({
+                        this.tools.copyURI({
                             filepath: view.file.path,
                             block: blockID
                         });
@@ -333,7 +339,7 @@ export default class Handlers {
                 new Notice("No file opened");
                 return;
             }
-            this.plugin.copyURI({
+            this.tools.copyURI({
                 filepath: file2.path,
             });
         } else {

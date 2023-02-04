@@ -40,13 +40,13 @@ export class EnterDataModal extends SuggestModal<EnterData> {
                     mode: mode,
                     func: () => {
                         if (this.file) {
-                            this.plugin.copyURI({
+                            this.plugin.tools.copyURI({
                                 filepath: this.file,
                                 data: query,
                                 mode: mode as Parameters["mode"]
                             });
                         } else {
-                            this.plugin.copyURI({
+                            this.plugin.tools.copyURI({
                                 daily: "true",
                                 data: query,
                                 mode: mode as Parameters["mode"]

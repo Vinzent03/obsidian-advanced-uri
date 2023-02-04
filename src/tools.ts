@@ -7,9 +7,12 @@ import { copyText } from "./utils";
  * These methods depend on the plugins settings in contrast to the utils.ts file, which's functions are independent of the plugins settings.
  */
 export default class Tools {
-    settings: AdvancedURISettings;
+
+    public get settings(): AdvancedURISettings {
+        return this.plugin.settings;
+    }
+
     constructor(private readonly plugin: AdvancedURI) {
-        this.settings = plugin.settings;
     }
 
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
