@@ -211,7 +211,9 @@ export default class AdvancedURI extends Plugin {
 
         this.registerEvent(
             this.app.workspace.on('file-menu', (menu, file, source) => {
-                if (!(source === "pane-more-options" || source === "tab-header" || source == "file-explorer-context-menu")) {
+                console.log(source);
+
+                if (!(source === "more-options" || source === "tab-header" || source == "file-explorer-context-menu")) {
                     return;
                 }
 
