@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.31.3](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.31.2...1.31.3) (2023-02-05)
+
+
+### Bug Fixes
+
+* don't focus existing pane on silent mode ([d6edfbd](https://github.com/Vinzent03/obsidian-advanced-uri/commit/d6edfbdac3be412b3c21f68ce3414046505edd02)), closes [#106](https://github.com/Vinzent03/obsidian-advanced-uri/issues/106)
+* open existing tab if possible ([e98b03d](https://github.com/Vinzent03/obsidian-advanced-uri/commit/e98b03def89cb09ff96ce011b91940676a63318e)), closes [#98](https://github.com/Vinzent03/obsidian-advanced-uri/issues/98)
+* show copy advanced uri in file options ([e38c8f4](https://github.com/Vinzent03/obsidian-advanced-uri/commit/e38c8f4a64ec2f0dfc0e96238ee3f2c4b16125fe))
+
 ### [1.31.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.31.1...1.31.2) (2022-12-17)
 
 
