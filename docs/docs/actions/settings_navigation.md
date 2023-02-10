@@ -27,7 +27,7 @@ The settings tab of every community plugin can be opened by the plugin's id. The
 | id             | Meaning        |
 | -------------- | -------------- |
 | theme-browser  | Theme browser  |
-| plugin-browser | Plugin browser | 
+| plugin-browser | Plugin browser |
 
 
 ## Core plugin settings
@@ -35,12 +35,16 @@ The settings tab of every community plugin can be opened by the plugin's id. The
 | id              | Meaning         |
 | --------------- | --------------- |
 | note-composer   | Note composer   |
-| backlink        | Backlink        | 
+| backlink        | Backlink        |
 | switcher        | Quick Switcher  |
 | command-palette | Command palette |
 | daily-notes     | Daily notes     |
 | file-recovery   | File recovery   |
 | page-preview    | Page Preview    |
+
+## Setting Sections
+
+In addition to navigating to a specific setting, you can also navigate to a specific section of a setting. This is useful if you want to open a specific setting and have it scrolled into view. Use the `settingsection` parameter to do this.
 
 
 :::note Example

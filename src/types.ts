@@ -4,6 +4,7 @@ declare module 'obsidian' {
     interface App {
         setting: {
             containerEl: HTMLElement;
+            tabContentContainer: HTMLElement;
             openTabById(id: string): void;
             pluginTabs: Array<{
                 id: string;
@@ -116,6 +117,7 @@ export interface Parameters {
     viewmode?: "source" | "preview" | "live";
     openmode?: OpenMode;
     settingid?: string;
+    settingsection?: string;
     "x-success"?: string;
     "x-error"?: string;
     saveworkspace?: "true";

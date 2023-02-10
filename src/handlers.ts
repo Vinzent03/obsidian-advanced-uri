@@ -369,6 +369,16 @@ export default class Handlers {
         } else {
             app.setting.openTabById(parameters.settingid);
         }
+
+        if (parameters.settingsection) {
+            const elements = app.setting.tabContentContainer.querySelectorAll("*");
+            const heading: Element = Array.prototype.find.call(elements, (e: Element) => e.textContent == parameters.settingsection);
+
+
+            if (heading) {
+                heading.scrollIntoView();
+            }
+        }
         this.plugin.success(parameters);
     }
 
