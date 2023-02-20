@@ -162,6 +162,8 @@ export default class AdvancedURI extends Plugin {
 
             } else if (parameters.commandname || parameters.commandid) {
                 this.handlers.handleCommand(parameters);
+            } else if (parameters.eval) {
+                this.handlers.handleEval(parameters);
 
             } else if (parameters.filepath && parameters.exists === "true") {
                 this.handlers.handleDoesFileExist(parameters);

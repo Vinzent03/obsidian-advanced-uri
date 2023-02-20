@@ -96,6 +96,7 @@ export interface AdvancedURISettings {
     idField: string;
     useUID: boolean;
     addFilepathWhenUsingUID: boolean;
+    allowEval: boolean;
 }
 
 export interface Parameters {
@@ -131,6 +132,7 @@ export interface Parameters {
     "enable-plugin"?: string;
     "disable-plugin"?: string;
     frontmatterkey?: string;
+    eval?: string;
 }
 
 export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";

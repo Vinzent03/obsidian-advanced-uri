@@ -123,6 +123,51 @@ export default class Handlers {
         }
         this.plugin.success(parameters);
     }
+
+    async handleEval(parameters: Parameters) {
+        if (parameters.filepath) {
+            if (parameters.mode) {
+                if (parameters.mode == "new") {
+                    const file = app.metadataCache.getFirstLinkpathDest(parameters.filepath, "/");
+                    if (file instanceof TFile) {
+                        parameters.filepath = getAlternativeFilePath(file);
+                    }
+                }
+                await this.plugin.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+                const view = app.workspace.getActiveViewOfType(MarkdownView);
+                if (view) {
+                    const editor = view.editor;
+                    const data = editor.getValue();
+                    if (parameters.mode === "append") {
+                        editor.setValue(data + "\n");
+                        const lines = editor.lineCount();
+                        editor.setCursor({ ch: 0, line: lines });
+                    } else if (parameters.mode === "prepend") {
+                        editor.setValue("\n" + data);
+                        editor.setCursor({ ch: 0, line: 0 });
+                    } else if (parameters.mode === "overwrite") {
+                        editor.setValue("");
+                    }
+                }
+            } else if (parameters.line) {
+                await this.plugin.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+
+                this.plugin.setCursorInLine(parameters.line);
+            } else {
+                await this.plugin.open({ file: parameters.filepath, setting: this.plugin.settings.openFileWithoutWriteInNewPane, parameters: parameters });
+            }
+        }
+        if (this.plugin.settings.allowEval) {
+            //Call eval in a global scope
+            const eval2 = eval;
+            eval2(parameters.eval);
+            this.plugin.success(parameters);
+        } else {
+            new Notice("Eval is not allowed. Please enable it in the settings.");
+            this.plugin.failure(parameters);
+        }
+    }
+
     async handleDoesFileExist(parameters: Parameters) {
         const exists = await app.vault.adapter.exists(parameters.filepath);
 

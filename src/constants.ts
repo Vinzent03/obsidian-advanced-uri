@@ -8,4 +8,5 @@ export const DEFAULT_SETTINGS: AdvancedURISettings = {
     idField: "id",
     useUID: false,
     addFilepathWhenUsingUID: false,
+    allowEval: false,
 };
