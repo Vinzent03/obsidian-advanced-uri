@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.33.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.32.0...1.33.0) (2023-02-20)
+
+
+### Features
+
+* eval parameter ([025bb92](https://github.com/Vinzent03/obsidian-advanced-uri/commit/025bb9201ef7ca840ef5d4efea7fd8aefc960bea)), closes [#114](https://github.com/Vinzent03/obsidian-advanced-uri/issues/114)
+
 ## [1.32.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.31.3...1.32.0) (2023-02-10)
 
 
