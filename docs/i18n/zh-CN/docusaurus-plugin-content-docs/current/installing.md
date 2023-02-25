@@ -8,10 +8,10 @@ sidebar_position: 2
 
 1. 设置 -> 第三方插件
 2. 关闭安全模式
-3. 点击 社区插件市场 -> 浏览
-4. 搜索 "Advanced Obsidian URI"
-5. 安装
-6. 在安装后选择启用
+3. 安装 [Advanced Obsidian URI](obsidian://show-plugin?id=obsidian-advanced-uri)
+
+   如果链接无法使用，点击 社区插件市场 -> 浏览，搜索“Advanced Obsidian URI”。
+4. 在安装后选择启用
 
 ### 从 GitHub 安装
 
