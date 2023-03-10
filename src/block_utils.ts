@@ -1,20 +1,32 @@
-import { Editor, ListItemCache, MarkdownView, SectionCache, TFile } from "obsidian";
+import {
+    Editor,
+    ListItemCache,
+    MarkdownView,
+    SectionCache,
+    TFile,
+} from "obsidian";
 
 export abstract class BlockUtils {
-    private static getBlock(editor: Editor, file: TFile): (SectionCache | ListItemCache) | undefined {
+    private static getBlock(
+        editor: Editor,
+        file: TFile
+    ): (SectionCache | ListItemCache) | undefined {
         const cursor = editor.getCursor("to");
         const fileCache = app.metadataCache.getFileCache(file);
 
         let currentBlock: SectionCache | ListItemCache =
-            fileCache?.sections?.find((section) =>
-                section.position.start.line <= cursor.line &&
-                section.position.end.line >= cursor.line
+            fileCache?.sections?.find(
+                (section) =>
+                    section.position.start.line <= cursor.line &&
+                    section.position.end.line >= cursor.line
             );
 
         if (currentBlock.type == "list") {
             currentBlock = fileCache.listItems?.find((list) => {
-                if (list.position.start.line <= cursor.line &&
-                    list.position.end.line >= cursor.line) {
+                if (
+                    list.position.start.line <= cursor.line &&
+                    list.position.end.line >= cursor.line
+                ) {
                     return list;
                 }
             });
@@ -24,7 +36,7 @@ export abstract class BlockUtils {
 
     private static getIdOfBlock(
         editor: Editor,
-        block: SectionCache | ListItemCache,
+        block: SectionCache | ListItemCache
     ): string {
         const blockId = block.id;
 
@@ -46,7 +58,9 @@ export abstract class BlockUtils {
         return newId;
     }
 
-    private static shouldInsertAfter(block: SectionCache | ListItemCache): boolean {
+    private static shouldInsertAfter(
+        block: SectionCache | ListItemCache
+    ): boolean {
         if ((block as any).type) {
             return [
                 "blockquote",
@@ -65,9 +79,7 @@ export abstract class BlockUtils {
             const editor = view.editor;
             const file = view.file;
             const block = this.getBlock(editor, file);
-            if (block)
-                return this.getIdOfBlock(editor, block);
+            if (block) return this.getIdOfBlock(editor, block);
         }
     }
-
 }

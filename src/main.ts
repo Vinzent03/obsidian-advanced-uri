@@ -1,6 +1,21 @@
-import { base64ToArrayBuffer, MarkdownView, normalizePath, Notice, parseFrontMatterAliases, parseFrontMatterEntry, Plugin, TFile, TFolder } from "obsidian";
+import {
+    base64ToArrayBuffer,
+    MarkdownView,
+    normalizePath,
+    Notice,
+    parseFrontMatterAliases,
+    parseFrontMatterEntry,
+    Plugin,
+    TFile,
+    TFolder,
+} from "obsidian";
 import { stripMD } from "obsidian-community-lib";
-import { appHasDailyNotesPluginLoaded, createDailyNote, getAllDailyNotes, getDailyNote } from "obsidian-daily-notes-interface";
+import {
+    appHasDailyNotesPluginLoaded,
+    createDailyNote,
+    getAllDailyNotes,
+    getDailyNote,
+} from "obsidian-daily-notes-interface";
 import { BlockUtils } from "./block_utils";
 import { DEFAULT_SETTINGS } from "./constants";
 import { getDailyNotePath } from "./daily_note_utils";
@@ -12,9 +27,19 @@ import { ReplaceModal } from "./modals/replace_modal";
 import { SearchModal } from "./modals/search_modal";
 import { SettingsTab } from "./settings";
 import Tools from "./tools";
-import { AdvancedURISettings, FileModalData, HookParameters, OpenMode, Parameters, SearchModalData } from "./types";
-import { getEndAndBeginningOfHeading, getFileUri, getViewStateFromMode } from "./utils";
-
+import {
+    AdvancedURISettings,
+    FileModalData,
+    HookParameters,
+    OpenMode,
+    Parameters,
+    SearchModalData,
+} from "./types";
+import {
+    getEndAndBeginningOfHeading,
+    getFileUri,
+    getViewStateFromMode,
+} from "./utils";
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
@@ -26,35 +51,39 @@ export default class AdvancedURI extends Plugin {
         await this.loadSettings();
         this.addSettingTab(new SettingsTab(this.app, this));
 
-
         this.addCommand({
             id: "copy-uri-current-file",
             name: "copy URI for file with options",
-            callback: () => this.handlers.handleCopyFileURI(false)
+            callback: () => this.handlers.handleCopyFileURI(false),
         });
 
         this.addCommand({
             id: "copy-uri-current-file-simple",
             name: "copy URI for current file",
-            callback: () => this.handlers.handleCopyFileURI(true)
+            callback: () => this.handlers.handleCopyFileURI(true),
         });
 
         this.addCommand({
             id: "copy-uri-daily",
             name: "copy URI for daily note",
-            callback: () => new EnterDataModal(this).open()
+            callback: () => new EnterDataModal(this).open(),
         });
 
         this.addCommand({
             id: "copy-uri-search-and-replace",
             name: "copy URI for search and replace",
             callback: () => {
-                const fileModal = new FileModal(this, "Used file for search and replace");
+                const fileModal = new FileModal(
+                    this,
+                    "Used file for search and replace"
+                );
                 fileModal.open();
                 fileModal.onChooseItem = (filePath: FileModalData) => {
                     const searchModal = new SearchModal(this);
                     searchModal.open();
-                    searchModal.onChooseSuggestion = (item: SearchModalData) => {
+                    searchModal.onChooseSuggestion = (
+                        item: SearchModalData
+                    ) => {
                         new ReplaceModal(this, item, filePath?.source).open();
                     };
                 };
@@ -65,28 +94,32 @@ export default class AdvancedURI extends Plugin {
             id: "copy-uri-command",
             name: "copy URI for command",
             callback: () => {
-                const fileModal = new FileModal(this, "Select a file to be opened before executing the command");
+                const fileModal = new FileModal(
+                    this,
+                    "Select a file to be opened before executing the command"
+                );
                 fileModal.open();
                 fileModal.onChooseItem = (item: FileModalData) => {
                     new CommandModal(this, item?.source).open();
                 };
-            }
+            },
         });
 
         this.addCommand({
             id: "copy-uri-block",
             name: "copy URI for current block",
             checkCallback: (checking) => {
-                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                const view =
+                    this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (checking) return view != undefined;
                 const id = BlockUtils.getBlockId();
                 if (id) {
                     this.tools.copyURI({
                         filepath: view.file.path,
-                        block: id
+                        block: id,
                     });
                 }
-            }
+            },
         });
 
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
@@ -95,7 +128,9 @@ export default class AdvancedURI extends Plugin {
             /** Allows writing to new created daily note without any `Parameters.mode` */
             let createdDailyNote = false;
             for (const parameter in parameters) {
-                (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
+                (parameters as any)[parameter] = decodeURIComponent(
+                    (parameters as any)[parameter]
+                );
             }
             this.lastParameters = { ...parameters };
             if (parameters.uid) {
@@ -104,20 +139,37 @@ export default class AdvancedURI extends Plugin {
                     parameters.filepath = res;
                     parameters.uid = undefined;
                 }
-
             } else if (parameters.filename) {
-                let file = this.app.metadataCache.getFirstLinkpathDest(parameters.filename, "");
+                let file = this.app.metadataCache.getFirstLinkpathDest(
+                    parameters.filename,
+                    ""
+                );
                 if (!file) {
-                    file = this.app.vault.getMarkdownFiles().find(file => parseFrontMatterAliases(this.app.metadataCache.getFileCache(file).frontmatter)?.includes(parameters.filename));
+                    file = this.app.vault
+                        .getMarkdownFiles()
+                        .find((file) =>
+                            parseFrontMatterAliases(
+                                this.app.metadataCache.getFileCache(file)
+                                    .frontmatter
+                            )?.includes(parameters.filename)
+                        );
                 }
-                const parentFolder = this.app.fileManager.getNewFileParent(this.app.workspace.activeLeaf.view.file?.path);
-                const parentFolderPath = parentFolder.isRoot() ? "" : parentFolder.path + "/";
-                parameters.filepath = file?.path ?? (parentFolderPath + normalizePath(parameters.filename));
+                const parentFolder = this.app.fileManager.getNewFileParent(
+                    this.app.workspace.activeLeaf.view.file?.path
+                );
+                const parentFolderPath = parentFolder.isRoot()
+                    ? ""
+                    : parentFolder.path + "/";
+                parameters.filepath =
+                    file?.path ??
+                    parentFolderPath + normalizePath(parameters.filename);
             }
             if (parameters.filepath) {
                 parameters.filepath = normalizePath(parameters.filepath);
                 const index = parameters.filepath.lastIndexOf(".");
-                const extension = parameters.filepath.substring(index < 0 ? parameters.filepath.length : index);
+                const extension = parameters.filepath.substring(
+                    index < 0 ? parameters.filepath.length : index
+                );
 
                 if (extension === "") {
                     parameters.filepath = parameters.filepath + ".md";
@@ -138,7 +190,7 @@ export default class AdvancedURI extends Plugin {
                         dailyNote = await createDailyNote(moment);
 
                         // delay to let Obsidian index and generate CachedMetadata
-                        await new Promise(r => setTimeout(r, 500));
+                        await new Promise((r) => setTimeout(r, 500));
 
                         createdDailyNote = true;
                     }
@@ -153,45 +205,38 @@ export default class AdvancedURI extends Plugin {
 
             if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
                 this.handlers.handlePluginManagement(parameters);
-
             } else if (parameters.frontmatterkey) {
                 this.handlers.handleFrontmatterKey(parameters);
-
-            } else if (parameters.workspace || parameters.saveworkspace == "true") {
+            } else if (
+                parameters.workspace ||
+                parameters.saveworkspace == "true"
+            ) {
                 this.handlers.handleWorkspace(parameters);
-
             } else if (parameters.commandname || parameters.commandid) {
                 this.handlers.handleCommand(parameters);
             } else if (parameters.eval) {
                 this.handlers.handleEval(parameters);
-
             } else if (parameters.filepath && parameters.exists === "true") {
                 this.handlers.handleDoesFileExist(parameters);
-
             } else if (parameters.data) {
                 this.handlers.handleWrite(parameters, createdDailyNote);
-
             } else if (parameters.filepath && parameters.heading) {
                 this.handlers.handleOpen(parameters);
-
             } else if (parameters.filepath && parameters.block) {
                 this.handlers.handleOpen(parameters);
-
-            } else if ((parameters.search || parameters.searchregex) && parameters.replace != undefined) {
+            } else if (
+                (parameters.search || parameters.searchregex) &&
+                parameters.replace != undefined
+            ) {
                 this.handlers.handleSearchAndReplace(parameters);
-
             } else if (parameters.search) {
                 this.handlers.handleSearch(parameters);
-
             } else if (parameters.filepath) {
                 this.handlers.handleOpen(parameters);
-
             } else if (parameters.settingid) {
                 this.handlers.handleOpenSettings(parameters);
-
             } else if (parameters.updateplugins) {
                 this.handlers.handleUpdatePlugins(parameters);
-
             }
         });
         this.registerObsidianProtocolHandler(
@@ -199,23 +244,33 @@ export default class AdvancedURI extends Plugin {
             async (e) => {
                 const parameters = e as unknown as HookParameters;
                 for (const parameter in parameters) {
-                    (parameters as any)[parameter] = decodeURIComponent((parameters as any)[parameter]);
+                    (parameters as any)[parameter] = decodeURIComponent(
+                        (parameters as any)[parameter]
+                    );
                 }
                 const activeLeaf = this.app.workspace.activeLeaf;
                 const file = activeLeaf.view.file;
                 if (activeLeaf && file) {
                     this.hookSuccess(parameters, file);
                 } else {
-
-                    this.failure(parameters, { errorMessage: "No file opened" });
+                    this.failure(parameters, {
+                        errorMessage: "No file opened",
+                    });
                 }
-            });
+            }
+        );
 
         this.registerEvent(
-            this.app.workspace.on('file-menu', (menu, file, source) => {
+            this.app.workspace.on("file-menu", (menu, file, source) => {
                 console.log(source);
 
-                if (!(source === "more-options" || source === "tab-header" || source == "file-explorer-context-menu")) {
+                if (
+                    !(
+                        source === "more-options" ||
+                        source === "tab-header" ||
+                        source == "file-explorer-context-menu"
+                    )
+                ) {
                     return;
                 }
 
@@ -224,13 +279,15 @@ export default class AdvancedURI extends Plugin {
                 }
 
                 menu.addItem((item) => {
-                    item
-                        .setTitle(`Copy Advanced URI`)
-                        .setIcon('link')
+                    item.setTitle(`Copy Advanced URI`)
+                        .setIcon("link")
                         .setSection("info")
-                        .onClick((_) => this.handlers.handleCopyFileURI(true, file));
+                        .onClick((_) =>
+                            this.handlers.handleCopyFileURI(true, file)
+                        );
                 });
-            }));
+            })
+        );
     }
 
     async hookSuccess(parameters: Parameters, file: TFile): Promise<void> {
@@ -238,13 +295,15 @@ export default class AdvancedURI extends Plugin {
 
         const options = {
             title: stripMD(file.name),
-            advanceduri: await this.tools.generateURI({ filepath: file.path }, false),
+            advanceduri: await this.tools.generateURI(
+                { filepath: file.path },
+                false
+            ),
             urlkey: "advanceduri",
             fileuri: getFileUri(file),
         };
         this.success(parameters, options);
     }
-
 
     success(parameters: Parameters, options?: Record<string, any>): void {
         if (parameters["x-success"]) {
@@ -269,9 +328,14 @@ export default class AdvancedURI extends Plugin {
     getFileFromUID(uid: string): TFile | undefined {
         const files = this.app.vault.getFiles();
         const idKey = this.settings.idField;
-        return files.find(file => parseFrontMatterEntry(this.app.metadataCache.getFileCache(file)?.frontmatter, idKey) == uid);
+        return files.find(
+            (file) =>
+                parseFrontMatterEntry(
+                    this.app.metadataCache.getFileCache(file)?.frontmatter,
+                    idKey
+                ) == uid
+        );
     }
-
 
     async append(file: TFile | string, parameters: Parameters): Promise<TFile> {
         let path: string;
@@ -279,7 +343,10 @@ export default class AdvancedURI extends Plugin {
         if (parameters.heading) {
             if (file instanceof TFile) {
                 path = file.path;
-                const line = getEndAndBeginningOfHeading(file, parameters.heading)?.lastLine;
+                const line = getEndAndBeginningOfHeading(
+                    file,
+                    parameters.heading
+                )?.lastLine;
                 if (line === undefined) return;
 
                 const data = await this.app.vault.read(file);
@@ -288,8 +355,7 @@ export default class AdvancedURI extends Plugin {
                 lines.splice(line, 0, ...parameters.data.split("\n"));
                 dataToWrite = lines.join("\n");
             }
-        }
-        else {
+        } else {
             let fileData: string;
             if (file instanceof TFile) {
                 fileData = await this.app.vault.read(file);
@@ -303,13 +369,19 @@ export default class AdvancedURI extends Plugin {
         return this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
-    async prepend(file: TFile | string, parameters: Parameters): Promise<TFile> {
+    async prepend(
+        file: TFile | string,
+        parameters: Parameters
+    ): Promise<TFile> {
         let path: string;
         let dataToWrite: string;
         if (parameters.heading) {
             if (file instanceof TFile) {
                 path = file.path;
-                const line = getEndAndBeginningOfHeading(file, parameters.heading)?.firstLine;
+                const line = getEndAndBeginningOfHeading(
+                    file,
+                    parameters.heading
+                )?.firstLine;
                 if (line === undefined) return;
 
                 const data = await this.app.vault.read(file);
@@ -318,7 +390,6 @@ export default class AdvancedURI extends Plugin {
                 lines.splice(line, 0, ...parameters.data.split("\n"));
                 dataToWrite = lines.join("\n");
             }
-
         } else {
             if (file instanceof TFile) {
                 const fileData = await this.app.vault.read(file);
@@ -326,10 +397,15 @@ export default class AdvancedURI extends Plugin {
 
                 if (cache.frontmatter) {
                     const line = cache.frontmatter.position.end.line;
-                    const first = fileData.split("\n").slice(0, line + 1).join("\n");
-                    const last = fileData.split("\n").slice(line + 1).join("\n");
+                    const first = fileData
+                        .split("\n")
+                        .slice(0, line + 1)
+                        .join("\n");
+                    const last = fileData
+                        .split("\n")
+                        .slice(line + 1)
+                        .join("\n");
                     dataToWrite = first + "\n" + parameters.data + "\n" + last;
-
                 } else {
                     dataToWrite = parameters.data + "\n" + fileData;
                 }
@@ -343,7 +419,11 @@ export default class AdvancedURI extends Plugin {
         return this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
-    async writeAndOpenFile(outputFileName: string, text: string, parameters: Parameters): Promise<TFile> {
+    async writeAndOpenFile(
+        outputFileName: string,
+        text: string,
+        parameters: Parameters
+    ): Promise<TFile> {
         const file = this.app.vault.getAbstractFileByPath(outputFileName);
 
         if (file instanceof TFile) {
@@ -351,18 +431,24 @@ export default class AdvancedURI extends Plugin {
         } else {
             const parts = outputFileName.split("/");
             const dir = parts.slice(0, parts.length - 1).join("/");
-            if (parts.length > 1 && !(this.app.vault.getAbstractFileByPath(dir) instanceof TFolder)) {
+            if (
+                parts.length > 1 &&
+                !(this.app.vault.getAbstractFileByPath(dir) instanceof TFolder)
+            ) {
                 await this.app.vault.createFolder(dir);
             }
-            const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+            const base64regex =
+                /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
             if (base64regex.test(text)) {
-                await this.app.vault.createBinary(outputFileName, base64ToArrayBuffer(text));
+                await this.app.vault.createBinary(
+                    outputFileName,
+                    base64ToArrayBuffer(text)
+                );
             } else {
                 await this.app.vault.create(outputFileName, text);
             }
         }
         this.openExistingFileAndSetCursor(outputFileName, parameters);
-
 
         return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
     }
@@ -371,7 +457,7 @@ export default class AdvancedURI extends Plugin {
         if (parameters.openmode == "silent") return;
         if (this.settings.openFileOnWrite) {
             let fileIsAlreadyOpened = false;
-            this.app.workspace.iterateAllLeaves(leaf => {
+            this.app.workspace.iterateAllLeaves((leaf) => {
                 if (leaf.view.file?.path === file) {
                     fileIsAlreadyOpened = true;
                     this.app.workspace.setActiveLeaf(leaf, { focus: true });
@@ -379,26 +465,47 @@ export default class AdvancedURI extends Plugin {
             });
 
             if (!fileIsAlreadyOpened)
-                await this.open({ file: file, setting: this.settings.openFileOnWriteInNewPane, parameters });
+                await this.open({
+                    file: file,
+                    setting: this.settings.openFileOnWriteInNewPane,
+                    parameters,
+                });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
         }
     }
 
-    open({ file, setting, parameters, supportPopover, mode }: { file: string | TFile, setting?: boolean, parameters: Parameters, supportPopover?: boolean, mode?: "source"; }): Promise<void> {
+    open({
+        file,
+        setting,
+        parameters,
+        supportPopover,
+        mode,
+    }: {
+        file: string | TFile;
+        setting?: boolean;
+        parameters: Parameters;
+        supportPopover?: boolean;
+        mode?: "source";
+    }): Promise<void> {
         if (parameters.openmode == "popover" && (supportPopover ?? true)) {
-
-            const hoverEditor = this.app.plugins.plugins["obsidian-hover-editor"];
+            const hoverEditor =
+                this.app.plugins.plugins["obsidian-hover-editor"];
             if (!hoverEditor) {
-                new Notice("Cannot find Hover Editor plugin. Please file an issue.");
+                new Notice(
+                    "Cannot find Hover Editor plugin. Please file an issue."
+                );
                 this.failure(parameters);
             }
 
             const leaf = hoverEditor.spawnPopover(undefined, () => {
                 this.app.workspace.setActiveLeaf(leaf, { focus: true });
             });
-            const tfile = file instanceof TFile ? file : this.app.vault.getAbstractFileByPath(file) as TFile;
+            const tfile =
+                file instanceof TFile
+                    ? file
+                    : (this.app.vault.getAbstractFileByPath(file) as TFile);
             leaf.openFile(tfile);
         } else {
             let openMode: OpenMode | boolean = setting;
@@ -406,7 +513,10 @@ export default class AdvancedURI extends Plugin {
                 openMode = parameters.newpane == "true";
             }
             if (parameters.openmode !== undefined) {
-                if (parameters.openmode == "true" || parameters.openmode == "false") {
+                if (
+                    parameters.openmode == "true" ||
+                    parameters.openmode == "false"
+                ) {
                     openMode = parameters.openmode == "true";
                 } else if (parameters.openmode == "popover") {
                     openMode = false;
@@ -417,7 +527,14 @@ export default class AdvancedURI extends Plugin {
             if (openMode == "silent") {
                 return;
             }
-            return this.app.workspace.openLinkText(file instanceof TFile ? file.path : file, "", openMode, mode != undefined ? { state: { mode: mode } } : getViewStateFromMode(parameters));
+            return this.app.workspace.openLinkText(
+                file instanceof TFile ? file.path : file,
+                "",
+                openMode,
+                mode != undefined
+                    ? { state: { mode: mode } }
+                    : getViewStateFromMode(parameters)
+            );
         }
     }
 
@@ -454,7 +571,10 @@ export default class AdvancedURI extends Plugin {
 
         const line = Math.min(rawLine - 1, view.editor.lineCount() - 1);
         view.editor.focus();
-        view.editor.setCursor({ line: line, ch: view.editor.getLine(line).length });
+        view.editor.setCursor({
+            line: line,
+            ch: view.editor.getLine(line).length,
+        });
     }
 
     async loadSettings() {

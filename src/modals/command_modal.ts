@@ -12,7 +12,7 @@ export class CommandModal extends FuzzySuggestModal<Command> {
 
     getItems(): Command[] {
         const rawCommands = this.app.commands.commands;
-        const commands: Command[] = Object.keys(rawCommands).map(e => {
+        const commands: Command[] = Object.keys(rawCommands).map((e) => {
             return { id: rawCommands[e].id, name: rawCommands[e].name };
         });
         return commands;
@@ -25,7 +25,7 @@ export class CommandModal extends FuzzySuggestModal<Command> {
     onChooseItem(item: Command, _: MouseEvent | KeyboardEvent): void {
         this.plugin.tools.copyURI({
             filepath: this.file,
-            commandid: item.id
+            commandid: item.id,
         });
     }
 }

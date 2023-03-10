@@ -1,6 +1,6 @@
 import { PaneType } from "obsidian";
 
-declare module 'obsidian' {
+declare module "obsidian" {
     interface App {
         setting: {
             containerEl: HTMLElement;
@@ -26,9 +26,12 @@ declare module 'obsidian' {
         };
         plugins: {
             plugins: {
-                [key: string]: { manifest: PluginManifest; };
+                [key: string]: { manifest: PluginManifest };
                 "obsidian-hover-editor": {
-                    spawnPopover(initiatingEl?: HTMLElement, onShowCallback?: () => unknown): WorkspaceLeaf;
+                    spawnPopover(
+                        initiatingEl?: HTMLElement,
+                        onShowCallback?: () => unknown
+                    ): WorkspaceLeaf;
                     manifest: PluginManifest;
                 };
             };
@@ -61,7 +64,6 @@ declare module 'obsidian' {
     }
     interface View {
         file: TFile;
-
     }
     interface FileView {
         currentMode: {
@@ -83,9 +85,9 @@ export interface FileModalData {
 
 export interface EnterData {
     mode: string;
-    data: string,
-    display: string,
-    func: Function,
+    data: string;
+    display: string;
+    func: Function;
 }
 
 export interface AdvancedURISettings {
@@ -107,9 +109,9 @@ export interface Parameters {
     mode?: "overwrite" | "append" | "prepend" | "new";
     heading?: string;
     block?: string;
-    commandname?: string,
-    commandid?: string,
-    search?: string,
+    commandname?: string;
+    commandid?: string;
+    search?: string;
     searchregex?: string;
     replace?: string;
     uid?: string;
@@ -126,7 +128,7 @@ export interface Parameters {
     line?: number;
     /**
      * @deprecated Use "openMode" instead
-    */
+     */
     newpane?: "true" | "false";
     clipboard?: "true";
     "enable-plugin"?: string;
@@ -140,7 +142,6 @@ export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";
 export interface HookParameters {
     "x-success": string;
     "x-error": string;
-
 }
 
 export interface SearchModalData {

@@ -6,9 +6,7 @@ import Tools from "./tools";
 import { Parameters } from "./types";
 import { copyText, getAlternativeFilePath } from "./utils";
 export default class Handlers {
-    constructor(private readonly plugin: AdvancedURI) {
-    }
-
+    constructor(private readonly plugin: AdvancedURI) {}
 
     public get tools(): Tools {
         return this.plugin.tools;
@@ -27,7 +25,9 @@ export default class Handlers {
     }
     handleFrontmatterKey(parameters: Parameters) {
         const key = parameters.frontmatterkey;
-        const frontmatter = app.metadataCache.getCache(parameters.filepath ?? app.workspace.getActiveFile().path).frontmatter;
+        const frontmatter = app.metadataCache.getCache(
+            parameters.filepath ?? app.workspace.getActiveFile().path
+        ).frontmatter;
 
         let res: string;
         if (key.startsWith("[") && key.endsWith("]")) {
@@ -77,12 +77,19 @@ export default class Handlers {
         if (parameters.filepath) {
             if (parameters.mode) {
                 if (parameters.mode == "new") {
-                    const file = app.metadataCache.getFirstLinkpathDest(parameters.filepath, "/");
+                    const file = app.metadataCache.getFirstLinkpathDest(
+                        parameters.filepath,
+                        "/"
+                    );
                     if (file instanceof TFile) {
                         parameters.filepath = getAlternativeFilePath(file);
                     }
                 }
-                await this.plugin.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+                await this.plugin.open({
+                    file: parameters.filepath,
+                    mode: "source",
+                    parameters: parameters,
+                });
                 const view = app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
                     const editor = view.editor;
@@ -99,11 +106,19 @@ export default class Handlers {
                     }
                 }
             } else if (parameters.line) {
-                await this.plugin.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+                await this.plugin.open({
+                    file: parameters.filepath,
+                    mode: "source",
+                    parameters: parameters,
+                });
 
                 this.plugin.setCursorInLine(parameters.line);
             } else {
-                await this.plugin.open({ file: parameters.filepath, setting: this.plugin.settings.openFileWithoutWriteInNewPane, parameters: parameters });
+                await this.plugin.open({
+                    file: parameters.filepath,
+                    setting: this.plugin.settings.openFileWithoutWriteInNewPane,
+                    parameters: parameters,
+                });
             }
         }
         if (parameters.commandid) {
@@ -128,12 +143,19 @@ export default class Handlers {
         if (parameters.filepath) {
             if (parameters.mode) {
                 if (parameters.mode == "new") {
-                    const file = app.metadataCache.getFirstLinkpathDest(parameters.filepath, "/");
+                    const file = app.metadataCache.getFirstLinkpathDest(
+                        parameters.filepath,
+                        "/"
+                    );
                     if (file instanceof TFile) {
                         parameters.filepath = getAlternativeFilePath(file);
                     }
                 }
-                await this.plugin.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+                await this.plugin.open({
+                    file: parameters.filepath,
+                    mode: "source",
+                    parameters: parameters,
+                });
                 const view = app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
                     const editor = view.editor;
@@ -150,11 +172,19 @@ export default class Handlers {
                     }
                 }
             } else if (parameters.line) {
-                await this.plugin.open({ file: parameters.filepath, mode: "source", parameters: parameters });
+                await this.plugin.open({
+                    file: parameters.filepath,
+                    mode: "source",
+                    parameters: parameters,
+                });
 
                 this.plugin.setCursorInLine(parameters.line);
             } else {
-                await this.plugin.open({ file: parameters.filepath, setting: this.plugin.settings.openFileWithoutWriteInNewPane, parameters: parameters });
+                await this.plugin.open({
+                    file: parameters.filepath,
+                    setting: this.plugin.settings.openFileWithoutWriteInNewPane,
+                    parameters: parameters,
+                });
             }
         }
         if (this.plugin.settings.allowEval) {
@@ -163,7 +193,9 @@ export default class Handlers {
             eval2(parameters.eval);
             this.plugin.success(parameters);
         } else {
-            new Notice("Eval is not allowed. Please enable it in the settings.");
+            new Notice(
+                "Eval is not allowed. Please enable it in the settings."
+            );
             this.plugin.failure(parameters);
         }
     }
@@ -173,13 +205,13 @@ export default class Handlers {
 
         copyText((exists ? 1 : 0).toString());
         this.plugin.success(parameters);
-
     }
     async handleSearchAndReplace(parameters: Parameters) {
         let file: TFile;
         if (parameters.filepath) {
-
-            const abstractFile = app.vault.getAbstractFileByPath(parameters.filepath);
+            const abstractFile = app.vault.getAbstractFileByPath(
+                parameters.filepath
+            );
             if (abstractFile instanceof TFile) {
                 file = abstractFile;
             }
@@ -191,12 +223,15 @@ export default class Handlers {
             let data = await app.vault.read(file);
             if (parameters.searchregex) {
                 try {
-                    const [, , pattern, flags] = parameters.searchregex.match(/(\/?)(.+)\1([a-z]*)/i);
+                    const [, , pattern, flags] =
+                        parameters.searchregex.match(/(\/?)(.+)\1([a-z]*)/i);
                     const regex = new RegExp(pattern, flags);
                     data = data.replace(regex, parameters.replace);
                     this.plugin.success(parameters);
                 } catch (error) {
-                    new Notice(`Can't parse ${parameters.searchregex} as RegEx`);
+                    new Notice(
+                        `Can't parse ${parameters.searchregex} as RegEx`
+                    );
                     this.plugin.failure(parameters);
                 }
             } else {
@@ -213,7 +248,10 @@ export default class Handlers {
 
     async handleSearch(parameters: Parameters) {
         if (parameters.filepath) {
-            await this.plugin.open({ file: parameters.filepath, parameters: parameters });
+            await this.plugin.open({
+                file: parameters.filepath,
+                parameters: parameters,
+            });
         }
         const view = app.workspace.getActiveViewOfType(FileView);
         view.currentMode.showSearch();
@@ -222,7 +260,10 @@ export default class Handlers {
         search.searchInputEl.dispatchEvent(new Event("input"));
     }
 
-    async handleWrite(parameters: Parameters, createdDailyNote: boolean = false) {
+    async handleWrite(
+        parameters: Parameters,
+        createdDailyNote: boolean = false
+    ) {
         let file: TAbstractFile | null;
         if (parameters.filepath) {
             file = app.vault.getAbstractFileByPath(parameters.filepath);
@@ -234,7 +275,11 @@ export default class Handlers {
             let outFile: TFile;
             let path = parameters.filepath ?? file.path;
             if (parameters.mode === "overwrite") {
-                outFile = await this.plugin.writeAndOpenFile(path, parameters.data, parameters);
+                outFile = await this.plugin.writeAndOpenFile(
+                    path,
+                    parameters.data,
+                    parameters
+                );
                 this.plugin.success(parameters);
             } else if (parameters.mode === "prepend") {
                 if (file instanceof TFile) {
@@ -252,10 +297,18 @@ export default class Handlers {
                 this.plugin.success(parameters);
             } else if (parameters.mode === "new") {
                 if (file instanceof TFile) {
-                    outFile = await this.plugin.writeAndOpenFile(getAlternativeFilePath(file), parameters.data, parameters);
+                    outFile = await this.plugin.writeAndOpenFile(
+                        getAlternativeFilePath(file),
+                        parameters.data,
+                        parameters
+                    );
                     this.plugin.hookSuccess(parameters, outFile);
                 } else {
-                    outFile = await this.plugin.writeAndOpenFile(path, parameters.data, parameters);
+                    outFile = await this.plugin.writeAndOpenFile(
+                        path,
+                        parameters.data,
+                        parameters
+                    );
                     this.plugin.hookSuccess(parameters, outFile);
                 }
             } else if (!createdDailyNote && file instanceof TFile) {
@@ -263,7 +316,11 @@ export default class Handlers {
                 this.plugin.openExistingFileAndSetCursor(file.path, parameters);
                 this.plugin.failure(parameters);
             } else {
-                outFile = await this.plugin.writeAndOpenFile(path, parameters.data, parameters);
+                outFile = await this.plugin.writeAndOpenFile(
+                    path,
+                    parameters.data,
+                    parameters
+                );
                 this.plugin.success(parameters);
             }
             if (parameters.uid) {
@@ -277,7 +334,7 @@ export default class Handlers {
 
     async handleOpen(parameters: Parameters) {
         let fileIsAlreadyOpened = false;
-        app.workspace.iterateAllLeaves(leaf => {
+        app.workspace.iterateAllLeaves((leaf) => {
             if (leaf.view.file?.path === parameters.filepath) {
                 if (fileIsAlreadyOpened && leaf.width == 0) return;
                 fileIsAlreadyOpened = true;
@@ -306,11 +363,15 @@ export default class Handlers {
             const view = app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
             const cache = app.metadataCache.getFileCache(view.file);
-            const heading = cache.headings.find((e) => e.heading === parameters.heading);
+            const heading = cache.headings.find(
+                (e) => e.heading === parameters.heading
+            );
             view.editor.focus();
-            view.editor.setCursor({ line: heading.position.start.line + 1, ch: 0 });
-        }
-        else if (parameters.block != undefined) {
+            view.editor.setCursor({
+                line: heading.position.start.line + 1,
+                ch: 0,
+            });
+        } else if (parameters.block != undefined) {
             await this.plugin.open({
                 file: parameters.filepath + "#^" + parameters.block,
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
@@ -323,14 +384,13 @@ export default class Handlers {
             const block = cache.blocks[parameters.block];
             view.editor.focus();
             view.editor.setCursor({ line: block.position.start.line, ch: 0 });
-        }
-        else {
+        } else {
             if (!fileIsAlreadyOpened)
                 await this.plugin.open({
                     file: parameters.filepath,
                     setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                     parameters: parameters,
-                    mode: parameters.line != undefined ? "source" : undefined
+                    mode: parameters.line != undefined ? "source" : undefined,
                 });
             if (parameters.line != undefined) {
                 this.plugin.setCursorInLine(parameters.line);
@@ -347,8 +407,6 @@ export default class Handlers {
         this.plugin.success(parameters);
     }
 
-
-
     handleCopyFileURI(withoutData: boolean, file?: TFile) {
         const view = app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
@@ -357,10 +415,13 @@ export default class Handlers {
             const cache = app.metadataCache.getFileCache(view.file);
             if (cache.headings) {
                 for (const heading of cache.headings) {
-                    if (heading.position.start.line <= pos.line && heading.position.end.line >= pos.line) {
+                    if (
+                        heading.position.start.line <= pos.line &&
+                        heading.position.end.line >= pos.line
+                    ) {
                         this.tools.copyURI({
                             filepath: view.file.path,
-                            heading: heading.heading
+                            heading: heading.heading,
                         });
                         return;
                     }
@@ -369,10 +430,13 @@ export default class Handlers {
             if (cache.blocks) {
                 for (const blockID of Object.keys(cache.blocks)) {
                     const block = cache.blocks[blockID];
-                    if (block.position.start.line <= pos.line && block.position.end.line >= pos.line) {
+                    if (
+                        block.position.start.line <= pos.line &&
+                        block.position.end.line >= pos.line
+                    ) {
                         this.tools.copyURI({
                             filepath: view.file.path,
-                            block: blockID
+                            block: blockID,
                         });
                         return;
                     }
@@ -390,15 +454,16 @@ export default class Handlers {
                 filepath: file2.path,
             });
         } else {
-            const fileModal = new FileModal(this.plugin, "Choose a file", false);
+            const fileModal = new FileModal(
+                this.plugin,
+                "Choose a file",
+                false
+            );
             fileModal.open();
             fileModal.onChooseItem = (item, _) => {
-
                 new EnterDataModal(this.plugin, item.source).open();
-
             };
         }
-
     }
 
     handleOpenSettings(parameters: Parameters) {
@@ -416,9 +481,12 @@ export default class Handlers {
         }
 
         if (parameters.settingsection) {
-            const elements = app.setting.tabContentContainer.querySelectorAll("*");
-            const heading: Element = Array.prototype.find.call(elements, (e: Element) => e.textContent == parameters.settingsection);
-
+            const elements =
+                app.setting.tabContentContainer.querySelectorAll("*");
+            const heading: Element = Array.prototype.find.call(
+                elements,
+                (e: Element) => e.textContent == parameters.settingsection
+            );
 
             if (heading) {
                 heading.scrollIntoView();
@@ -432,10 +500,13 @@ export default class Handlers {
         this.handleOpenSettings(parameters);
         app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
         new Notice("Waiting 10 seconds");
-        await new Promise(resolve => setTimeout(resolve, 10 * 1000));
+        await new Promise((resolve) => setTimeout(resolve, 10 * 1000));
 
         if (Object.keys((app as any).plugins.updates).length !== 0) {
-            app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+            app.setting.activeTab.containerEl
+                .findAll(".mod-cta")
+                .last()
+                .click();
         }
         this.plugin.success(parameters);
     }

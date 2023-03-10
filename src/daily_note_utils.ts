@@ -1,7 +1,6 @@
 import { normalizePath } from "obsidian";
 import { getDailyNoteSettings } from "obsidian-daily-notes-interface";
 
-
 //! All of these methods are taken from https://www.npmjs.com/package/obsidian-daily-notes-interface.
 function join(...partSegments: string[]): string {
     // Split the inputs into a list of path commands.
@@ -52,7 +51,6 @@ async function ensureFolderExists(path: string): Promise<void> {
 }
 
 export async function getDailyNotePath(date: any): Promise<string> {
-
     const { format, folder } = getDailyNoteSettings();
 
     const filename = date.format(format);

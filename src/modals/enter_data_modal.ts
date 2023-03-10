@@ -10,9 +10,10 @@ export class EnterDataModal extends SuggestModal<EnterData> {
     constructor(plugin: AdvancedURI, private file?: string | undefined) {
         super(plugin.app);
         this.plugin = plugin;
-        this.setPlaceholder("Type your data to be written to the file or leave it empty to just open it");
+        this.setPlaceholder(
+            "Type your data to be written to the file or leave it empty to just open it"
+        );
     }
-
 
     getSuggestions(query: string): EnterData[] {
         if (query == "") query = null;
@@ -43,16 +44,16 @@ export class EnterDataModal extends SuggestModal<EnterData> {
                             this.plugin.tools.copyURI({
                                 filepath: this.file,
                                 data: query,
-                                mode: mode as Parameters["mode"]
+                                mode: mode as Parameters["mode"],
                             });
                         } else {
                             this.plugin.tools.copyURI({
                                 daily: "true",
                                 data: query,
-                                mode: mode as Parameters["mode"]
+                                mode: mode as Parameters["mode"],
                             });
                         }
-                    }
+                    },
                 });
             }
         }
@@ -62,9 +63,9 @@ export class EnterDataModal extends SuggestModal<EnterData> {
 
     renderSuggestion(value: EnterData, el: HTMLElement): void {
         el.innerText = value.display;
-    };
+    }
 
     onChooseSuggestion(item: EnterData, _: MouseEvent | KeyboardEvent): void {
         item.func();
-    };
+    }
 }
