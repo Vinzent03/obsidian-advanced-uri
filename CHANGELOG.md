@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.1...1.33.2) (2023-03-17)
+
+
+### Bug Fixes
+
+* better use for 'true' openmode ([d4d802f](https://github.com/Vinzent03/obsidian-advanced-uri/commit/d4d802f8936f90724d3eea8a688a80ea38ca2c26))
+
 ### [1.33.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.0...1.33.1) (2023-03-17)
 
 
