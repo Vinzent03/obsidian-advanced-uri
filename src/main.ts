@@ -519,7 +519,7 @@ export default class AdvancedURI extends Plugin {
                 return;
             }
 
-            if (!openMode) {
+            if (isBoolean(openMode)) {
                 let fileIsAlreadyOpened = false;
                 app.workspace.iterateAllLeaves((leaf) => {
                     if (leaf.view.file?.path === parameters.filepath) {
@@ -537,8 +537,8 @@ export default class AdvancedURI extends Plugin {
                         viewState.state.source =
                             parameters.viewmode == "source";
                     await leaf.setViewState(viewState);
-                    return;
                 }
+                if (fileIsAlreadyOpened) return;
             }
             return this.app.workspace.openLinkText(
                 file instanceof TFile ? file.path : file,
