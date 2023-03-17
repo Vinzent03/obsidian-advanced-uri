@@ -456,27 +456,18 @@ export default class AdvancedURI extends Plugin {
     async openExistingFileAndSetCursor(file: string, parameters: Parameters) {
         if (parameters.openmode == "silent") return;
         if (this.settings.openFileOnWrite) {
-            let fileIsAlreadyOpened = false;
-            this.app.workspace.iterateAllLeaves((leaf) => {
-                if (leaf.view.file?.path === file) {
-                    fileIsAlreadyOpened = true;
-                    this.app.workspace.setActiveLeaf(leaf, { focus: true });
-                }
+            await this.open({
+                file: file,
+                setting: this.settings.openFileOnWriteInNewPane,
+                parameters,
             });
-
-            if (!fileIsAlreadyOpened)
-                await this.open({
-                    file: file,
-                    setting: this.settings.openFileOnWriteInNewPane,
-                    parameters,
-                });
             if (parameters.line != undefined) {
                 this.setCursorInLine(parameters.line);
             }
         }
     }
 
-    open({
+    async open({
         file,
         setting,
         parameters,
@@ -527,9 +518,31 @@ export default class AdvancedURI extends Plugin {
             if (openMode == "silent") {
                 return;
             }
+
+            if (!openMode) {
+                let fileIsAlreadyOpened = false;
+                app.workspace.iterateAllLeaves((leaf) => {
+                    if (leaf.view.file?.path === parameters.filepath) {
+                        if (fileIsAlreadyOpened && leaf.width == 0) return;
+                        fileIsAlreadyOpened = true;
+
+                        app.workspace.setActiveLeaf(leaf, { focus: true });
+                    }
+                });
+                if (fileIsAlreadyOpened && parameters.viewmode != undefined) {
+                    const leaf = app.workspace.activeLeaf;
+                    let viewState = leaf.getViewState();
+                    viewState.state.mode = parameters.viewmode;
+                    if (viewState.state.source != undefined)
+                        viewState.state.source =
+                            parameters.viewmode == "source";
+                    await leaf.setViewState(viewState);
+                    return;
+                }
+            }
             return this.app.workspace.openLinkText(
                 file instanceof TFile ? file.path : file,
-                "",
+                "/",
                 openMode,
                 mode != undefined
                     ? { state: { mode: mode } }

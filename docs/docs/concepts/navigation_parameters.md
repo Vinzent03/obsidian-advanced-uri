@@ -14,7 +14,7 @@ Every action opening or focusing a pane supports the parameter `viewmode`. Accep
 ## Open mode
 
 Every action opening a pane supports the parameter `openmode`. Accepted values:
-- `true` opens file in a new pane if not already opened
+- `true` always opens file in a new pane
 - `false` opens file in current pane if not already opened
 - `window`
 - `split`

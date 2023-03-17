@@ -4,7 +4,12 @@ import { Parameters } from "./types";
 
 export function getViewStateFromMode(parameters: Parameters) {
     return parameters.viewmode
-        ? { state: { mode: parameters.viewmode } }
+        ? {
+              state: {
+                  mode: parameters.viewmode,
+                  source: parameters.viewmode == "source",
+              },
+          }
         : undefined;
 }
 

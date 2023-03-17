@@ -333,26 +333,6 @@ export default class Handlers {
     }
 
     async handleOpen(parameters: Parameters) {
-        let fileIsAlreadyOpened = false;
-        app.workspace.iterateAllLeaves((leaf) => {
-            if (leaf.view.file?.path === parameters.filepath) {
-                if (fileIsAlreadyOpened && leaf.width == 0) return;
-                fileIsAlreadyOpened = true;
-
-                app.workspace.setActiveLeaf(leaf, { focus: true });
-            }
-        });
-        if (fileIsAlreadyOpened) {
-            const leaf = app.workspace.activeLeaf;
-            if (parameters.viewmode != undefined) {
-                let viewState = leaf.getViewState();
-                viewState.state.mode = parameters.viewmode;
-                if (viewState.state.source != undefined)
-                    viewState.state.source = parameters.viewmode == "source";
-                await leaf.setViewState(viewState);
-            }
-        }
-
         if (parameters.heading != undefined) {
             await this.plugin.open({
                 file: parameters.filepath + "#" + parameters.heading,
@@ -385,13 +365,12 @@ export default class Handlers {
             view.editor.focus();
             view.editor.setCursor({ line: block.position.start.line, ch: 0 });
         } else {
-            if (!fileIsAlreadyOpened)
-                await this.plugin.open({
-                    file: parameters.filepath,
-                    setting: this.plugin.settings.openFileWithoutWriteInNewPane,
-                    parameters: parameters,
-                    mode: parameters.line != undefined ? "source" : undefined,
-                });
+            await this.plugin.open({
+                file: parameters.filepath,
+                setting: this.plugin.settings.openFileWithoutWriteInNewPane,
+                parameters: parameters,
+                mode: parameters.line != undefined ? "source" : undefined,
+            });
             if (parameters.line != undefined) {
                 this.plugin.setCursorInLine(parameters.line);
             }
