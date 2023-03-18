@@ -519,8 +519,8 @@ export default class AdvancedURI extends Plugin {
                 return;
             }
 
+            let fileIsAlreadyOpened = false;
             if (isBoolean(openMode)) {
-                let fileIsAlreadyOpened = false;
                 app.workspace.iterateAllLeaves((leaf) => {
                     if (leaf.view.file?.path === parameters.filepath) {
                         if (fileIsAlreadyOpened && leaf.width == 0) return;
@@ -529,21 +529,11 @@ export default class AdvancedURI extends Plugin {
                         app.workspace.setActiveLeaf(leaf, { focus: true });
                     }
                 });
-                if (fileIsAlreadyOpened && parameters.viewmode != undefined) {
-                    const leaf = app.workspace.activeLeaf;
-                    let viewState = leaf.getViewState();
-                    viewState.state.mode = parameters.viewmode;
-                    if (viewState.state.source != undefined)
-                        viewState.state.source =
-                            parameters.viewmode == "source";
-                    await leaf.setViewState(viewState);
-                }
-                if (fileIsAlreadyOpened) return;
             }
             return this.app.workspace.openLinkText(
                 file instanceof TFile ? file.path : file,
                 "/",
-                openMode,
+                fileIsAlreadyOpened ? false : openMode,
                 mode != undefined
                     ? { state: { mode: mode } }
                     : getViewStateFromMode(parameters)

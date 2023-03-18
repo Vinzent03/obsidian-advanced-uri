@@ -4,6 +4,15 @@ sidebar_position: 1
 
 # Navigation
 
+:::tip
+Use the [view mode](../concepts/navigation_parameters.md#view-mode) parameter to e.g. switch between reading and live preview mode.
+:::
+
+:::tip
+Use the [open mode](../concepts/navigation_parameters.md#open-mode) parameter to open the file always in a new tab or in a new window.
+:::
+
+
 | /                      | parameters                 | explanation                                                                                                                   |
 | ---------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | workspace              | workspace                  | Opens the workspace called `workspace`                                                                                        |
@@ -33,6 +42,3 @@ obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345
 
 :::
 
-:::tip
-You can specify a custom [view mode](../concepts/navigation_parameters.md)
-:::
