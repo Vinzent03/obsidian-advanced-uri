@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.3](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.2...1.33.3) (2023-03-18)
+
+
+### Bug Fixes
+
+* focus heading in current file ([2adddab](https://github.com/Vinzent03/obsidian-advanced-uri/commit/2adddab38ce95e6ee23a8081d8b8c0460e3dda21))
+
 ### [1.33.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.1...1.33.2) (2023-03-17)
 
 
