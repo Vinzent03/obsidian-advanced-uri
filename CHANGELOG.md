@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.34.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.3...1.34.0) (2023-03-30)
+
+
+### Features
+
+* set line and switch to reading/preview mode ([917a4eb](https://github.com/Vinzent03/obsidian-advanced-uri/commit/917a4eb5d193e721817bfa770a0d126824b4ad98)), closes [#91](https://github.com/Vinzent03/obsidian-advanced-uri/issues/91)
+
 ### [1.33.3](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.2...1.33.3) (2023-03-18)
 
 
