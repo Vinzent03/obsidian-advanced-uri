@@ -462,7 +462,7 @@ export default class AdvancedURI extends Plugin {
                 parameters,
             });
             if (parameters.line != undefined) {
-                this.setCursorInLine(parameters.line);
+                await this.setCursorInLine(parameters);
             }
         }
     }
@@ -541,36 +541,42 @@ export default class AdvancedURI extends Plugin {
         }
     }
 
-    async setCursor(mode: Parameters["mode"]) {
+    async setCursor(parameters: Parameters) {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (view) {
-            const editor = view.editor;
+        if (!view) return;
+        const mode = parameters.mode;
+        const editor = view.editor;
 
-            let viewState = view.leaf.getViewState();
-            viewState.state.mode = "source";
+        let viewState = view.leaf.getViewState();
+        viewState.state.mode = "source";
 
-            if (mode === "append") {
-                const lastLine = editor.lastLine();
-                const lastLineLength = editor.getLine(lastLine).length;
-                await view.leaf.setViewState(viewState, { focus: true });
+        if (mode === "append") {
+            const lastLine = editor.lastLine();
+            const lastLineLength = editor.getLine(lastLine).length;
+            await view.leaf.setViewState(viewState, { focus: true });
 
-                editor.setCursor({ ch: lastLineLength, line: lastLine });
-            } else if (mode === "prepend") {
-                await view.leaf.setViewState(viewState, { focus: true });
+            editor.setCursor({ ch: lastLineLength, line: lastLine });
+        } else if (mode === "prepend") {
+            await view.leaf.setViewState(viewState, { focus: true });
 
-                editor.setCursor({ ch: 0, line: 0 });
-            }
+            editor.setCursor({ ch: 0, line: 0 });
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        if (parameters.viewmode == "preview") {
+            viewState.state.mode = "preview";
+            await view.leaf.setViewState(viewState);
         }
     }
 
-    setCursorInLine(rawLine: number) {
+    async setCursorInLine(parameters: Parameters) {
+        const rawLine = parameters.line;
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
         const viewState = view.leaf.getViewState();
-        if (viewState.state.mode !== "source") {
-            viewState.state.mode = "source";
-            view.leaf.setViewState(viewState);
-        }
+        viewState.state.mode = "source";
+        await view.leaf.setViewState(viewState);
 
         const line = Math.min(rawLine - 1, view.editor.lineCount() - 1);
         view.editor.focus();
@@ -578,6 +584,13 @@ export default class AdvancedURI extends Plugin {
             line: line,
             ch: view.editor.getLine(line).length,
         });
+
+        await new Promise((resolve) => setTimeout(resolve, 10));
+
+        if (parameters.viewmode == "preview") {
+            viewState.state.mode = "preview";
+            await view.leaf.setViewState(viewState);
+        }
     }
 
     async loadSettings() {

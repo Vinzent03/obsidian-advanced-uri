@@ -112,7 +112,7 @@ export default class Handlers {
                     parameters: parameters,
                 });
 
-                this.plugin.setCursorInLine(parameters.line);
+                await this.plugin.setCursorInLine(parameters);
             } else {
                 await this.plugin.open({
                     file: parameters.filepath,
@@ -178,7 +178,7 @@ export default class Handlers {
                     parameters: parameters,
                 });
 
-                this.plugin.setCursorInLine(parameters.line);
+                await this.plugin.setCursorInLine(parameters);
             } else {
                 await this.plugin.open({
                     file: parameters.filepath,
@@ -369,14 +369,13 @@ export default class Handlers {
                 file: parameters.filepath,
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
-                mode: parameters.line != undefined ? "source" : undefined,
             });
             if (parameters.line != undefined) {
-                this.plugin.setCursorInLine(parameters.line);
+                await this.plugin.setCursorInLine(parameters);
             }
         }
         if (parameters.mode != undefined) {
-            await this.plugin.setCursor(parameters.mode);
+            await this.plugin.setCursor(parameters);
         }
         if (parameters.uid) {
             const view = app.workspace.getActiveViewOfType(MarkdownView);
