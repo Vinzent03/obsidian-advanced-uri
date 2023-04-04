@@ -22,3 +22,15 @@ In the following `<command>` can be replaced with either `commandname` or `comma
 | <command\>, <identification\>, mode=append    | Opens file, adds empty line at the end and sets cursor, then executes command by its name       |
 | <command\>, <identification\>, mode=prepend   | Opens file, adds empty line at the beginning and sets cursor, then executes command by its name |
 | <command\>, <identification\>, mode=overwrite | Opens file, clears the file, then executes command by its name                                  |
+
+
+:::note Example
+
+Close specific tab by its filepath:
+```uri
+obsidian://advanced-uri?vault=<your-vault>&filepath=<your-file>&commandid=workspace%253Aclose
+```
+
+To explain this example: It first switches to the tab specified by `filepath` and then executes the command `Close current tab` by its ID. Resulting in the ability to close any tab by its filepath.
+:::
+
