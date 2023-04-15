@@ -1,4 +1,4 @@
-import { PaneType } from "obsidian";
+import { PaneType, Plugin } from "obsidian";
 
 declare module "obsidian" {
     interface App {
@@ -39,29 +39,27 @@ declare module "obsidian" {
             disablePluginAndSave(plugin: string): void;
         };
         internalPlugins: {
-            plugins: {
-                [key: string]: {
-                    instance: {
-                        description: string;
-                        id: string;
-                        name: string;
-                    };
-                    enabled: boolean;
-                };
-                workspaces: {
-                    instance: {
-                        description: string;
-                        id: string;
-                        name: string;
-                        activeWorkspace: Workspace;
-                        saveWorkspace(workspace: Workspace): void;
-                        loadWorkspace(workspace: string): void;
-                    };
-                    enabled: boolean;
-                };
-            };
+            getEnabledPluginById(plugin: String): Plugin;
+            getEnabledPluginById(plugin: "bookmarks"): {
+                openBookmark(
+                    bookmark: Bookmark,
+                    viewmode: PaneType | boolean
+                ): void;
+                getBookmarks(): Bookmark[];
+            } | null;
+            getEnabledPluginById(plugin: "workspaces"): {
+                activeWorkspace: Workspace;
+                saveWorkspace(workspace: Workspace): void;
+                loadWorkspace(workspace: string): void;
+            } | null;
         };
     }
+    interface Bookmark {
+        path: string;
+        title: string;
+        type: string;
+    }
+
     interface View {
         file: TFile;
     }
@@ -135,6 +133,7 @@ export interface Parameters {
     "disable-plugin"?: string;
     frontmatterkey?: string;
     eval?: string;
+    bookmark?: string;
 }
 
 export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";

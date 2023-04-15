@@ -53,23 +53,21 @@ export default class Handlers {
     }
 
     handleWorkspace(parameters: Parameters) {
-        const workspaces = app.internalPlugins?.plugins?.workspaces;
+        const workspaces =
+            app.internalPlugins.getEnabledPluginById("workspaces");
         if (!workspaces) {
-            new Notice("Cannot find Workspaces plugin. Please file an issue.");
+            new Notice("Workspaces plugin is not enabled");
             this.plugin.failure(parameters);
-        } else if (workspaces.enabled) {
+        } else {
             if (parameters.saveworkspace == "true") {
-                const active = workspaces.instance.activeWorkspace;
-                workspaces.instance.saveWorkspace(active);
+                const active = workspaces.activeWorkspace;
+                workspaces.saveWorkspace(active);
                 new Notice(`Saved current workspace to ${active}`);
             }
             if (parameters.workspace != undefined) {
-                workspaces.instance.loadWorkspace(parameters.workspace);
+                workspaces.loadWorkspace(parameters.workspace);
             }
             this.plugin.success(parameters);
-        } else {
-            new Notice("Workspaces plugin is not enabled");
-            this.plugin.failure(parameters);
         }
     }
 
@@ -487,5 +485,19 @@ export default class Handlers {
                 .click();
         }
         this.plugin.success(parameters);
+    }
+
+    async handleBookmarks(parameters: Parameters) {
+        const bookmarksPlugin =
+            app.internalPlugins.getEnabledPluginById("bookmarks");
+        const bookmarks = bookmarksPlugin.getBookmarks();
+        const bookmark = bookmarks.find((b) => b.title == parameters.bookmark);
+        let openMode;
+        if (parameters.openmode == "true" || parameters.openmode == "false") {
+            openMode = parameters.openmode == "true";
+        } else {
+            openMode = parameters.openmode;
+        }
+        bookmarksPlugin.openBookmark(bookmark, openMode as any);
     }
 }
