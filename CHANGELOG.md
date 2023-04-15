@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.35.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.34.0...1.35.0) (2023-04-15)
+
+
+### Features
+
+* bookmark support ([32fd56b](https://github.com/Vinzent03/obsidian-advanced-uri/commit/32fd56b6bd83b021d1c37db75040c7f46b87710e)), closes [#113](https://github.com/Vinzent03/obsidian-advanced-uri/issues/113)
+
 ## [1.34.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.33.3...1.34.0) (2023-03-30)
 
 
