@@ -330,13 +330,18 @@ export default class AdvancedURI extends Plugin {
     getFileFromUID(uid: string): TFile | undefined {
         const files = this.app.vault.getFiles();
         const idKey = this.settings.idField;
-        return files.find(
-            (file) =>
-                parseFrontMatterEntry(
-                    this.app.metadataCache.getFileCache(file)?.frontmatter,
-                    idKey
-                ) == uid
-        );
+        return files.find((file) => {
+            const fieldValue = parseFrontMatterEntry(
+                this.app.metadataCache.getFileCache(file)?.frontmatter,
+                idKey
+            );
+
+            if (fieldValue instanceof String) {
+                return fieldValue == uid;
+            } else if (fieldValue instanceof Array) {
+                return fieldValue.contains(uid);
+            }
+        });
     }
 
     async append(file: TFile | string, parameters: Parameters): Promise<TFile> {

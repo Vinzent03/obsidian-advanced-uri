@@ -51,7 +51,13 @@ export default class Tools {
             cache.frontmatter,
             this.plugin.settings.idField
         );
-        if (uid != undefined) return uid;
+        if (uid != undefined) {
+            if (uid instanceof Array) {
+                return uid[0];
+            } else {
+                return uid;
+            }
+        }
         return await this.writeUIDToFile(file, uuidv4());
     }
 
