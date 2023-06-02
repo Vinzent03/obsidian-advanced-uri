@@ -336,7 +336,7 @@ export default class AdvancedURI extends Plugin {
                 idKey
             );
 
-            if (fieldValue instanceof String) {
+            if (typeof fieldValue === "string") {
                 return fieldValue == uid;
             } else if (fieldValue instanceof Array) {
                 return fieldValue.contains(uid);
