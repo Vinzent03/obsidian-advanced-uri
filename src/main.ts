@@ -336,10 +336,10 @@ export default class AdvancedURI extends Plugin {
                 idKey
             );
 
-            if (typeof fieldValue === "string") {
-                return fieldValue == uid;
-            } else if (fieldValue instanceof Array) {
+            if (fieldValue instanceof Array) {
                 return fieldValue.contains(uid);
+            } else {
+                return fieldValue == uid;
             }
         });
     }
