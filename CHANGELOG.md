@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.1...1.36.2) (2023-06-03)
+
+
+### Bug Fixes
+
+* support numbers as frontmatter uid ([0a0c409](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0a0c4096fc00f4ab5fa63c915c04d56e14a8e542))
+
 ### [1.36.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.0...1.36.1) (2023-06-02)
 
 
