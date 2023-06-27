@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.3](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.2...1.36.3) (2023-06-27)
+
+
+### Bug Fixes
+
+* only add frontmatter to canvas files ([9d6672a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/9d6672a3ba755ce22b30cc1356f2c205c34f962c)), closes [#131](https://github.com/Vinzent03/obsidian-advanced-uri/issues/131)
+
 ### [1.36.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.1...1.36.2) (2023-06-03)
 
 
