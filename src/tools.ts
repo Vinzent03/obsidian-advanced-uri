@@ -68,7 +68,11 @@ export default class Tools {
         let suffix = "";
         const file = app.vault.getAbstractFileByPath(parameters.filepath);
 
-        if (this.settings.useUID && file instanceof TFile) {
+        if (
+            this.settings.useUID &&
+            file instanceof TFile &&
+            file.extension == "md"
+        ) {
             if (!this.settings.addFilepathWhenUsingUID)
                 parameters.filepath = undefined;
             parameters.uid = await this.getUIDFromFile(file);
