@@ -38,15 +38,19 @@ export default class Tools {
     }
 
     async getUIDFromFile(file: TFile): Promise<string> {
-        let cache: CachedMetadata;
-
         //await parsing of frontmatter
-        for (let i = 0; i <= 20; i++) {
-            cache = app.metadataCache.getFileCache(file);
+        const cache =
+            app.metadataCache.getFileCache(file) ??
+            (await new Promise<CachedMetadata>((resolve) => {
+                const ref = app.metadataCache.on("changed", (metaFile) => {
+                    if (metaFile.path == file.path) {
+                        const cache = app.metadataCache.getFileCache(file);
+                        app.metadataCache.offref(ref);
+                        resolve(cache);
+                    }
+                });
+            }));
 
-            if (cache !== undefined) break;
-            await new Promise((resolve) => setTimeout(resolve, 150));
-        }
         const uid = parseFrontMatterEntry(
             cache.frontmatter,
             this.plugin.settings.idField
