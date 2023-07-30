@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.36.5](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.4...1.36.5) (2023-07-30)
+
+
+### Bug Fixes
+
+* allow block and heading in popover openmode ([40227a3](https://github.com/Vinzent03/obsidian-advanced-uri/commit/40227a36e7cb306607619c4868fa2efff5cbe942)), closes [#137](https://github.com/Vinzent03/obsidian-advanced-uri/issues/137)
+
 ### [1.36.4](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.3...1.36.4) (2023-07-17)
 
 
