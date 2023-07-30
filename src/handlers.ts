@@ -336,7 +336,6 @@ export default class Handlers {
                 file: parameters.filepath + "#" + parameters.heading,
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
-                supportPopover: false,
             });
             const view = app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
@@ -354,7 +353,6 @@ export default class Handlers {
                 file: parameters.filepath + "#^" + parameters.block,
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
-                supportPopover: false,
             });
             const view = app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;

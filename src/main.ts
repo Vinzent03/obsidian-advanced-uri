@@ -1,5 +1,6 @@
 import {
     base64ToArrayBuffer,
+    getLinkpath,
     MarkdownView,
     normalizePath,
     Notice,
@@ -500,11 +501,17 @@ export default class AdvancedURI extends Plugin {
             const leaf = hoverEditor.spawnPopover(undefined, () => {
                 this.app.workspace.setActiveLeaf(leaf, { focus: true });
             });
-            const tfile =
-                file instanceof TFile
-                    ? file
-                    : (this.app.vault.getAbstractFileByPath(file) as TFile);
-            leaf.openFile(tfile);
+
+            let tFile: TFile;
+            if (file instanceof TFile) {
+                tFile = file;
+            } else {
+                tFile = this.app.vault.getAbstractFileByPath(
+                    getLinkpath(file)
+                ) as TFile;
+            }
+
+            await leaf.openFile(tFile);
         } else {
             let openMode: OpenMode | boolean = setting;
             if (parameters.newpane !== undefined) {
