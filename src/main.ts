@@ -204,43 +204,7 @@ export default class AdvancedURI extends Plugin {
                 parameters.data = await navigator.clipboard.readText();
             }
 
-            if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
-                this.handlers.handlePluginManagement(parameters);
-            } else if (parameters.frontmatterkey) {
-                this.handlers.handleFrontmatterKey(parameters);
-            } else if (
-                parameters.workspace ||
-                parameters.saveworkspace == "true"
-            ) {
-                this.handlers.handleWorkspace(parameters);
-            } else if (parameters.commandname || parameters.commandid) {
-                this.handlers.handleCommand(parameters);
-            } else if (parameters.bookmark) {
-                this.handlers.handleBookmarks(parameters);
-            } else if (parameters.eval) {
-                this.handlers.handleEval(parameters);
-            } else if (parameters.filepath && parameters.exists === "true") {
-                this.handlers.handleDoesFileExist(parameters);
-            } else if (parameters.data) {
-                this.handlers.handleWrite(parameters, createdDailyNote);
-            } else if (parameters.filepath && parameters.heading) {
-                this.handlers.handleOpen(parameters);
-            } else if (parameters.filepath && parameters.block) {
-                this.handlers.handleOpen(parameters);
-            } else if (
-                (parameters.search || parameters.searchregex) &&
-                parameters.replace != undefined
-            ) {
-                this.handlers.handleSearchAndReplace(parameters);
-            } else if (parameters.search) {
-                this.handlers.handleSearch(parameters);
-            } else if (parameters.filepath) {
-                this.handlers.handleOpen(parameters);
-            } else if (parameters.settingid) {
-                this.handlers.handleOpenSettings(parameters);
-            } else if (parameters.updateplugins) {
-                this.handlers.handleUpdatePlugins(parameters);
-            }
+            this.chooseHandler(parameters, createdDailyNote);
         });
         this.registerObsidianProtocolHandler(
             "hook-get-advanced-uri",
@@ -291,6 +255,49 @@ export default class AdvancedURI extends Plugin {
                 });
             })
         );
+    }
+
+    async chooseHandler(parameters: Parameters, createdDailyNote: boolean) {
+        if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
+            this.handlers.handlePluginManagement(parameters);
+        } else if (parameters.frontmatterkey) {
+            this.handlers.handleFrontmatterKey(parameters);
+        } else if (parameters.workspace || parameters.saveworkspace == "true") {
+            this.handlers.handleWorkspace(parameters);
+        } else if (parameters.commandname || parameters.commandid) {
+            this.handlers.handleCommand(parameters);
+        } else if (parameters.bookmark) {
+            this.handlers.handleBookmarks(parameters);
+        } else if (parameters.eval) {
+            this.handlers.handleEval(parameters);
+        } else if (parameters.filepath && parameters.exists === "true") {
+            this.handlers.handleDoesFileExist(parameters);
+        } else if (parameters.data) {
+            this.handlers.handleWrite(parameters, createdDailyNote);
+        } else if (parameters.filepath && parameters.heading) {
+            await this.handlers.handleOpen(parameters);
+            parameters.filepath = undefined;
+            parameters.heading = undefined;
+            this.chooseHandler(parameters, createdDailyNote);
+        } else if (parameters.filepath && parameters.block) {
+            await this.handlers.handleOpen(parameters);
+            parameters.filepath = undefined;
+            parameters.block = undefined;
+            this.chooseHandler(parameters, createdDailyNote);
+        } else if (
+            (parameters.search || parameters.searchregex) &&
+            parameters.replace != undefined
+        ) {
+            this.handlers.handleSearchAndReplace(parameters);
+        } else if (parameters.search) {
+            this.handlers.handleSearch(parameters);
+        } else if (parameters.filepath) {
+            this.handlers.handleOpen(parameters);
+        } else if (parameters.settingid) {
+            this.handlers.handleOpenSettings(parameters);
+        } else if (parameters.updateplugins) {
+            this.handlers.handleUpdatePlugins(parameters);
+        }
     }
 
     async hookSuccess(parameters: Parameters, file: TFile): Promise<void> {
