@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.37.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.5...1.37.0) (2023-08-07)
+
+
+### Features
+
+* use block/heading nav and search in one ([7581613](https://github.com/Vinzent03/obsidian-advanced-uri/commit/7581613e921a268ca514014a89cd05f9bc500f42)), closes [#135](https://github.com/Vinzent03/obsidian-advanced-uri/issues/135)
+
 ### [1.36.5](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.36.4...1.36.5) (2023-07-30)
 
 
