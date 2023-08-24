@@ -5,7 +5,6 @@ import {
     normalizePath,
     Notice,
     parseFrontMatterAliases,
-    parseFrontMatterEntry,
     Plugin,
     TFile,
     TFolder,
@@ -135,7 +134,7 @@ export default class AdvancedURI extends Plugin {
             }
             this.lastParameters = { ...parameters };
             if (parameters.uid) {
-                const res = this.getFileFromUID(parameters.uid)?.path;
+                const res = this.tools.getFileFromUID(parameters.uid)?.path;
                 if (res != undefined) {
                     parameters.filepath = res;
                     parameters.uid = undefined;
@@ -293,6 +292,8 @@ export default class AdvancedURI extends Plugin {
             this.handlers.handleSearch(parameters);
         } else if (parameters.filepath) {
             this.handlers.handleOpen(parameters);
+        } else if (parameters.block) {
+            this.handlers.handleOpenBlock(parameters);
         } else if (parameters.settingid) {
             this.handlers.handleOpenSettings(parameters);
         } else if (parameters.updateplugins) {
@@ -333,23 +334,6 @@ export default class AdvancedURI extends Plugin {
             }
             window.open(url.toString());
         }
-    }
-
-    getFileFromUID(uid: string): TFile | undefined {
-        const files = this.app.vault.getFiles();
-        const idKey = this.settings.idField;
-        return files.find((file) => {
-            const fieldValue = parseFrontMatterEntry(
-                this.app.metadataCache.getFileCache(file)?.frontmatter,
-                idKey
-            );
-
-            if (fieldValue instanceof Array) {
-                return fieldValue.contains(uid);
-            } else {
-                return fieldValue == uid;
-            }
-        });
     }
 
     async append(file: TFile | string, parameters: Parameters): Promise<TFile> {

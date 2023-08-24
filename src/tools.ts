@@ -11,6 +11,10 @@ export default class Tools {
         return this.plugin.settings;
     }
 
+    public get app() {
+        return this.plugin.app;
+    }
+
     constructor(private readonly plugin: AdvancedURI) {}
 
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
@@ -102,5 +106,33 @@ export default class Tools {
         await copyText(uri);
 
         new Notice("Advanced URI copied to your clipboard");
+    }
+
+    getFileFromUID(uid: string): TFile | undefined {
+        const files = this.app.vault.getMarkdownFiles();
+        const idKey = this.settings.idField;
+        for (const file of files) {
+            const fieldValue = parseFrontMatterEntry(
+                this.app.metadataCache.getFileCache(file)?.frontmatter,
+                idKey
+            );
+
+            if (fieldValue instanceof Array) {
+                if (fieldValue.contains(uid)) return file;
+            } else {
+                if (fieldValue == uid) return file;
+            }
+        }
+    }
+
+    getFileFromBlockID(blockId: string): TFile | undefined {
+        const files = this.app.vault.getMarkdownFiles();
+
+        for (const file of files) {
+            const blockExists =
+                this.app.metadataCache.getFileCache(file)?.blocks?.[blockId] !=
+                undefined;
+            if (blockExists) return file;
+        }
     }
 }

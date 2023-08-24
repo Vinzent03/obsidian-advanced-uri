@@ -381,6 +381,19 @@ export default class Handlers {
         this.plugin.success(parameters);
     }
 
+    async handleOpenBlock(parameters: Parameters) {
+        const file = this.tools.getFileFromBlockID(parameters.block);
+        if (file) {
+            await this.plugin.chooseHandler(
+                {
+                    ...parameters,
+                    filepath: file.path,
+                },
+                false
+            );
+        }
+    }
+
     handleCopyFileURI(withoutData: boolean, file?: TFile) {
         const view = app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
