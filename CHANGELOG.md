@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.38.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.38.0...1.38.1) (2023-08-30)
+
+
+### Bug Fixes
+
+* use existing empty frontmatter key for uid ([f07c035](https://github.com/Vinzent03/obsidian-advanced-uri/commit/f07c035e3f6d007bb005056390c1b010836564c0)), closes [#144](https://github.com/Vinzent03/obsidian-advanced-uri/issues/144)
+
 ## [1.38.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.37.0...1.38.0) (2023-08-24)
 
 
