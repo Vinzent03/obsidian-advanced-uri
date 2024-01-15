@@ -97,6 +97,8 @@ export interface AdvancedURISettings {
     useUID: boolean;
     addFilepathWhenUsingUID: boolean;
     allowEval: boolean;
+    includeVaultName: boolean;
+    vaultParam: 'id' | 'name';
 }
 
 export interface Parameters {
