@@ -82,7 +82,7 @@ export default class Tools {
             if (this.settings.vaultParam == "id" && app.appId) {
                 suffix += app.appId;
             } else {
-                suffix += await app.vault.getName();
+                suffix += app.vault.getName();
             }
         }
         if (
