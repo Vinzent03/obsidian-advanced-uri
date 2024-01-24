@@ -1,4 +1,4 @@
-import { PaneType, Plugin } from "obsidian";
+import { PaneType } from "obsidian";
 
 declare module "obsidian" {
     interface App {
@@ -18,6 +18,7 @@ declare module "obsidian" {
             activeTab: SettingTab;
             open(): void;
         };
+        appId: string;
         commands: {
             executeCommandById(id: string): void;
             commands: {
@@ -97,6 +98,8 @@ export interface AdvancedURISettings {
     useUID: boolean;
     addFilepathWhenUsingUID: boolean;
     allowEval: boolean;
+    includeVaultName: boolean;
+    vaultParam: "id" | "name";
 }
 
 export interface Parameters {
