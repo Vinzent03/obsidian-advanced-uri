@@ -72,11 +72,13 @@ export class SettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName("Include vault name/ID parameter")
             .addToggle((cb) =>
-                cb.setValue(this.plugin.settings.includeVaultName).onChange((value) => {
-                    this.plugin.settings.includeVaultName = value;
-                    this.plugin.saveSettings();
-                    this.display();
-                })
+                cb
+                    .setValue(this.plugin.settings.includeVaultName)
+                    .onChange((value) => {
+                        this.plugin.settings.includeVaultName = value;
+                        this.plugin.saveSettings();
+                        this.display();
+                    })
             );
 
         if (this.plugin.settings.includeVaultName) {
@@ -87,8 +89,8 @@ export class SettingsTab extends PluginSettingTab {
                 )
                 .addDropdown((cb) =>
                     cb
-                        .addOption('name', "Name")
-                        .addOption('id', "ID")
+                        .addOption("name", "Name")
+                        .addOption("id", "ID")
                         .setValue(this.plugin.settings.vaultParam)
                         .onChange((value) => {
                             this.plugin.settings.vaultParam = value;

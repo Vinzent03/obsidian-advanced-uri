@@ -74,7 +74,7 @@ export default class Tools {
     }
 
     async generateURI(parameters: Parameters, doubleEncode: boolean) {
-        const prefix = 'obsidian://advanced-uri';
+        const prefix = "obsidian://advanced-uri";
         let suffix = "";
         const file = app.vault.getAbstractFileByPath(parameters.filepath);
         if (this.settings.includeVaultName) {
@@ -96,11 +96,10 @@ export default class Tools {
         }
         for (const parameter in parameters) {
             if ((parameters as any)[parameter] != undefined) {
-                suffix += suffix ? '&' : '?';
-                suffix +=
-                    `${parameter}=${encodeURIComponent(
-                        (parameters as any)[parameter]
-                    )}`;
+                suffix += suffix ? "&" : "?";
+                suffix += `${parameter}=${encodeURIComponent(
+                    (parameters as any)[parameter]
+                )}`;
             }
         }
         if (doubleEncode) {
