@@ -394,7 +394,7 @@ export default class Handlers {
         }
     }
 
-    handleCopyFileURI(withoutData: boolean, file?: TFile, asMarkdown: boolean = false) {
+    handleCopyFileURI(withoutData: boolean, asMarkdown: boolean = false, file?: TFile) {
         const view = app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
 

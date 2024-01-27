@@ -64,6 +64,12 @@ export default class AdvancedURI extends Plugin {
         });
 
         this.addCommand({
+            id: "copy-uri-current-file-simple-markdown",
+            name: "copy URI for current file (Markdown)",
+            callback: () => this.handlers.handleCopyFileURI(true, true),
+        });
+
+        this.addCommand({
             id: "copy-uri-daily",
             name: "copy URI for daily note",
             callback: () => new EnterDataModal(this).open(),
@@ -105,20 +111,40 @@ export default class AdvancedURI extends Plugin {
             },
         });
 
-        this.addCommand({
-            id: "copy-uri-block",
-            name: "copy URI for current block",
-            checkCallback: (checking) => {
-                const view =
-                    this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (checking) return view != undefined;
-                const id = BlockUtils.getBlockId();
-                if (id) {
+        let copyUriBlock = (checking: boolean, asMarkdown: boolean)=> {
+            const view =
+                this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (checking) return view != undefined;
+            const id = BlockUtils.getBlockId();
+            if (id) {
+                if (asMarkdown) {
+                    this.tools.copyMarkdownLink({
+                        filepath: view.file.path,
+                        markdownTitle: view.file.basename,
+                        block: id,
+                    })
+                } else {
                     this.tools.copyURI({
                         filepath: view.file.path,
                         block: id,
                     });
                 }
+            }
+        };
+
+        this.addCommand({
+            id: "copy-uri-block",
+            name: "copy URI for current block",
+            checkCallback: (checking) => {
+                return copyUriBlock(checking, false)
+            },
+        });
+
+        this.addCommand({
+            id: "copy-uri-bm",
+            name: "copy URI for current block (Markdown)",
+            checkCallback: (checking) => {
+                return copyUriBlock(checking, true)
             },
         });
 
@@ -249,7 +275,7 @@ export default class AdvancedURI extends Plugin {
                         .setIcon("link")
                         .setSection("info")
                         .onClick((_) =>
-                            this.handlers.handleCopyFileURI(true, file)
+                            this.handlers.handleCopyFileURI(true, false, file)
                         );
                 });
                 menu.addItem((item)=>{
@@ -257,7 +283,7 @@ export default class AdvancedURI extends Plugin {
                         .setIcon("link")
                         .setSection("info")
                         .onClick((_)=>
-                            this.handlers.handleCopyFileURI(true, file, true)
+                            this.handlers.handleCopyFileURI(true, true, file)
                         )
                 })
             })
