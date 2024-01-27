@@ -127,6 +127,8 @@ export interface Parameters {
     saveworkspace?: "true";
     updateplugins?: "true";
     line?: number;
+    markdownTitle?: string;
+
     /**
      * @deprecated Use "openMode" instead
      */

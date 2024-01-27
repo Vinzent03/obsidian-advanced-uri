@@ -252,6 +252,14 @@ export default class AdvancedURI extends Plugin {
                             this.handlers.handleCopyFileURI(true, file)
                         );
                 });
+                menu.addItem((item)=>{
+                    item.setTitle("Copy Advanced URI (Markdown)")
+                        .setIcon("link")
+                        .setSection("info")
+                        .onClick((_)=>
+                            this.handlers.handleCopyFileURI(true, file, true)
+                        )
+                })
             })
         );
     }

@@ -394,9 +394,21 @@ export default class Handlers {
         }
     }
 
-    handleCopyFileURI(withoutData: boolean, file?: TFile) {
+    handleCopyFileURI(withoutData: boolean, file?: TFile, asMarkdown: boolean = false) {
         const view = app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
+
+        // const copyFunc = asMarkdown ?
+        //     (parameters)=>this.tools.copyMarkdownLink(parameters) : (parameters) =>this.tools.copyURI(parameters);
+
+        let copyFunc =  (parameters: Parameters) => {
+            if (asMarkdown){
+                this.tools.copyMarkdownLink(parameters)
+            } else {
+                this.tools.copyURI(parameters)
+            }
+        }
+
         if (view instanceof MarkdownView) {
             const pos = view.editor.getCursor();
             const cache = app.metadataCache.getFileCache(view.file);
@@ -406,9 +418,10 @@ export default class Handlers {
                         heading.position.start.line <= pos.line &&
                         heading.position.end.line >= pos.line
                     ) {
-                        this.tools.copyURI({
+                        copyFunc({
                             filepath: view.file.path,
                             heading: heading.heading,
+                            markdownTitle: view.file.basename,
                         });
                         return;
                     }
@@ -421,9 +434,10 @@ export default class Handlers {
                         block.position.start.line <= pos.line &&
                         block.position.end.line >= pos.line
                     ) {
-                        this.tools.copyURI({
+                        copyFunc({
                             filepath: view.file.path,
                             block: blockID,
+                            markdownTitle: view.file.basename,
                         });
                         return;
                     }
@@ -437,8 +451,9 @@ export default class Handlers {
                 new Notice("No file opened");
                 return;
             }
-            this.tools.copyURI({
+            copyFunc({
                 filepath: file2.path,
+                markdownTitle: file2.basename,
             });
         } else {
             const fileModal = new FileModal(
