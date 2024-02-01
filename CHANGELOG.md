@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.39.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.39.0...1.39.1) (2024-02-01)
+
+
+### Bug Fixes
+
+* prepend with frontmatter ([fb39d06](https://github.com/Vinzent03/obsidian-advanced-uri/commit/fb39d0655041da6a14a9c8fa37259d91d7b75e3d)), closes [#148](https://github.com/Vinzent03/obsidian-advanced-uri/issues/148)
+* support enable and disable core plugin ([c9b05af](https://github.com/Vinzent03/obsidian-advanced-uri/commit/c9b05af3b7bdbcd9ae8e3a61cee3d856c1b836c8))
+
 ## [1.39.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.38.1...1.39.0) (2024-02-01)
 
 
