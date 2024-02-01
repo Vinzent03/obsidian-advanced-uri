@@ -395,8 +395,11 @@ export default class AdvancedURI extends Plugin {
                 const fileData = await this.app.vault.read(file);
                 const cache = this.app.metadataCache.getFileCache(file);
 
-                if (cache.frontmatter) {
-                    const line = cache.frontmatter.position.end.line;
+                if (
+                    cache.sections[0].type == "yaml" &&
+                    cache.sections[0].position.start.line == 0
+                ) {
+                    const line = cache.sections[0].position.end.line;
                     const first = fileData
                         .split("\n")
                         .slice(0, line + 1)

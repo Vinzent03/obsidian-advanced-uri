@@ -56,10 +56,10 @@ declare module "obsidian" {
             } | null;
             plugins: {
                 [key: string]: {
-                    disable(_:boolean): void;
-                    enable(_:boolean): void;
-                }
-            }
+                    disable(_: boolean): void;
+                    enable(_: boolean): void;
+                };
+            };
         };
     }
     interface Bookmark {
