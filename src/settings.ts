@@ -92,7 +92,7 @@ export class SettingsTab extends PluginSettingTab {
                         .addOption("name", "Name")
                         .addOption("id", "ID")
                         .setValue(this.plugin.settings.vaultParam)
-                        .onChange((value) => {
+                        .onChange((value: "id" | "name") => {
                             this.plugin.settings.vaultParam = value;
                             this.plugin.saveSettings();
                         })

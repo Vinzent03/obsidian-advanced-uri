@@ -15,12 +15,24 @@ export default class Handlers {
     handlePluginManagement(parameters: Parameters): void {
         if (parameters["enable-plugin"]) {
             const pluginId = parameters["enable-plugin"];
-            app.plugins.enablePluginAndSave(pluginId);
-            new Notice(`Enabled ${pluginId}`);
+
+            if (app.plugins.getPlugin(pluginId)) {
+                app.plugins.enablePluginAndSave(pluginId);
+                new Notice(`Enabled ${pluginId}`);
+            } else if (app.internalPlugins.plugins[pluginId]) {
+                app.internalPlugins.plugins[pluginId].enable(true);
+                new Notice(`Enabled ${pluginId}`);
+            }
         } else if (parameters["disable-plugin"]) {
             const pluginId = parameters["disable-plugin"];
-            app.plugins.disablePluginAndSave(pluginId);
-            new Notice(`Disabled ${pluginId}`);
+
+            if (app.plugins.getPlugin(pluginId)) {
+                app.plugins.disablePluginAndSave(pluginId);
+                new Notice(`Disabled ${pluginId}`);
+            } else if (app.internalPlugins.plugins[pluginId]) {
+                app.internalPlugins.plugins[pluginId].disable(true);
+                new Notice(`Disabled ${pluginId}`);
+            }
         }
     }
     handleFrontmatterKey(parameters: Parameters) {

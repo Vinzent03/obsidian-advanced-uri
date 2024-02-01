@@ -38,6 +38,7 @@ declare module "obsidian" {
             };
             enablePluginAndSave(plugin: string): void;
             disablePluginAndSave(plugin: string): void;
+            getPlugin(plugin: string): Plugin | null;
         };
         internalPlugins: {
             getEnabledPluginById(plugin: String): Plugin;
@@ -53,6 +54,12 @@ declare module "obsidian" {
                 saveWorkspace(workspace: Workspace): void;
                 loadWorkspace(workspace: string): void;
             } | null;
+            plugins: {
+                [key: string]: {
+                    disable(_:boolean): void;
+                    enable(_:boolean): void;
+                }
+            }
         };
     }
     interface Bookmark {
