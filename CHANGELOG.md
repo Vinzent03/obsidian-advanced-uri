@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.39.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.38.1...1.39.0) (2024-02-01)
+
+
+### Features
+
+* add toggle to exclude vault param, and specify name or vault ID ([#153](https://github.com/Vinzent03/obsidian-advanced-uri/issues/153)) ([209160e](https://github.com/Vinzent03/obsidian-advanced-uri/commit/209160efec46235f8317a9f0c8e7a241a4a5261d))
+
 ### [1.38.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.38.0...1.38.1) (2023-08-30)
 
 
