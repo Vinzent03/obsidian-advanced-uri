@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "node esbuild.config.mjs dev",
         "build": "node esbuild.config.mjs production",
-        "release": "standard-version"
+        "release": "standard-version",
+        "format": "prettier src --check"
     },
     "keywords": [],
     "standard-version": {

@@ -7,7 +7,10 @@ export class EnterDataModal extends SuggestModal<EnterData> {
     //null if for normal write mode, its not associated with a special mode like "append" or "prepend"
     modes = [null, "overwrite", "append", "prepend"];
 
-    constructor(plugin: AdvancedURI, private file?: string | undefined) {
+    constructor(
+        plugin: AdvancedURI,
+        private file?: string | undefined
+    ) {
         super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder(

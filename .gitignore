@@ -10,5 +10,4 @@ main.js
 *.js.map
 
 .prettierignore
-.prettierrc.json
 /data.json

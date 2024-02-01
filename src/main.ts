@@ -147,11 +147,12 @@ export default class AdvancedURI extends Plugin {
                 if (!file) {
                     file = this.app.vault
                         .getMarkdownFiles()
-                        .find((file) =>
-                            parseFrontMatterAliases(
-                                this.app.metadataCache.getFileCache(file)
-                                    .frontmatter
-                            )?.includes(parameters.filename)
+                        .find(
+                            (file) =>
+                                parseFrontMatterAliases(
+                                    this.app.metadataCache.getFileCache(file)
+                                        .frontmatter
+                                )?.includes(parameters.filename)
                         );
                 }
                 const parentFolder = this.app.fileManager.getNewFileParent(
