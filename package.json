@@ -24,7 +24,7 @@
         "esbuild": "^0.18.10"
     },
     "dependencies": {
-        "obsidian-community-lib": "^2.0.2",
+        "obsidian-community-lib": "git://github.com/obsidian-community/obsidian-community-lib.git",
         "obsidian-daily-notes-interface": "^0.9.4",
         "uuid": "^8.3.2"
     }

@@ -1,4 +1,4 @@
-import { Notice, TFile } from "obsidian";
+import { App, Notice, TFile } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { Parameters } from "./types";
 
@@ -17,7 +17,7 @@ export function copyText(text: string) {
     return navigator.clipboard.writeText(text);
 }
 
-export function getAlternativeFilePath(file: TFile): string {
+export function getAlternativeFilePath(app: App, file: TFile): string {
     const dir = file.parent?.path;
     const formattedDir = dir === "/" ? "" : dir;
     const name = file.name;
@@ -36,7 +36,7 @@ export function getAlternativeFilePath(file: TFile): string {
     }
 }
 
-export function getFileUri(file: TFile): string {
+export function getFileUri(app: App, file: TFile): string {
     const url = new URL(app.vault.getResourcePath(file));
     url.host = "localhosthostlocal";
     url.protocol = "file";
@@ -48,6 +48,7 @@ export function getFileUri(file: TFile): string {
 }
 
 export function getEndAndBeginningOfHeading(
+    app: App,
     file: TFile,
     heading: string
 ): { lastLine: number; firstLine: number } {

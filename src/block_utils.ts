@@ -1,4 +1,5 @@
 import {
+    App,
     Editor,
     ListItemCache,
     MarkdownView,
@@ -8,6 +9,7 @@ import {
 
 export abstract class BlockUtils {
     private static getBlock(
+        app: App,
         editor: Editor,
         file: TFile
     ): (SectionCache | ListItemCache) | undefined {
@@ -73,12 +75,12 @@ export abstract class BlockUtils {
         }
     }
 
-    public static getBlockId(): string | undefined {
+    public static getBlockId(app: App): string | undefined {
         const view = app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
             const editor = view.editor;
             const file = view.file;
-            const block = this.getBlock(editor, file);
+            const block = this.getBlock(app, editor, file);
             if (block) return this.getIdOfBlock(editor, block);
         }
     }

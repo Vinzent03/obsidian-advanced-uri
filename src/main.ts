@@ -112,7 +112,7 @@ export default class AdvancedURI extends Plugin {
                 const view =
                     this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (checking) return view != undefined;
-                const id = BlockUtils.getBlockId();
+                const id = BlockUtils.getBlockId(this.app);
                 if (id) {
                     this.tools.copyURI({
                         filepath: view.file.path,
@@ -156,7 +156,7 @@ export default class AdvancedURI extends Plugin {
                         );
                 }
                 const parentFolder = this.app.fileManager.getNewFileParent(
-                    this.app.workspace.activeLeaf.view.file?.path
+                    this.app.workspace.getActiveFile()?.path
                 );
                 const parentFolderPath = parentFolder.isRoot()
                     ? ""
@@ -215,9 +215,8 @@ export default class AdvancedURI extends Plugin {
                         (parameters as any)[parameter]
                     );
                 }
-                const activeLeaf = this.app.workspace.activeLeaf;
-                const file = activeLeaf.view.file;
-                if (activeLeaf && file) {
+                const file = this.app.workspace.getActiveFile();
+                if (file) {
                     this.hookSuccess(parameters, file);
                 } else {
                     this.failure(parameters, {
@@ -312,7 +311,7 @@ export default class AdvancedURI extends Plugin {
                 false
             ),
             urlkey: "advanceduri",
-            fileuri: getFileUri(file),
+            fileuri: getFileUri(this.app, file),
         };
         this.success(parameters, options);
     }
@@ -344,6 +343,7 @@ export default class AdvancedURI extends Plugin {
             if (file instanceof TFile) {
                 path = file.path;
                 const line = getEndAndBeginningOfHeading(
+                    this.app,
                     file,
                     parameters.heading
                 )?.lastLine;
@@ -379,6 +379,7 @@ export default class AdvancedURI extends Plugin {
             if (file instanceof TFile) {
                 path = file.path;
                 const line = getEndAndBeginningOfHeading(
+                    this.app,
                     file,
                     parameters.heading
                 )?.firstLine;
@@ -530,12 +531,12 @@ export default class AdvancedURI extends Plugin {
 
             let fileIsAlreadyOpened = false;
             if (isBoolean(openMode)) {
-                app.workspace.iterateAllLeaves((leaf) => {
+                this.app.workspace.iterateAllLeaves((leaf) => {
                     if (leaf.view.file?.path === parameters.filepath) {
                         if (fileIsAlreadyOpened && leaf.width == 0) return;
                         fileIsAlreadyOpened = true;
 
-                        app.workspace.setActiveLeaf(leaf, { focus: true });
+                        this.app.workspace.setActiveLeaf(leaf, { focus: true });
                     }
                 });
             }

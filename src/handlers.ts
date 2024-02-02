@@ -7,7 +7,7 @@ import { Parameters } from "./types";
 import { copyText, getAlternativeFilePath } from "./utils";
 export default class Handlers {
     constructor(private readonly plugin: AdvancedURI) {}
-
+    app = this.plugin.app;
     public get tools(): Tools {
         return this.plugin.tools;
     }
@@ -16,34 +16,35 @@ export default class Handlers {
         if (parameters["enable-plugin"]) {
             const pluginId = parameters["enable-plugin"];
 
-            if (app.plugins.getPlugin(pluginId)) {
-                app.plugins.enablePluginAndSave(pluginId);
+            if (this.app.plugins.getPlugin(pluginId)) {
+                this.app.plugins.enablePluginAndSave(pluginId);
                 new Notice(`Enabled ${pluginId}`);
-            } else if (app.internalPlugins.plugins[pluginId]) {
-                app.internalPlugins.plugins[pluginId].enable(true);
+            } else if (this.app.internalPlugins.plugins[pluginId]) {
+                this.app.internalPlugins.plugins[pluginId].enable(true);
                 new Notice(`Enabled ${pluginId}`);
             }
         } else if (parameters["disable-plugin"]) {
             const pluginId = parameters["disable-plugin"];
 
-            if (app.plugins.getPlugin(pluginId)) {
-                app.plugins.disablePluginAndSave(pluginId);
+            if (this.app.plugins.getPlugin(pluginId)) {
+                this.app.plugins.disablePluginAndSave(pluginId);
                 new Notice(`Disabled ${pluginId}`);
-            } else if (app.internalPlugins.plugins[pluginId]) {
-                app.internalPlugins.plugins[pluginId].disable(true);
+            } else if (this.app.internalPlugins.plugins[pluginId]) {
+                this.app.internalPlugins.plugins[pluginId].disable(true);
                 new Notice(`Disabled ${pluginId}`);
             }
         }
     }
     handleFrontmatterKey(parameters: Parameters) {
         const key = parameters.frontmatterkey;
-        const file = app.vault.getAbstractFileByPath(
-            parameters.filepath ?? app.workspace.getActiveFile().path
+        const file = this.app.vault.getAbstractFileByPath(
+            parameters.filepath ?? this.app.workspace.getActiveFile().path
         );
         if (!(file instanceof TFile)) {
             return;
         }
-        const frontmatter = app.metadataCache.getFileCache(file).frontmatter;
+        const frontmatter =
+            this.app.metadataCache.getFileCache(file).frontmatter;
 
         if (parameters.data) {
             let data = parameters.data;
@@ -54,7 +55,7 @@ export default class Handlers {
                 data = `"${data}"`;
                 data = JSON.parse(data);
             }
-            app.fileManager.processFrontMatter(file, (frontmatter) => {
+            this.app.fileManager.processFrontMatter(file, (frontmatter) => {
                 if (key.startsWith("[") && key.endsWith("]")) {
                     const list = key.substring(1, key.length - 1).split(",");
                     let cache: any = frontmatter;
@@ -99,7 +100,6 @@ export default class Handlers {
                     }
                 }
                 res = cache;
-                const a = 4;
             } else {
                 res = frontmatter[key];
             }
@@ -110,7 +110,7 @@ export default class Handlers {
 
     handleWorkspace(parameters: Parameters) {
         const workspaces =
-            app.internalPlugins.getEnabledPluginById("workspaces");
+            this.app.internalPlugins.getEnabledPluginById("workspaces");
         if (!workspaces) {
             new Notice("Workspaces plugin is not enabled");
             this.plugin.failure(parameters);
@@ -131,12 +131,15 @@ export default class Handlers {
         if (parameters.filepath) {
             if (parameters.mode) {
                 if (parameters.mode == "new") {
-                    const file = app.metadataCache.getFirstLinkpathDest(
+                    const file = this.app.metadataCache.getFirstLinkpathDest(
                         parameters.filepath,
                         "/"
                     );
                     if (file instanceof TFile) {
-                        parameters.filepath = getAlternativeFilePath(file);
+                        parameters.filepath = getAlternativeFilePath(
+                            this.app,
+                            file
+                        );
                     }
                 }
                 await this.plugin.open({
@@ -144,7 +147,8 @@ export default class Handlers {
                     mode: "source",
                     parameters: parameters,
                 });
-                const view = app.workspace.getActiveViewOfType(MarkdownView);
+                const view =
+                    this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
                     const editor = view.editor;
                     const data = editor.getValue();
@@ -176,9 +180,9 @@ export default class Handlers {
             }
         }
         if (parameters.commandid) {
-            app.commands.executeCommandById(parameters.commandid);
+            this.app.commands.executeCommandById(parameters.commandid);
         } else if (parameters.commandname) {
-            const rawCommands = app.commands.commands;
+            const rawCommands = this.app.commands.commands;
             for (const command in rawCommands) {
                 if (rawCommands[command].name === parameters.commandname) {
                     if (rawCommands[command].callback) {
@@ -197,12 +201,15 @@ export default class Handlers {
         if (parameters.filepath) {
             if (parameters.mode) {
                 if (parameters.mode == "new") {
-                    const file = app.metadataCache.getFirstLinkpathDest(
+                    const file = this.app.metadataCache.getFirstLinkpathDest(
                         parameters.filepath,
                         "/"
                     );
                     if (file instanceof TFile) {
-                        parameters.filepath = getAlternativeFilePath(file);
+                        parameters.filepath = getAlternativeFilePath(
+                            this.app,
+                            file
+                        );
                     }
                 }
                 await this.plugin.open({
@@ -210,7 +217,8 @@ export default class Handlers {
                     mode: "source",
                     parameters: parameters,
                 });
-                const view = app.workspace.getActiveViewOfType(MarkdownView);
+                const view =
+                    this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
                     const editor = view.editor;
                     const data = editor.getValue();
@@ -255,7 +263,7 @@ export default class Handlers {
     }
 
     async handleDoesFileExist(parameters: Parameters) {
-        const exists = await app.vault.adapter.exists(parameters.filepath);
+        const exists = await this.app.vault.adapter.exists(parameters.filepath);
 
         copyText((exists ? 1 : 0).toString());
         this.plugin.success(parameters);
@@ -263,18 +271,18 @@ export default class Handlers {
     async handleSearchAndReplace(parameters: Parameters) {
         let file: TFile;
         if (parameters.filepath) {
-            const abstractFile = app.vault.getAbstractFileByPath(
+            const abstractFile = this.app.vault.getAbstractFileByPath(
                 parameters.filepath
             );
             if (abstractFile instanceof TFile) {
                 file = abstractFile;
             }
         } else {
-            file = app.workspace.getActiveFile();
+            file = this.app.workspace.getActiveFile();
         }
 
         if (file) {
-            let data = await app.vault.read(file);
+            let data = await this.app.vault.read(file);
             if (parameters.searchregex) {
                 try {
                     const [, , pattern, flags] =
@@ -307,7 +315,7 @@ export default class Handlers {
                 parameters: parameters,
             });
         }
-        const view = app.workspace.getActiveViewOfType(FileView);
+        const view = this.app.workspace.getActiveViewOfType(FileView);
         view.currentMode.showSearch();
         const search = view.currentMode.search;
         search.searchInputEl.value = parameters.search;
@@ -320,9 +328,9 @@ export default class Handlers {
     ) {
         let file: TAbstractFile | null;
         if (parameters.filepath) {
-            file = app.vault.getAbstractFileByPath(parameters.filepath);
+            file = this.app.vault.getAbstractFileByPath(parameters.filepath);
         } else {
-            file = app.workspace.getActiveFile();
+            file = this.app.workspace.getActiveFile();
         }
 
         if (parameters.filepath || file) {
@@ -352,7 +360,7 @@ export default class Handlers {
             } else if (parameters.mode === "new") {
                 if (file instanceof TFile) {
                     outFile = await this.plugin.writeAndOpenFile(
-                        getAlternativeFilePath(file),
+                        getAlternativeFilePath(this.app, file),
                         parameters.data,
                         parameters
                     );
@@ -393,9 +401,9 @@ export default class Handlers {
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
             });
-            const view = app.workspace.getActiveViewOfType(MarkdownView);
+            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
-            const cache = app.metadataCache.getFileCache(view.file);
+            const cache = this.app.metadataCache.getFileCache(view.file);
             const heading = cache.headings.find(
                 (e) => e.heading === parameters.heading
             );
@@ -410,9 +418,9 @@ export default class Handlers {
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
             });
-            const view = app.workspace.getActiveViewOfType(MarkdownView);
+            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
-            const cache = app.metadataCache.getFileCache(view.file);
+            const cache = this.app.metadataCache.getFileCache(view.file);
             const block = cache.blocks[parameters.block];
             view.editor.focus();
             view.editor.setCursor({ line: block.position.start.line, ch: 0 });
@@ -430,7 +438,7 @@ export default class Handlers {
             await this.plugin.setCursor(parameters);
         }
         if (parameters.uid) {
-            const view = app.workspace.getActiveViewOfType(MarkdownView);
+            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
             this.tools.writeUIDToFile(view.file, parameters.uid);
         }
@@ -451,11 +459,11 @@ export default class Handlers {
     }
 
     handleCopyFileURI(withoutData: boolean, file?: TFile) {
-        const view = app.workspace.getActiveViewOfType(FileView);
+        const view = this.app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
         if (view instanceof MarkdownView) {
             const pos = view.editor.getCursor();
-            const cache = app.metadataCache.getFileCache(view.file);
+            const cache = this.app.metadataCache.getFileCache(view.file);
             if (cache.headings) {
                 for (const heading of cache.headings) {
                     if (
@@ -488,7 +496,7 @@ export default class Handlers {
         }
 
         if (withoutData) {
-            const file2 = file ?? app.workspace.getActiveFile();
+            const file2 = file ?? this.app.workspace.getActiveFile();
             if (!file2) {
                 new Notice("No file opened");
                 return;
@@ -510,22 +518,22 @@ export default class Handlers {
     }
 
     handleOpenSettings(parameters: Parameters) {
-        if (app.setting.containerEl.parentElement === null) {
-            app.setting.open();
+        if (this.app.setting.containerEl.parentElement === null) {
+            this.app.setting.open();
         }
         if (parameters.settingid == "plugin-browser") {
-            app.setting.openTabById("community-plugins");
-            app.setting.activeTab.containerEl.find(".mod-cta").click();
+            this.app.setting.openTabById("community-plugins");
+            this.app.setting.activeTab.containerEl.find(".mod-cta").click();
         } else if (parameters.settingid == "theme-browser") {
-            app.setting.openTabById("appearance");
-            app.setting.activeTab.containerEl.find(".mod-cta").click();
+            this.app.setting.openTabById("appearance");
+            this.app.setting.activeTab.containerEl.find(".mod-cta").click();
         } else {
-            app.setting.openTabById(parameters.settingid);
+            this.app.setting.openTabById(parameters.settingid);
         }
 
         if (parameters.settingsection) {
             const elements =
-                app.setting.tabContentContainer.querySelectorAll("*");
+                this.app.setting.tabContentContainer.querySelectorAll("*");
             const heading: Element = Array.prototype.find.call(
                 elements,
                 (e: Element) => e.textContent == parameters.settingsection
@@ -541,12 +549,15 @@ export default class Handlers {
     async handleUpdatePlugins(parameters: Parameters) {
         parameters.settingid = "community-plugins";
         this.handleOpenSettings(parameters);
-        app.setting.activeTab.containerEl.findAll(".mod-cta").last().click();
+        this.app.setting.activeTab.containerEl
+            .findAll(".mod-cta")
+            .last()
+            .click();
         new Notice("Waiting 10 seconds");
         await new Promise((resolve) => setTimeout(resolve, 10 * 1000));
 
-        if (Object.keys((app as any).plugins.updates).length !== 0) {
-            app.setting.activeTab.containerEl
+        if (Object.keys((this.app as any).plugins.updates).length !== 0) {
+            this.app.setting.activeTab.containerEl
                 .findAll(".mod-cta")
                 .last()
                 .click();
@@ -556,7 +567,7 @@ export default class Handlers {
 
     async handleBookmarks(parameters: Parameters) {
         const bookmarksPlugin =
-            app.internalPlugins.getEnabledPluginById("bookmarks");
+            this.app.internalPlugins.getEnabledPluginById("bookmarks");
         const bookmarks = bookmarksPlugin.getBookmarks();
         const bookmark = bookmarks.find((b) => b.title == parameters.bookmark);
         let openMode;

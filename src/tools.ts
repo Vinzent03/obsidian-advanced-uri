@@ -1,25 +1,21 @@
 import { CachedMetadata, Notice, parseFrontMatterEntry, TFile } from "obsidian";
 import { v4 as uuidv4 } from "uuid";
 import AdvancedURI from "./main";
-import { AdvancedURISettings, Parameters } from "./types";
+import { Parameters } from "./types";
 import { copyText } from "./utils";
 /**
  * These methods depend on the plugins settings in contrast to the utils.ts file, which's functions are independent of the plugins settings.
  */
 export default class Tools {
-    public get settings(): AdvancedURISettings {
-        return this.plugin.settings;
-    }
-
-    public get app() {
-        return this.plugin.app;
-    }
-
     constructor(private readonly plugin: AdvancedURI) {}
 
+    app = this.plugin.app;
+    settings = this.plugin.settings;
+
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
-        const frontmatter = app.metadataCache.getFileCache(file)?.frontmatter;
-        const fileContent: string = await app.vault.read(file);
+        const frontmatter =
+            this.app.metadataCache.getFileCache(file)?.frontmatter;
+        const fileContent: string = await this.app.vault.read(file);
         const isYamlEmpty: boolean =
             (!frontmatter || frontmatter.length === 0) &&
             !fileContent.match(/^-{3}\s*\n*\r*-{3}/);
@@ -41,19 +37,19 @@ export default class Tools {
         }
 
         const newFileContent = splitContent.join("\n");
-        await app.vault.modify(file, newFileContent);
+        await this.app.vault.modify(file, newFileContent);
         return uid;
     }
 
     async getUIDFromFile(file: TFile): Promise<string> {
         //await parsing of frontmatter
         const cache =
-            app.metadataCache.getFileCache(file) ??
+            this.app.metadataCache.getFileCache(file) ??
             (await new Promise<CachedMetadata>((resolve) => {
-                const ref = app.metadataCache.on("changed", (metaFile) => {
+                const ref = this.app.metadataCache.on("changed", (metaFile) => {
                     if (metaFile.path == file.path) {
-                        const cache = app.metadataCache.getFileCache(file);
-                        app.metadataCache.offref(ref);
+                        const cache = this.app.metadataCache.getFileCache(file);
+                        this.app.metadataCache.offref(ref);
                         resolve(cache);
                     }
                 });
@@ -76,13 +72,13 @@ export default class Tools {
     async generateURI(parameters: Parameters, doubleEncode: boolean) {
         const prefix = "obsidian://advanced-uri";
         let suffix = "";
-        const file = app.vault.getAbstractFileByPath(parameters.filepath);
+        const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
         if (this.settings.includeVaultName) {
             suffix += "?vault=";
-            if (this.settings.vaultParam == "id" && app.appId) {
-                suffix += app.appId;
+            if (this.settings.vaultParam == "id" && this.app.appId) {
+                suffix += this.app.appId;
             } else {
-                suffix += app.vault.getName();
+                suffix += this.app.vault.getName();
             }
         }
         if (
