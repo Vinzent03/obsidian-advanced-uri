@@ -37,31 +37,75 @@ export default class Handlers {
     }
     handleFrontmatterKey(parameters: Parameters) {
         const key = parameters.frontmatterkey;
-        const frontmatter = app.metadataCache.getCache(
+        const file = app.vault.getAbstractFileByPath(
             parameters.filepath ?? app.workspace.getActiveFile().path
-        ).frontmatter;
-
-        let res: string;
-        if (key.startsWith("[") && key.endsWith("]")) {
-            const list = key.substring(1, key.length - 1).split(",");
-            let cache: any = frontmatter;
-            for (const item of list) {
-                if (cache instanceof Array) {
-                    const index = parseInt(item);
-                    if (Number.isNaN(index)) {
-                        cache = cache.find((e) => e == item);
-                    }
-                    cache = cache[parseInt(item)];
-                } else {
-                    cache = cache[item];
-                }
-            }
-            res = cache;
-        } else {
-            res = frontmatter[key];
+        );
+        if (!(file instanceof TFile)) {
+            return;
         }
+        const frontmatter = app.metadataCache.getFileCache(file).frontmatter;
 
-        copyText(res);
+        if (parameters.data) {
+            let data = parameters.data;
+            try {
+                // This try catch is needed to allow passing strings as a data value without extra ".
+                data = JSON.parse(data);
+            } catch {
+                data = `"${data}"`;
+                data = JSON.parse(data);
+            }
+            app.fileManager.processFrontMatter(file, (frontmatter) => {
+                if (key.startsWith("[") && key.endsWith("]")) {
+                    const list = key.substring(1, key.length - 1).split(",");
+                    let cache: any = frontmatter;
+                    for (let i = 0; i < list.length; i++) {
+                        const item = list[i];
+                        if (cache instanceof Array) {
+                            const index = parseInt(item);
+                            if (Number.isNaN(index)) {
+                                cache = cache.find((e) => e == item);
+                            }
+                            if (i == list.length - 1) {
+                                cache[parseInt(item)] = data;
+                            } else {
+                                cache = cache[parseInt(item)];
+                            }
+                        } else {
+                            if (i == list.length - 1) {
+                                cache[item] = data;
+                            } else {
+                                cache = cache[item];
+                            }
+                        }
+                    }
+                } else {
+                    frontmatter[key] = data;
+                }
+            });
+        } else {
+            let res: string;
+            if (key.startsWith("[") && key.endsWith("]")) {
+                const list = key.substring(1, key.length - 1).split(",");
+                let cache: any = frontmatter;
+                for (const item of list) {
+                    if (cache instanceof Array) {
+                        const index = parseInt(item);
+                        if (Number.isNaN(index)) {
+                            cache = cache.find((e) => e == item);
+                        }
+                        cache = cache[parseInt(item)];
+                    } else {
+                        cache = cache[item];
+                    }
+                }
+                res = cache;
+                const a = 4;
+            } else {
+                res = frontmatter[key];
+            }
+
+            copyText(res);
+        }
     }
 
     handleWorkspace(parameters: Parameters) {
