@@ -77,6 +77,7 @@ export default class Tools {
         const prefix = "obsidian://advanced-uri";
         let suffix = "";
         const file = app.vault.getAbstractFileByPath(parameters.filepath);
+        parameters.markdownTitle = undefined; // no need copy title
         if (this.settings.includeVaultName) {
             suffix += "?vault=";
             if (this.settings.vaultParam == "id" && app.appId) {
@@ -114,6 +115,16 @@ export default class Tools {
         await copyText(uri);
 
         new Notice("Advanced URI copied to your clipboard");
+    }
+
+    async copyMarkdownLink(parameters: Parameters) {
+        const markdownTitle = parameters.markdownTitle ? parameters.markdownTitle : "";
+        const uri = await this.generateURI(parameters, true);
+        const markdownLink = "[" + markdownTitle + "](" + uri + ")";
+
+        new Notice("Advanced URI copied to your clipboard (Markdown)");
+
+        await copyText(markdownLink);
     }
 
     getFileFromUID(uid: string): TFile | undefined {
