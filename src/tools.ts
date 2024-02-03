@@ -10,7 +10,10 @@ export default class Tools {
     constructor(private readonly plugin: AdvancedURI) {}
 
     app = this.plugin.app;
-    settings = this.plugin.settings;
+
+    get settings() {
+        return this.plugin.settings;
+    }
 
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
         const frontmatter =
