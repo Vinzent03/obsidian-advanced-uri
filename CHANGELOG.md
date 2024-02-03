@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.40.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.39.1...1.40.0) (2024-02-03)
+
+
+### Features
+
+* write to specific frontmatter fields ([73e6388](https://github.com/Vinzent03/obsidian-advanced-uri/commit/73e6388716c6b02ae8db7a87adca5c73df5ef9fa))
+
+
+### Bug Fixes
+
+* access settings properly ([7002ce1](https://github.com/Vinzent03/obsidian-advanced-uri/commit/7002ce1e9988ecfdbbc4f6898985898a91ca2847))
+
 ### [1.39.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.39.0...1.39.1) (2024-02-01)
 
 
