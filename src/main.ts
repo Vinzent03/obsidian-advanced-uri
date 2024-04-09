@@ -147,12 +147,11 @@ export default class AdvancedURI extends Plugin {
                 if (!file) {
                     file = this.app.vault
                         .getMarkdownFiles()
-                        .find(
-                            (file) =>
-                                parseFrontMatterAliases(
-                                    this.app.metadataCache.getFileCache(file)
-                                        .frontmatter
-                                )?.includes(parameters.filename)
+                        .find((file) =>
+                            parseFrontMatterAliases(
+                                this.app.metadataCache.getFileCache(file)
+                                    .frontmatter
+                            )?.includes(parameters.filename)
                         );
                 }
                 const parentFolder = this.app.fileManager.getNewFileParent(
@@ -396,11 +395,8 @@ export default class AdvancedURI extends Plugin {
                 const fileData = await this.app.vault.read(file);
                 const cache = this.app.metadataCache.getFileCache(file);
 
-                if (
-                    cache.sections[0].type == "yaml" &&
-                    cache.sections[0].position.start.line == 0
-                ) {
-                    const line = cache.sections[0].position.end.line;
+                if (cache.frontmatterPosition) {
+                    const line = cache.frontmatterPosition.end.line;
                     const first = fileData
                         .split("\n")
                         .slice(0, line + 1)
