@@ -133,7 +133,7 @@ export interface Parameters {
     "x-error"?: string;
     saveworkspace?: "true";
     updateplugins?: "true";
-    line?: number;
+    line?: string;
     /**
      * @deprecated Use "openMode" instead
      */

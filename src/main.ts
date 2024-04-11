@@ -355,15 +355,24 @@ export default class AdvancedURI extends Plugin {
                 dataToWrite = lines.join("\n");
             }
         } else {
-            let fileData: string;
             if (file instanceof TFile) {
-                fileData = await this.app.vault.read(file);
                 path = file.path;
+                const fileData = await this.app.vault.read(file);
+                if (parameters.line) {
+                    let line = Math.max(Number(parameters.line) - 1, 0);
+                    const lines = fileData.split("\n");
+                    if (lines[line]?.trim() !== "") {
+                        line += 1;
+                    }
+                    lines.splice(line, 0, parameters.data);
+                    dataToWrite = lines.join("\n");
+                } else {
+                    dataToWrite = fileData + "\n" + parameters.data;
+                }
             } else {
                 path = file;
-                fileData = "";
+                dataToWrite = parameters.data;
             }
-            dataToWrite = fileData + "\n" + parameters.data;
         }
         return this.writeAndOpenFile(path, dataToWrite, parameters);
     }
@@ -392,24 +401,18 @@ export default class AdvancedURI extends Plugin {
             }
         } else {
             if (file instanceof TFile) {
+                path = file.path;
                 const fileData = await this.app.vault.read(file);
                 const cache = this.app.metadataCache.getFileCache(file);
-
+                let line = 0;
                 if (cache.frontmatterPosition) {
-                    const line = cache.frontmatterPosition.end.line;
-                    const first = fileData
-                        .split("\n")
-                        .slice(0, line + 1)
-                        .join("\n");
-                    const last = fileData
-                        .split("\n")
-                        .slice(line + 1)
-                        .join("\n");
-                    dataToWrite = first + "\n" + parameters.data + "\n" + last;
-                } else {
-                    dataToWrite = parameters.data + "\n" + fileData;
+                    line += cache.frontmatterPosition.end.line + 1;
+                } else if (parameters.line) {
+                    line += Math.max(Number(parameters.line) - 1, 0);
                 }
-                path = file.path;
+                const lines = fileData.split("\n");
+                lines.splice(line, 0, parameters.data);
+                dataToWrite = lines.join("\n");
             } else {
                 path = file;
                 dataToWrite = parameters.data;
@@ -577,7 +580,7 @@ export default class AdvancedURI extends Plugin {
     }
 
     async setCursorInLine(parameters: Parameters) {
-        const rawLine = parameters.line;
+        const rawLine = Number(parameters.line);
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
         const viewState = view.leaf.getViewState();
