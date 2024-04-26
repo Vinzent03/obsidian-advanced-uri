@@ -547,16 +547,13 @@ export default class Handlers {
     }
 
     async handleUpdatePlugins(parameters: Parameters) {
-        parameters.settingid = "community-plugins";
-        this.handleOpenSettings(parameters);
-        this.app.setting.activeTab.containerEl
-            .findAll(".mod-cta")
-            .last()
-            .click();
-        new Notice("Waiting 10 seconds");
-        await new Promise((resolve) => setTimeout(resolve, 10 * 1000));
-
-        if (Object.keys((this.app as any).plugins.updates).length !== 0) {
+	    new Notice("Checking for updates…");
+	    await app.plugins.checkForUpdates();
+	
+    	const updateCount = Object.keys((this.app as any).plugins.updates).length;
+        if (updateCount > 0) {
+            parameters.settingid = "community-plugins";
+            this.handleOpenSettings(parameters);
             this.app.setting.activeTab.containerEl
                 .findAll(".mod-cta")
                 .last()
