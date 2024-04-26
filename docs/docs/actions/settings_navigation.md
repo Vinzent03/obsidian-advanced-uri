@@ -47,12 +47,17 @@ The settings tab of every community plugin can be opened by the plugin's id. The
 In addition to navigating to a specific setting, you can also navigate to a specific section of a setting. This is useful if you want to open a specific setting and have it scrolled into view. Use the additional `settingsection` parameter for this purpose. The parameter's value is the exact case-sensitive section name.
 
 
-:::note Example
+:::note Example for Obsidian Settings
 ```uri
 obsidian://advanced-uri?vault=<your-vault>&settingid=editor
 ```
 ```uri
 obsidian://advanced-uri?vault=<your-vault>&settingid=editor&settingsection=Behavior
+```
+
+:::note Example for Community Plugins Options Page
+```uri
+obsidian://advanced-uri?vault=Manifold-Grace&settingid=<community plugin id>
 ```
 :::
 
