@@ -526,6 +526,10 @@ export default class AdvancedURI extends Plugin {
                     openMode = parameters.openmode == "true";
                 } else if (parameters.openmode == "popover") {
                     openMode = false;
+                } else if (
+                    Platform.isMobile &&
+                    parameters.openmode == "window"
+                ) {
                 } else {
                     openMode = parameters.openmode;
                 }
