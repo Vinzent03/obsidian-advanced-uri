@@ -53,25 +53,25 @@ export default class AdvancedURI extends Plugin {
 
         this.addCommand({
             id: "copy-uri-current-file",
-            name: "copy URI for file with options",
+            name: "Copy URI for file with options",
             callback: () => this.handlers.handleCopyFileURI(false),
         });
 
         this.addCommand({
             id: "copy-uri-current-file-simple",
-            name: "copy URI for current file",
+            name: "Copy URI for current file",
             callback: () => this.handlers.handleCopyFileURI(true),
         });
 
         this.addCommand({
             id: "copy-uri-daily",
-            name: "copy URI for daily note",
+            name: "Copy URI for daily note",
             callback: () => new EnterDataModal(this).open(),
         });
 
         this.addCommand({
             id: "copy-uri-search-and-replace",
-            name: "copy URI for search and replace",
+            name: "Copy URI for search and replace",
             callback: () => {
                 const fileModal = new FileModal(
                     this,
@@ -92,7 +92,7 @@ export default class AdvancedURI extends Plugin {
 
         this.addCommand({
             id: "copy-uri-command",
-            name: "copy URI for command",
+            name: "Copy URI for command",
             callback: () => {
                 const fileModal = new FileModal(
                     this,
@@ -107,7 +107,7 @@ export default class AdvancedURI extends Plugin {
 
         this.addCommand({
             id: "copy-uri-block",
-            name: "copy URI for current block",
+            name: "Copy URI for current block",
             checkCallback: (checking) => {
                 const view =
                     this.app.workspace.getActiveViewOfType(MarkdownView);
