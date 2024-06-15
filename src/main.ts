@@ -359,11 +359,8 @@ export default class AdvancedURI extends Plugin {
                 path = file.path;
                 const fileData = await this.app.vault.read(file);
                 if (parameters.line) {
-                    let line = Math.max(Number(parameters.line) - 1, 0);
+                    let line = Math.max(Number(parameters.line), 0);
                     const lines = fileData.split("\n");
-                    if (lines[line]?.trim() !== "") {
-                        line += 1;
-                    }
                     lines.splice(line, 0, parameters.data);
                     dataToWrite = lines.join("\n");
                 } else {
@@ -405,10 +402,10 @@ export default class AdvancedURI extends Plugin {
                 const fileData = await this.app.vault.read(file);
                 const cache = this.app.metadataCache.getFileCache(file);
                 let line = 0;
-                if (cache.frontmatterPosition) {
-                    line += cache.frontmatterPosition.end.line + 1;
-                } else if (parameters.line) {
+                if (parameters.line) {
                     line += Math.max(Number(parameters.line) - 1, 0);
+                } else if (cache.frontmatterPosition) {
+                    line += cache.frontmatterPosition.end.line + 1;
                 }
                 const lines = fileData.split("\n");
                 lines.splice(line, 0, parameters.data);
