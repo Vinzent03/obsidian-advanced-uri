@@ -15,23 +15,18 @@ export abstract class BlockUtils {
     ): (SectionCache | ListItemCache) | undefined {
         const cursor = editor.getCursor("to");
         const fileCache = app.metadataCache.getFileCache(file);
-
-        let currentBlock: SectionCache | ListItemCache =
-            fileCache?.sections?.find(
-                (section) =>
-                    section.position.start.line <= cursor.line &&
-                    section.position.end.line >= cursor.line
-            );
-
-        if (currentBlock.type == "list") {
-            currentBlock = fileCache.listItems?.find((list) => {
-                if (
-                    list.position.start.line <= cursor.line &&
-                    list.position.end.line >= cursor.line
-                ) {
-                    return list;
-                }
-            });
+        const sections = fileCache?.sections;
+        if (!sections || sections.length === 0) {
+            console.log('error reading FileCache (empty file?)');
+            return;
+        }
+        const foundSectionIndex = sections.findIndex(section => section.position.start.line > cursor.line);
+        let currentBlock: SectionCache | ListItemCache = foundSectionIndex > 0 ? sections[foundSectionIndex - 1] : sections[sections.length - 1];
+        if (currentBlock?.type == "list") {
+            currentBlock = fileCache.listItems?.find(section =>
+                section.position.start.line <= cursor.line &&
+                section.position.end.line >= cursor.line
+            ) ?? currentBlock;
         }
         return currentBlock;
     }
