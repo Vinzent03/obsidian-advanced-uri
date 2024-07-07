@@ -51,6 +51,7 @@ declare module "obsidian" {
             } | null;
             getEnabledPluginById(plugin: "workspaces"): {
                 activeWorkspace: Workspace;
+                workspaces: { [key: string]: any };
                 saveWorkspace(workspace: Workspace): void;
                 loadWorkspace(workspace: string): void;
             } | null;

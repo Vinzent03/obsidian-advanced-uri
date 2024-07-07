@@ -40,6 +40,7 @@ import {
     getFileUri,
     getViewStateFromMode,
 } from "./utils";
+import { WorkspaceModal } from "./modals/workspace_modal";
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
@@ -119,6 +120,15 @@ export default class AdvancedURI extends Plugin {
                         block: id,
                     });
                 }
+            },
+        });
+
+        this.addCommand({
+            id: "copy-uri-workspace",
+            name: "Copy URI for workspace",
+            callback: () => {
+                const modal = new WorkspaceModal(this);
+                modal.open();
             },
         });
 
