@@ -5,6 +5,7 @@ import {
     normalizePath,
     Notice,
     parseFrontMatterAliases,
+    Platform,
     Plugin,
     TFile,
     TFolder,
@@ -533,6 +534,11 @@ export default class AdvancedURI extends Plugin {
             }
             if (openMode == "silent") {
                 return;
+            }
+
+            // `window` is only supported on desktop
+            if (Platform.isMobileApp && openMode == "window") {
+                openMode = true;
             }
 
             let fileIsAlreadyOpened = false;
