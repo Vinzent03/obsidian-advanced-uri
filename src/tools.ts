@@ -93,11 +93,24 @@ export default class Tools {
                 parameters.filepath = undefined;
             parameters.uid = await this.getUIDFromFile(file);
         }
-        for (const parameter in parameters) {
-            if ((parameters as any)[parameter] != undefined) {
+        const sortedParameterKeys = (
+            Object.keys(parameters) as (keyof Parameters)[]
+        )
+            .filter((key) => parameters[key])
+            .sort((a, b) => {
+                const first = ["filepath", "filename", "uid", "daily"];
+                const last = ["data", "eval"];
+                if (first.includes(a)) return -1;
+                if (first.includes(b)) return 1;
+                if (last.includes(a)) return 1;
+                if (last.includes(b)) return -1;
+                return 0;
+            });
+        for (const parameter of sortedParameterKeys) {
+            if (parameters[parameter] != undefined) {
                 suffix += suffix ? "&" : "?";
                 suffix += `${parameter}=${encodeURIComponent(
-                    (parameters as any)[parameter]
+                    parameters[parameter]
                 )}`;
             }
         }
