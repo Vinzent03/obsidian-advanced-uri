@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.41.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.40.1...1.41.0) (2024-07-07)
+
+
+### Features
+
+* add command to copy workspace URI ([31a61b9](https://github.com/Vinzent03/obsidian-advanced-uri/commit/31a61b91d650a2cee99e4f4e359f16ffc762e50e)), closes [#42](https://github.com/Vinzent03/obsidian-advanced-uri/issues/42)
+* allow appending / prepending at line ([a564d0b](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a564d0ba237c0d5613a0ab1d3ff048c596b11c02))
+* improve `updateplugins` ([#166](https://github.com/Vinzent03/obsidian-advanced-uri/issues/166)) ([697b0ba](https://github.com/Vinzent03/obsidian-advanced-uri/commit/697b0baa9e5d0d3d4fd300aeffd9e2bcaec7157d))
+
+
+### Bug Fixes
+
+* append after empty line and fix prepend with frontmatter ([45f29f1](https://github.com/Vinzent03/obsidian-advanced-uri/commit/45f29f1a711bcb2c6dec6a64aa60ebae5399fe98))
+* change window openmode on mobile to true ([204be8a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/204be8a94299d3739737ef5803990b386233f99c)), closes [#169](https://github.com/Vinzent03/obsidian-advanced-uri/issues/169)
+* detect sections correctly ([#175](https://github.com/Vinzent03/obsidian-advanced-uri/issues/175)) ([a869f27](https://github.com/Vinzent03/obsidian-advanced-uri/commit/a869f27af99274e6b2040d9df6cbad9f59bddb42))
+* Missing capitalization of command names ([6d20433](https://github.com/Vinzent03/obsidian-advanced-uri/commit/6d204335008640cb5357bb363c18b7cbc74d3fbd))
+
 ### [1.40.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.40.0...1.40.1) (2024-04-09)
 
 
