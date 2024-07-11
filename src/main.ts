@@ -238,8 +238,6 @@ export default class AdvancedURI extends Plugin {
 
         this.registerEvent(
             this.app.workspace.on("file-menu", (menu, file, source) => {
-                console.log(source);
-
                 if (
                     !(
                         source === "more-options" ||
