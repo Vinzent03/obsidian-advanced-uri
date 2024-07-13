@@ -1,26 +1,26 @@
-# Obsidian Advanced URI
+# Advanced URI
 
 A plugin for [Obsidian](https://obsidian.md)
 
-[Documentation](https://vinzent03.github.io/obsidian-advanced-uri)
+[Documentation](https://publish.obsidian.md/advanced-uri-doc)
 
 ## Overview
 
-[Obsidian Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) allows you to control many different features in Obsidian just by opening some URIs. Because they are just text and don't require any mouse clicks or keyboard inputs, they are perfect to automate your Obsidian workflow.
+[Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) allows you to control many different features in Obsidian just by opening some URIs. Because they are just text and don't require any mouse clicks or keyboard inputs, they are perfect to automate your Obsidian workflow.
 
 You can for example 
-- [open files](https://vinzent03.github.io/obsidian-advanced-uri/actions/navigation)
-- [edit files](https://vinzent03.github.io/obsidian-advanced-uri/actions/writing)
-- [create files](https://vinzent03.github.io/obsidian-advanced-uri/actions/writing)
-- [open workspaces](https://vinzent03.github.io/obsidian-advanced-uri/actions/navigation)
-- [open bookmarks](https://vinzent03.github.io/obsidian-advanced-uri/actions/bookmarks)
-- [navigate to headings/blocks](https://vinzent03.github.io/obsidian-advanced-uri/actions/navigation)
-- [automated search and replace in a file](https://vinzent03.github.io/obsidian-advanced-uri/actions/search)
-- [call commands](https://vinzent03.github.io/obsidian-advanced-uri/actions/commands)
-- [edit and read from frontmatter](https://vinzent03.github.io/obsidian-advanced-uri/actions/frontmatter)
+- [open files](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
+- [edit files](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
+- [create files](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
+- [open workspaces](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
+- [open bookmarks](https://publish.obsidian.md/advanced-uri-doc/Actions/Bookmarks)
+- [navigate to headings/blocks](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
+- [automated search and replace in a file](https://publish.obsidian.md/advanced-uri-doc/Actions/Search)
+- [call commands](https://publish.obsidian.md/advanced-uri-doc/Actions/Commands)
+- [edit and read from frontmatter](https://publish.obsidian.md/advanced-uri-doc/actions/frontmatter)
 - and much more
 
-Please read the [documentation](https://vinzent03.github.io/obsidian-advanced-uri) for a detailed explanation.
+Please read the [documentation](https://publish.obsidian.md/advanced-uri-doc) for a detailed explanation.
 
 ## Examples
 
