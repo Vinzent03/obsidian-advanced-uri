@@ -135,6 +135,7 @@ export interface Parameters {
     saveworkspace?: "true";
     updateplugins?: "true";
     line?: string;
+    column?: string;
     /**
      * @deprecated Use "openMode" instead
      */

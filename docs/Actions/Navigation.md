@@ -6,16 +6,16 @@
 > Use the [open mode](Navigation%20Parameters.md#open-mode) parameter to open the file always in a new tab or in a new window.
 > 
 
-| /                       | parameters                 | explanation                                                                                                                   |
-| ----------------------  | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| workspace               | workspace                  | Opens the workspace called `workspace`                                                                                        |
-| save current workspace  | saveworkspace=true         | Saves the current workspace. (Can be combined with `workspace` to open a new workspace afterwards)                            |
-| file                    | <identification\>          | Opens file                                                                                                                    | 
-| line in file            | <identification\>, line    | Opens line `line` in file                                                                                                     |
-| heading in file         | <identification\>, heading | Opens the `heading` in file                                                                                                   |
-| block reference in file | <identification\>, block   | Opens the `block` in file                                                                                                     |
-| global block reference  | block                      | Searches the whole vault for that block id and uses that file for <identification\>                                           |
-| settings tab            | settingid                  | Opens a settings tab by id, all plugins are supported. See [here](Settings%20navigation.md) for a list of all available options |
+| /                          | parameters                      | explanation                                                                                                                     |     |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --- |
+| workspace                  | workspace                       | Opens the workspace called `workspace`                                                                                          |     |
+| save current workspace     | saveworkspace=true              | Saves the current workspace. (Can be combined with `workspace` to open a new workspace afterwards)                              |     |
+| file                       | <identification\>               | Opens file                                                                                                                      |     |
+| line and/or column in file | <identification\>, line, column | Opens `column` in `line` in file (1 indexed)                                                                                    |     |
+| heading in file            | <identification\>, heading      | Opens the `heading` in file                                                                                                     |     |
+| block reference in file    | <identification\>, block        | Opens the `block` in file                                                                                                       |     |
+| global block reference     | block                           | Searches the whole vault for that block id and uses that file for <identification\>                                             |     |
+| settings tab               | settingid                       | Opens a settings tab by id, all plugins are supported. See [here](Settings%20navigation.md) for a list of all available options |     |
 
 
 > [!example]

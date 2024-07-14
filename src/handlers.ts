@@ -6,7 +6,7 @@ import Tools from "./tools";
 import { Parameters } from "./types";
 import { copyText, getAlternativeFilePath } from "./utils";
 export default class Handlers {
-    constructor(private readonly plugin: AdvancedURI) {}
+    constructor(private readonly plugin: AdvancedURI) { }
     app = this.plugin.app;
     public get tools(): Tools {
         return this.plugin.tools;
@@ -163,7 +163,7 @@ export default class Handlers {
                         editor.setValue("");
                     }
                 }
-            } else if (parameters.line) {
+            } else if (parameters.line != undefined || parameters.column != undefined) {
                 await this.plugin.open({
                     file: parameters.filepath,
                     mode: "source",
@@ -233,7 +233,7 @@ export default class Handlers {
                         editor.setValue("");
                     }
                 }
-            } else if (parameters.line) {
+            } else if (parameters.line != undefined || parameters.column != undefined) {
                 await this.plugin.open({
                     file: parameters.filepath,
                     mode: "source",
@@ -430,7 +430,7 @@ export default class Handlers {
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
             });
-            if (parameters.line != undefined) {
+            if (parameters.line != undefined || parameters.column != undefined) {
                 await this.plugin.setCursorInLine(parameters);
             }
         }
@@ -547,10 +547,10 @@ export default class Handlers {
     }
 
     async handleUpdatePlugins(parameters: Parameters) {
-	    new Notice("Checking for updates…");
-	    await app.plugins.checkForUpdates();
-	
-    	const updateCount = Object.keys((this.app as any).plugins.updates).length;
+        new Notice("Checking for updates…");
+        await app.plugins.checkForUpdates();
+
+        const updateCount = Object.keys((this.app as any).plugins.updates).length;
         if (updateCount > 0) {
             parameters.settingid = "community-plugins";
             this.handleOpenSettings(parameters);

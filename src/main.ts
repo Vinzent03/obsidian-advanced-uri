@@ -470,7 +470,7 @@ export default class AdvancedURI extends Plugin {
                 setting: this.settings.openFileOnWriteInNewPane,
                 parameters,
             });
-            if (parameters.line != undefined) {
+            if (parameters.line != undefined || parameters.column != undefined) {
                 await this.setCursorInLine(parameters);
             }
         }
@@ -595,18 +595,22 @@ export default class AdvancedURI extends Plugin {
     }
 
     async setCursorInLine(parameters: Parameters) {
-        const rawLine = Number(parameters.line);
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) return;
         const viewState = view.leaf.getViewState();
+
+        const rawLine = parameters.line != undefined ? Number(parameters.line) : undefined;
+        const rawColumn = parameters.column ? Number(parameters.column) : undefined;
         viewState.state.mode = "source";
         await view.leaf.setViewState(viewState);
 
-        const line = Math.min(rawLine - 1, view.editor.lineCount() - 1);
+        const line = rawLine != undefined ? Math.min(rawLine - 1, view.editor.lineCount() - 1) : view.editor.getCursor().line;
+        const maxColumn = view.editor.getLine(line).length - 1;
+        const column = Math.min(rawColumn - 1, maxColumn);
         view.editor.focus();
         view.editor.setCursor({
             line: line,
-            ch: view.editor.getLine(line).length,
+            ch: column ?? maxColumn,
         });
 
         await new Promise((resolve) => setTimeout(resolve, 10));
