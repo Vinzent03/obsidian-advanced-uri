@@ -1,7 +1,12 @@
 ---
 sidebar_position: 3
 ---
+
 # Getting Started
+
+:::warning Documentation discontinued
+This documentation is no longer maintained. Pleas refer to the new documentation at https://publish.obsidian.md/advanced-uri-doc
+:::
 
 We are going through the whole workflow of creating and launching an URI to open a note.
 
@@ -48,6 +53,7 @@ xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
 ```
 
 #### Mac
+
 You can use Mac shell command `open` to launch Obsidian, and with `--background` let Obsidian run in background.
 
 ```bash
@@ -55,6 +61,7 @@ open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=
 ```
 
 #### Windows PowerShell
+
 You can use the PowerShell command `Start-Process` to launch an Obsidian URI.
 
 ```bash

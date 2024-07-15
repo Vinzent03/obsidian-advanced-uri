@@ -2,6 +2,10 @@
 sidebar_position: 2
 ---
 
+:::warning Documentation discontinued
+This documentation is no longer maintained. Pleas refer to the new documentation at https://publish.obsidian.md/advanced-uri-doc
+:::
+
 # Installing
 
 ### From Obsidian

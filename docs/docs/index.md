@@ -5,6 +5,9 @@ slug: /
 
 # Obsidian Advanced URI
 
+:::warning Documentation discontinued
+This documentation is no longer maintained. Pleas refer to the new documentation at https://publish.obsidian.md/advanced-uri-doc
+:::
 ## Overview
 
 [Obsidian Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) allows you to control many different features in Obsidian just by opening some URIs. Because they are just text and don't require any mouse clicks or keyboard inputs, they are perfect to automate your Obsidian workflow.
