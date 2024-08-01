@@ -5,3 +5,5 @@ There are multiple helper commands to generate the URI for you.
 - Copy URI for daily note
 - Copy URI for search and replace
 - Copy URI for command
+- Copy URI for canvas viewport
+- Copy URI for selected canvas nodes
