@@ -11,6 +11,7 @@ You can for example
 - [open workspaces](Actions/Navigation.md)
 - [navigate to headings/blocks](Actions/Navigation.md)
 - [automated search and replace in a file](Actions/Search.md)
+- [canvas movement](Actions/Canvas.md)
 
 ## Motivation
 

@@ -18,6 +18,7 @@ You can for example
 - [automated search and replace in a file](https://publish.obsidian.md/advanced-uri-doc/Actions/Search)
 - [call commands](https://publish.obsidian.md/advanced-uri-doc/Actions/Commands)
 - [edit and read from frontmatter](https://publish.obsidian.md/advanced-uri-doc/actions/frontmatter)
+- [canvas movement](https://publish.obsidian.md/advanced-uri-doc/actions/canvas)
 - and much more
 
 Please read the [documentation](https://publish.obsidian.md/advanced-uri-doc) for a detailed explanation.
