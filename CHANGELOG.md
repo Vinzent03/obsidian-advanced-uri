@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.42.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.41.0...1.42.0) (2024-08-01)
+
+
+### Features
+
+* canvas support ([6bf24ea](https://github.com/Vinzent03/obsidian-advanced-uri/commit/6bf24eae66e3dce9a41129c76354eaec23ff8ced)), closes [#177](https://github.com/Vinzent03/obsidian-advanced-uri/issues/177)
+* set cursor to column in line ([414277d](https://github.com/Vinzent03/obsidian-advanced-uri/commit/414277d0edef26348aaed6998e879519fca055c9)), closes [#173](https://github.com/Vinzent03/obsidian-advanced-uri/issues/173)
+
+
+### Bug Fixes
+
+* ignore window openmode on mobile ([03e7005](https://github.com/Vinzent03/obsidian-advanced-uri/commit/03e7005fa35e3aae21c9e66edb90a7f956384633)), closes [#169](https://github.com/Vinzent03/obsidian-advanced-uri/issues/169)
+* remove useless console.log ([4db3143](https://github.com/Vinzent03/obsidian-advanced-uri/commit/4db314317af3a13a16cf043636c4561e1c2117d3))
+
 ## [1.41.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.40.1...1.41.0) (2024-07-07)
 
 
