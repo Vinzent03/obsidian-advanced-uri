@@ -40,6 +40,10 @@ declare module "obsidian" {
             enablePluginAndSave(plugin: string): void;
             disablePluginAndSave(plugin: string): void;
             getPlugin(plugin: string): Plugin | null;
+            checkForUpdates(): Promise<void>;
+            updates: {
+                [key: string]: {};
+            };
         };
         internalPlugins: {
             getEnabledPluginById(plugin: String): Plugin;
@@ -71,7 +75,7 @@ declare module "obsidian" {
     }
 
     interface View {
-        file: TFile;
+        file?: TFile;
     }
     interface FileView {
         currentMode: {

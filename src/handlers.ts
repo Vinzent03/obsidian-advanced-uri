@@ -564,11 +564,9 @@ export default class Handlers {
 
     async handleUpdatePlugins(parameters: Parameters) {
         new Notice("Checking for updates…");
-        await app.plugins.checkForUpdates();
+        await this.app.plugins.checkForUpdates();
 
-        const updateCount = Object.keys(
-            (this.app as any).plugins.updates
-        ).length;
+        const updateCount = Object.keys(this.app.plugins.updates).length;
         if (updateCount > 0) {
             parameters.settingid = "community-plugins";
             this.handleOpenSettings(parameters);
