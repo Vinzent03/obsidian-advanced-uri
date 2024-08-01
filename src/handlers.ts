@@ -1,12 +1,19 @@
-import { FileView, MarkdownView, Notice, TAbstractFile, TFile } from "obsidian";
+import {
+    FileView,
+    MarkdownView,
+    Notice,
+    TAbstractFile,
+    TFile,
+    View,
+} from "obsidian";
 import AdvancedURI from "./main";
 import { EnterDataModal } from "./modals/enter_data_modal";
 import { FileModal } from "./modals/file_modal";
 import Tools from "./tools";
-import { Parameters } from "./types";
+import { CanvasView, Parameters } from "./types";
 import { copyText, getAlternativeFilePath } from "./utils";
 export default class Handlers {
-    constructor(private readonly plugin: AdvancedURI) { }
+    constructor(private readonly plugin: AdvancedURI) {}
     app = this.plugin.app;
     public get tools(): Tools {
         return this.plugin.tools;
@@ -163,7 +170,10 @@ export default class Handlers {
                         editor.setValue("");
                     }
                 }
-            } else if (parameters.line != undefined || parameters.column != undefined) {
+            } else if (
+                parameters.line != undefined ||
+                parameters.column != undefined
+            ) {
                 await this.plugin.open({
                     file: parameters.filepath,
                     mode: "source",
@@ -233,7 +243,10 @@ export default class Handlers {
                         editor.setValue("");
                     }
                 }
-            } else if (parameters.line != undefined || parameters.column != undefined) {
+            } else if (
+                parameters.line != undefined ||
+                parameters.column != undefined
+            ) {
                 await this.plugin.open({
                     file: parameters.filepath,
                     mode: "source",
@@ -430,7 +443,10 @@ export default class Handlers {
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
             });
-            if (parameters.line != undefined || parameters.column != undefined) {
+            if (
+                parameters.line != undefined ||
+                parameters.column != undefined
+            ) {
                 await this.plugin.setCursorInLine(parameters);
             }
         }
@@ -550,7 +566,9 @@ export default class Handlers {
         new Notice("Checking for updates…");
         await app.plugins.checkForUpdates();
 
-        const updateCount = Object.keys((this.app as any).plugins.updates).length;
+        const updateCount = Object.keys(
+            (this.app as any).plugins.updates
+        ).length;
         if (updateCount > 0) {
             parameters.settingid = "community-plugins";
             this.handleOpenSettings(parameters);
@@ -574,5 +592,64 @@ export default class Handlers {
             openMode = parameters.openmode;
         }
         bookmarksPlugin.openBookmark(bookmark, openMode as any);
+    }
+
+    async handleCanvas(parameters: Parameters) {
+        if (parameters.filepath) {
+            await this.plugin.open({
+                file: parameters.filepath,
+                setting: this.plugin.settings.openFileWithoutWriteInNewPane,
+                parameters: parameters,
+            });
+        }
+        const activeView = (this.app.workspace as any).activeLeaf.view as View;
+        if (activeView.getViewType() != "canvas") {
+            new Notice("Active view is not a canvas");
+            return;
+        }
+        const canvasView = activeView as CanvasView;
+        if (parameters.canvasnodes) {
+            const ids = parameters.canvasnodes.split(",");
+            const nodes = canvasView.canvas.nodes;
+            const selectedNodes = ids.map((id) => nodes.get(id));
+            const selection = canvasView.canvas.selection;
+
+            canvasView.canvas.updateSelection(() => {
+                for (const node of selectedNodes) {
+                    selection.add(node);
+                }
+            });
+
+            canvasView.canvas.zoomToSelection();
+        }
+        if (parameters.canvasviewport) {
+            const [x, y, zoom] = parameters.canvasviewport.split(",");
+            if (x != "-") {
+                if (x.startsWith("--") || x.startsWith("++")) {
+                    const tx = canvasView.canvas.tx + Number(x.substring(1));
+                    canvasView.canvas.tx = tx;
+                } else {
+                    canvasView.canvas.tx = Number(x);
+                }
+            }
+            if (y != "-") {
+                if (y.startsWith("--") || y.startsWith("++")) {
+                    const ty = canvasView.canvas.ty + Number(y.substring(1));
+                    canvasView.canvas.ty = ty;
+                } else {
+                    canvasView.canvas.ty = Number(y);
+                }
+            }
+            if (zoom != "-") {
+                if (zoom.startsWith("--") || zoom.startsWith("++")) {
+                    const tZoom =
+                        canvasView.canvas.tZoom + Number(zoom.substring(1));
+                    canvasView.canvas.tZoom = tZoom;
+                } else {
+                    canvasView.canvas.tZoom = Number(zoom);
+                }
+            }
+            canvasView.canvas.markViewportChanged();
+        }
     }
 }

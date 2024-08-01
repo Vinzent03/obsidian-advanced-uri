@@ -9,6 +9,7 @@ import {
     Plugin,
     TFile,
     TFolder,
+    View,
 } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import {
@@ -30,6 +31,7 @@ import { SettingsTab } from "./settings";
 import Tools from "./tools";
 import {
     AdvancedURISettings,
+    CanvasView,
     FileModalData,
     HookParameters,
     OpenMode,
@@ -130,6 +132,58 @@ export default class AdvancedURI extends Plugin {
             callback: () => {
                 const modal = new WorkspaceModal(this);
                 modal.open();
+            },
+        });
+
+        this.addCommand({
+            id: "copy-uri-canvas-node",
+            name: "Copy URI for selected canvas nodes",
+            checkCallback: (checking) => {
+                const activeView = (this.app.workspace as any).activeLeaf
+                    .view as View;
+                if (checking) {
+                    return (
+                        activeView.getViewType() === "canvas" &&
+                        (activeView as CanvasView).canvas.selection.size > 0
+                    );
+                }
+                if (activeView.getViewType() !== "canvas") return false;
+
+                const canvasView = activeView as CanvasView;
+
+                let ids: string[] = [];
+                canvasView.canvas.selection.forEach((node) => {
+                    ids.push(node.id);
+                });
+
+                this.tools.copyURI({
+                    canvasnodes: ids.join(","),
+                    filepath: activeView.file.path,
+                });
+            },
+        });
+
+        this.addCommand({
+            id: "copy-uri-canvas-viewport",
+            name: "Copy URI for current canvas viewport",
+            checkCallback: (checking) => {
+                const activeView = (this.app.workspace as any).activeLeaf
+                    .view as View;
+                if (checking) {
+                    return activeView.getViewType() === "canvas";
+                }
+                if (activeView.getViewType() !== "canvas") return false;
+
+                const canvasView = activeView as CanvasView;
+
+                const canvas = canvasView.canvas;
+                const tx = canvas.tx.toFixed(0),
+                    ty = canvas.ty.toFixed(0),
+                    tZoom = canvas.tZoom.toFixed(3);
+                this.tools.copyURI({
+                    filepath: activeView.file.path,
+                    canvasviewport: `${tx},${ty},${tZoom}`,
+                });
             },
         });
 
@@ -279,6 +333,8 @@ export default class AdvancedURI extends Plugin {
             this.handlers.handleEval(parameters);
         } else if (parameters.filepath && parameters.exists === "true") {
             this.handlers.handleDoesFileExist(parameters);
+        } else if (parameters.canvasnodes || parameters.canvasviewport) {
+            this.handlers.handleCanvas(parameters);
         } else if (parameters.data) {
             this.handlers.handleWrite(parameters, createdDailyNote);
         } else if (parameters.filepath && parameters.heading) {
@@ -470,7 +526,10 @@ export default class AdvancedURI extends Plugin {
                 setting: this.settings.openFileOnWriteInNewPane,
                 parameters,
             });
-            if (parameters.line != undefined || parameters.column != undefined) {
+            if (
+                parameters.line != undefined ||
+                parameters.column != undefined
+            ) {
                 await this.setCursorInLine(parameters);
             }
         }
@@ -599,12 +658,18 @@ export default class AdvancedURI extends Plugin {
         if (!view) return;
         const viewState = view.leaf.getViewState();
 
-        const rawLine = parameters.line != undefined ? Number(parameters.line) : undefined;
-        const rawColumn = parameters.column ? Number(parameters.column) : undefined;
+        const rawLine =
+            parameters.line != undefined ? Number(parameters.line) : undefined;
+        const rawColumn = parameters.column
+            ? Number(parameters.column)
+            : undefined;
         viewState.state.mode = "source";
         await view.leaf.setViewState(viewState);
 
-        const line = rawLine != undefined ? Math.min(rawLine - 1, view.editor.lineCount() - 1) : view.editor.getCursor().line;
+        const line =
+            rawLine != undefined
+                ? Math.min(rawLine - 1, view.editor.lineCount() - 1)
+                : view.editor.getCursor().line;
         const maxColumn = view.editor.getLine(line).length - 1;
         const column = Math.min(rawColumn - 1, maxColumn);
         view.editor.focus();

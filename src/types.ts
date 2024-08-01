@@ -1,4 +1,5 @@
-import { PaneType } from "obsidian";
+import { PaneType, View } from "obsidian";
+import { CanvasNodeData } from "obsidian/canvas";
 
 declare module "obsidian" {
     interface App {
@@ -146,6 +147,19 @@ export interface Parameters {
     frontmatterkey?: string;
     eval?: string;
     bookmark?: string;
+    /**
+     * A list of comma separated node ids
+     */
+    canvasnodes?: string;
+    /**
+     * x,y,zoom split by `,`
+     * To keep current value a `-` can be used
+     * To alter a value by a number use `++` or `-` before the number
+     * @example
+     * 0,0,1 to reset to default
+     * --50,++25,- to decrease x by 50, increase y by 25 and keep current zoom
+     */
+    canvasviewport?: string;
 }
 
 export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";
@@ -159,4 +173,21 @@ export interface SearchModalData {
     source: string;
     display: string;
     isRegEx: boolean;
+}
+
+export interface CanvasView extends View {
+    canvas: {
+        selection: Set<CanvasNodeData>;
+        zoomToSelection(): void;
+        nodes: Map<string, CanvasNodeData>;
+        select(node: CanvasNodeData): void;
+        /*
+         * Update `selection` in `func`
+         */
+        updateSelection(func: () => void): void;
+        tx: number;
+        ty: number;
+        tZoom: number;
+        markViewportChanged(): void;
+    };
 }
