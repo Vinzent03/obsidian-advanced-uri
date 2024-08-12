@@ -677,6 +677,13 @@ export default class AdvancedURI extends Plugin {
             line: line,
             ch: column ?? maxColumn,
         });
+        view.editor.scrollIntoView(
+            {
+                from: { line: line, ch: column ?? maxColumn },
+                to: { line: line, ch: column ?? maxColumn },
+            },
+            true
+        );
 
         await new Promise((resolve) => setTimeout(resolve, 10));
 
