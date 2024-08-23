@@ -164,6 +164,7 @@ export interface Parameters {
      * --50,++25,- to decrease x by 50, increase y by 25 and keep current zoom
      */
     canvasviewport?: string;
+    confirm?: string;
 }
 
 export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";

@@ -196,12 +196,22 @@ export default class Handlers {
             for (const command in rawCommands) {
                 if (rawCommands[command].name === parameters.commandname) {
                     if (rawCommands[command].callback) {
-                        rawCommands[command].callback();
+                        await rawCommands[command].callback();
                     } else {
                         rawCommands[command].checkCallback(false);
                     }
                     break;
                 }
+            }
+        }
+
+        if (parameters.confirm && parameters.confirm != "false") {
+            await new Promise((r) => setTimeout(r, 750));
+            const button = document.querySelector(
+                ".mod-cta:not([style*='display: none'])"
+            ) as any;
+            if (button.click instanceof Function) {
+                button.click();
             }
         }
         this.plugin.success(parameters);
