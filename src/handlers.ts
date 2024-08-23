@@ -127,7 +127,11 @@ export default class Handlers {
                 workspaces.saveWorkspace(active);
                 new Notice(`Saved current workspace to ${active}`);
             }
-            if (parameters.workspace != undefined) {
+            if (parameters.clipboard && parameters.clipboard != "false") {
+                this.tools.copyURI({
+                    workspace: workspaces.activeWorkspace,
+                });
+            } else if (parameters.workspace != undefined) {
                 workspaces.loadWorkspace(parameters.workspace);
             }
             this.plugin.success(parameters);

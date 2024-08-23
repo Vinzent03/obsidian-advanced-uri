@@ -55,9 +55,9 @@ declare module "obsidian" {
                 getBookmarks(): Bookmark[];
             } | null;
             getEnabledPluginById(plugin: "workspaces"): {
-                activeWorkspace: Workspace;
+                activeWorkspace: string;
                 workspaces: { [key: string]: any };
-                saveWorkspace(workspace: Workspace): void;
+                saveWorkspace(workspace: string): void;
                 loadWorkspace(workspace: string): void;
             } | null;
             plugins: {
@@ -145,7 +145,7 @@ export interface Parameters {
      * @deprecated Use "openMode" instead
      */
     newpane?: "true" | "false";
-    clipboard?: "true";
+    clipboard?: string;
     "enable-plugin"?: string;
     "disable-plugin"?: string;
     frontmatterkey?: string;
