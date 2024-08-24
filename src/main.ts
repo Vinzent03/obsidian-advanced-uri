@@ -528,7 +528,8 @@ export default class AdvancedURI extends Plugin {
             });
             if (
                 parameters.line != undefined ||
-                parameters.column != undefined
+                parameters.column != undefined ||
+                parameters.offset != undefined
             ) {
                 await this.setCursorInLine(parameters);
             }
@@ -666,21 +667,28 @@ export default class AdvancedURI extends Plugin {
         viewState.state.mode = "source";
         await view.leaf.setViewState(viewState);
 
-        const line =
-            rawLine != undefined
-                ? Math.min(rawLine - 1, view.editor.lineCount() - 1)
-                : view.editor.getCursor().line;
-        const maxColumn = view.editor.getLine(line).length - 1;
-        const column = Math.min(rawColumn - 1, maxColumn);
+        let line: number, column: number;
+        if (parameters.offset != undefined) {
+            const pos = view.editor.offsetToPos(Number(parameters.offset));
+            line = pos.line;
+            column = pos.ch;
+        } else {
+            line =
+                rawLine != undefined
+                    ? Math.min(rawLine - 1, view.editor.lineCount() - 1)
+                    : view.editor.getCursor().line;
+            const maxColumn = view.editor.getLine(line).length - 1;
+            column = Math.min(rawColumn - 1, maxColumn);
+        }
         view.editor.focus();
         view.editor.setCursor({
             line: line,
-            ch: column ?? maxColumn,
+            ch: column,
         });
         view.editor.scrollIntoView(
             {
-                from: { line: line, ch: column ?? maxColumn },
-                to: { line: line, ch: column ?? maxColumn },
+                from: { line: line, ch: column },
+                to: { line: line, ch: column },
             },
             true
         );

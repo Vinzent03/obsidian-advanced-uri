@@ -11,6 +11,7 @@
 | save current workspace         | saveworkspace=true              | Saves the current workspace. (Can be combined with `workspace` to open a new workspace afterwards)                              |     |
 | file                           | <identification\>               | Opens file                                                                                                                      |     |
 | line and/or column in file     | <identification\>, line, column | Opens `column` in `line` in file (1 indexed)                                                                                    |     |
+| offset in file                 | <identification\>, offset       | Sets the cursor at `offset` in file. Offset is the character count from the start                                               |
 | heading in file                | <identification\>, heading      | Opens the `heading` in file                                                                                                     |     |
 | block reference in file        | <identification\>, block        | Opens the `block` in file                                                                                                       |     |
 | global block reference         | block                           | Searches the whole vault for that block id and uses that file for <identification\>                                             |     |

@@ -176,7 +176,8 @@ export default class Handlers {
                 }
             } else if (
                 parameters.line != undefined ||
-                parameters.column != undefined
+                parameters.column != undefined ||
+                parameters.offset != undefined
             ) {
                 await this.plugin.open({
                     file: parameters.filepath,
@@ -259,7 +260,8 @@ export default class Handlers {
                 }
             } else if (
                 parameters.line != undefined ||
-                parameters.column != undefined
+                parameters.column != undefined ||
+                parameters.offset != undefined
             ) {
                 await this.plugin.open({
                     file: parameters.filepath,
@@ -459,7 +461,8 @@ export default class Handlers {
             });
             if (
                 parameters.line != undefined ||
-                parameters.column != undefined
+                parameters.column != undefined ||
+                parameters.offset != undefined
             ) {
                 await this.plugin.setCursorInLine(parameters);
             }

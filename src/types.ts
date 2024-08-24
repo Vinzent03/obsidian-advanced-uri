@@ -165,6 +165,7 @@ export interface Parameters {
      */
     canvasviewport?: string;
     confirm?: string;
+    offset?: string;
 }
 
 export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";
