@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.43.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.42.0...1.43.0) (2024-08-25)
+
+
+### Features
+
+* add confirm parameter to command uris ([147be01](https://github.com/Vinzent03/obsidian-advanced-uri/commit/147be01e2dafa51867a66c7854d32eb2634cdfa4)), closes [#174](https://github.com/Vinzent03/obsidian-advanced-uri/issues/174)
+* center cursor in line ([e941beb](https://github.com/Vinzent03/obsidian-advanced-uri/commit/e941beb8bd968f8f41c0ce37e176379b9c4c22ef)), closes [#183](https://github.com/Vinzent03/obsidian-advanced-uri/issues/183)
+* copy URI for current workspace ([58f92ea](https://github.com/Vinzent03/obsidian-advanced-uri/commit/58f92eaafa12999c8df08196d4802a860503a207)), closes [#42](https://github.com/Vinzent03/obsidian-advanced-uri/issues/42)
+* set cursor at offset ([0d450ca](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0d450ca3270753ad6114f07146a73fe401ce3add)), closes [#181](https://github.com/Vinzent03/obsidian-advanced-uri/issues/181)
+* support openmode for command without file ([42df2cc](https://github.com/Vinzent03/obsidian-advanced-uri/commit/42df2cc85ec9048908f61b8cf4afe16e286cf917)), closes [#163](https://github.com/Vinzent03/obsidian-advanced-uri/issues/163)
+
 ## [1.42.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.41.0...1.42.0) (2024-08-01)
 
 
