@@ -10,6 +10,7 @@ import {
     TFile,
     TFolder,
     View,
+    WorkspaceLeaf,
 } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import {
@@ -41,7 +42,7 @@ import {
 import {
     getEndAndBeginningOfHeading,
     getFileUri,
-    getViewStateFromMode,
+    getViewStateFromMode as getOpenViewStateFromMode,
 } from "./utils";
 import { WorkspaceModal } from "./modals/workspace_modal";
 
@@ -543,12 +544,13 @@ export default class AdvancedURI extends Plugin {
         supportPopover,
         mode,
     }: {
-        file: string | TFile;
+        file?: string | TFile;
         setting?: boolean;
         parameters: Parameters;
         supportPopover?: boolean;
         mode?: "source";
-    }): Promise<void> {
+    }): Promise<WorkspaceLeaf | undefined> {
+        let leaf: WorkspaceLeaf;
         if (parameters.openmode == "popover" && (supportPopover ?? true)) {
             const hoverEditor =
                 this.app.plugins.plugins["obsidian-hover-editor"];
@@ -559,20 +561,12 @@ export default class AdvancedURI extends Plugin {
                 this.failure(parameters);
             }
 
-            const leaf = hoverEditor.spawnPopover(undefined, () => {
-                this.app.workspace.setActiveLeaf(leaf, { focus: true });
+            await new Promise<void>((resolve) => {
+                leaf = hoverEditor.spawnPopover(undefined, () => {
+                    this.app.workspace.setActiveLeaf(leaf, { focus: true });
+                    resolve();
+                });
             });
-
-            let tFile: TFile;
-            if (file instanceof TFile) {
-                tFile = file;
-            } else {
-                tFile = this.app.vault.getAbstractFileByPath(
-                    getLinkpath(file)
-                ) as TFile;
-            }
-
-            await leaf.openFile(tFile);
         } else {
             let openMode: OpenMode | boolean = setting;
             if (parameters.newpane !== undefined) {
@@ -603,26 +597,57 @@ export default class AdvancedURI extends Plugin {
                 openMode = true;
             }
 
-            let fileIsAlreadyOpened = false;
-            if (isBoolean(openMode)) {
-                this.app.workspace.iterateAllLeaves((leaf) => {
-                    if (leaf.view.file?.path === parameters.filepath) {
-                        if (fileIsAlreadyOpened && leaf.width == 0) return;
-                        fileIsAlreadyOpened = true;
+            if (file != undefined) {
+                let fileIsAlreadyOpened = false;
+                if (isBoolean(openMode)) {
+                    this.app.workspace.iterateAllLeaves((existingLeaf) => {
+                        if (
+                            existingLeaf.view.file?.path === parameters.filepath
+                        ) {
+                            if (fileIsAlreadyOpened && existingLeaf.width == 0)
+                                return;
+                            fileIsAlreadyOpened = true;
 
-                        this.app.workspace.setActiveLeaf(leaf, { focus: true });
-                    }
-                });
+                            this.app.workspace.setActiveLeaf(existingLeaf, {
+                                focus: true,
+                            });
+                            leaf = existingLeaf;
+                        }
+                    });
+                }
             }
-            return this.app.workspace.openLinkText(
-                file instanceof TFile ? file.path : file,
+            if (!leaf) {
+                leaf = this.app.workspace.getLeaf(openMode);
+                this.app.workspace.setActiveLeaf(leaf, { focus: true });
+            }
+        }
+        if (file instanceof TFile) {
+            await leaf.openFile(file);
+        } else if (file != undefined) {
+            await this.app.workspace.openLinkText(
+                file,
                 "/",
-                fileIsAlreadyOpened ? false : openMode,
+                false,
                 mode != undefined
                     ? { state: { mode: mode } }
-                    : getViewStateFromMode(parameters)
+                    : getOpenViewStateFromMode(parameters)
             );
         }
+
+        if (leaf.view instanceof MarkdownView) {
+            const viewState = leaf.getViewState();
+            if (mode != undefined) {
+                viewState.state.mode = mode;
+            } else {
+                viewState.state = {
+                    ...viewState.state,
+                    ...getOpenViewStateFromMode(parameters).state,
+                };
+            }
+            await leaf.setViewState(viewState);
+        }
+
+        return leaf;
     }
 
     async setCursor(parameters: Parameters) {

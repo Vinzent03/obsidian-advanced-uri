@@ -1,8 +1,10 @@
-import { App, Notice, TFile } from "obsidian";
+import { App, Notice, OpenViewState, TFile } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { Parameters } from "./types";
 
-export function getViewStateFromMode(parameters: Parameters) {
+export function getViewStateFromMode(
+    parameters: Parameters
+): OpenViewState | undefined {
     return parameters.viewmode
         ? {
               state: {

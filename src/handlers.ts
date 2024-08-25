@@ -193,6 +193,11 @@ export default class Handlers {
                     parameters: parameters,
                 });
             }
+        } else if (parameters.openmode || parameters.viewmode) {
+            // Open a new leaf without a file. For example in a new window or split
+            await this.plugin.open({
+                parameters: parameters,
+            });
         }
         if (parameters.commandid) {
             this.app.commands.executeCommandById(parameters.commandid);
