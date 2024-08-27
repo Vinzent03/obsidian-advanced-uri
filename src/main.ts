@@ -641,7 +641,7 @@ export default class AdvancedURI extends Plugin {
             } else {
                 viewState.state = {
                     ...viewState.state,
-                    ...getOpenViewStateFromMode(parameters).state,
+                    ...getOpenViewStateFromMode(parameters)?.state,
                 };
             }
             await leaf.setViewState(viewState);
