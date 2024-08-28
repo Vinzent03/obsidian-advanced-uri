@@ -15,13 +15,13 @@ sidebar_position: 2
 键值对`myKey=Hello World` 需要被编码如下：
 
 ```uri
-obsidian://advanced-uri?myKey=Hello%20World
+obsidian://adv-uri?myKey=Hello%20World
 ```
 
 如需使用`xdg-open`启动 URI，你需要将值编码两次
 
 ```uri
-obsidian://advanced-uri?myKey=Hello%2520World
+obsidian://adv-uri?myKey=Hello%20World
 ```
 
 可以注意到，此处`%`被`%25`取代了

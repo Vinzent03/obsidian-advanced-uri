@@ -24,25 +24,25 @@ sidebar_position: 2
 **写入** "Hello World" 到 "my-file.md":
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%2520World
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World
 ```
 
 **覆写** "This text is overwritten" 到 "my-file.md":
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=This%2520text%2520is%2520overwritten&mode=overwrite
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&data=This%20text%20is%20overwritten&mode=overwrite
 ```
 
 **追加** "Hello World" 到今天的 **日记**:
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%2520World&mode=append
+obsidian://adv-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append
 ```
 
 从**剪贴板追加** 内容到 **daily note**:
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
+obsidian://adv-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
 ```
 
 :::info

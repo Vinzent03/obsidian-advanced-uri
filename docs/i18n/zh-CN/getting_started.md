@@ -19,7 +19,7 @@ sidebar_position: 3
 如 [架构](Concepts/Schema.md) 中所述，每个 URI 都必须以 `obsidian://advanced-uri`开头。有关更详细的说明，请参阅 [架构](Concepts/Schema.md)。我们最终得到的 URI 如下所示。
 
 ```uri
-obsidian://advanced-uri?filepath=Home%20Index%2Ftoday
+obsidian://adv-uri?filepath=Home%20Index%2Ftoday
 ```
 
 ## 启动 URI
@@ -35,7 +35,7 @@ obsidian://advanced-uri?filepath=Home%20Index%2Ftoday
 你可以在 Obsidian 内部启动一个 ObsidianURI. 因为`obsidian://`是一个自定义的连接方式，它不会被直接认为是一个链接。我们可以通过将他涵盖在一个 markdown 链接里来修复这一点。
 
 ```md
-[This here is shown](obsidian://advanced-uri?filepath=Home%20Index%2Ftoday)
+[This here is shown](obsidian://adv-uri?filepath=Home%20Index%2Ftoday)
 ```
 
 ### 终端
@@ -45,7 +45,7 @@ obsidian://advanced-uri?filepath=Home%20Index%2Ftoday
 对于`xdg-open`来说整个 URI 编码需要编译两次.查看[编码](Concepts/Encoding.md)来获得更多信息
 
 ```bash
-xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
+xdg-open "obsidian://adv-uri?filepath=Home%20Index%2Ftoday"
 ```
 
 #### Mac
@@ -53,5 +53,5 @@ xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
 你可以使用 Mac 的 shell 命令`open`来启动 Obsidian，并使用`--background`参数来让 Obsidian 在后台运行。
 
 ```bash
-open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=my-data"
+open --background "obsidian://adv-uri?vault=my-vault&filename=my-file&data=my-data"
 ```

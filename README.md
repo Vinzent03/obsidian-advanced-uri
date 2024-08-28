@@ -27,17 +27,17 @@ Please read the [documentation](https://publish.obsidian.md/advanced-uri-doc) fo
 
 ### Append content from the clipboard to today's daily note
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
+obsidian://adv-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
 ```
 
-### Call a command
+### Export a file to PDF by calling the command "Export to PDF" via its command ID
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&filepath=<your-file>&commandid=workspace%253Aclose
+obsidian://adv-uri?vault=<your-vault>&filepath=<your-file>&commandid=workspace%3Aexport-pdf
 ```
 
 ### Open heading in a file
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&heading=Goal
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&heading=Goal
 ```
 
 If you find this plugin useful and would like to support its development, you can support me on [Ko-fi](https://Ko-fi.com/Vinzent).

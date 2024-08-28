@@ -16,6 +16,6 @@ For more openmodes, see [open mode](../concepts/navigation_parameters.md#open-mo
 
 :::note Example
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&bookmark=<your-bookmark-title>&openmode=tab
+obsidian://adv-uri?vault=<your-vault>&bookmark=<your-bookmark-title>&openmode=tab
 ```
 :::

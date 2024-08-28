@@ -72,8 +72,8 @@ export default class Tools {
         return await this.writeUIDToFile(file, uuidv4());
     }
 
-    async generateURI(parameters: Parameters, doubleEncode: boolean) {
-        const prefix = "obsidian://advanced-uri";
+    async generateURI(parameters: Parameters) {
+        const prefix = "obsidian://adv-uri";
         let suffix = "";
         const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
         if (this.settings.includeVaultName) {
@@ -114,15 +114,14 @@ export default class Tools {
                 )}`;
             }
         }
-        if (doubleEncode) {
-            return prefix + encodeURI(suffix);
-        } else {
-            return prefix + suffix;
-        }
+        // When the URI gets decoded, the %20 at the end gets somehow removed.
+        // Adding a trailing & to prevent this.
+        if(suffix.endsWith("%20")) suffix += "&";
+        return prefix + suffix;
     }
 
     async copyURI(parameters: Parameters) {
-        const uri = await this.generateURI(parameters, true);
+        const uri = await this.generateURI(parameters);
         await copyText(uri);
 
         new Notice("Advanced URI copied to your clipboard");

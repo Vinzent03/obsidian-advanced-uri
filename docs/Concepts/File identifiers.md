@@ -48,18 +48,18 @@ There are multiple ways to identify a file:
 
 ## Examples
 1)
-`obsidian://advanced-uri?&filepath=Inbox`
+`obsidian://adv-uri?&filepath=Inbox`
 This will open a note "Inbox" in your Obsidian vault even if there is no Inbox note present in your vault.
 
 2)
-`obsidian://advanced-uri?daily=true&heading=Inbox`
+`obsidian://adv-uri?daily=true&heading=Inbox`
 This will open your daily note and place the cursor under Inbox heading if there is one.
 Sample image: [image](https://user-images.githubusercontent.com/95166364/205477904-dc974487-65e7-4480-a99b-d9ab0b1a2536.png)
 
 3)
 Suppose you have a note called Inbox which has an alias "Brain Dumps". Now comes the use case for the `filename` parameter.
 Use this command
-`obsidian://advanced-uri?filename=Brain%20Dumps`
+`obsidian://adv-uri?filename=Brain%20Dumps`
 Example : [image](https://user-images.githubusercontent.com/95166364/205478454-b6949bf6-cf8c-4218-abaa-3d1bf22bfc1e.png)
 
 

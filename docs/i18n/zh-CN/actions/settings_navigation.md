@@ -43,7 +43,7 @@ sidebar_position: 6
 :::note Example
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&settingid=editor
+obsidian://adv-uri?vault=<your-vault>&settingid=editor
 ```
 
 :::

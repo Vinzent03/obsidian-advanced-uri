@@ -44,5 +44,5 @@ my_item:
 **完整示例：**
 
 ```
-obsidian://advanced-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]
 ```

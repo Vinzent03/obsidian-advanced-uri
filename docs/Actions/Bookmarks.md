@@ -10,5 +10,5 @@ For more openmodes, see [open mode](Navigation%20Parameters.md#open-mode).
 
 > [!example]
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&bookmark=<your-bookmark-title>&openmode=tab
+> obsidian://adv-uri?vault=<your-vault>&bookmark=<your-bookmark-title>&openmode=tab
 > ```

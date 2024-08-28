@@ -188,89 +188,26 @@ export default class AdvancedURI extends Plugin {
             },
         });
 
+        // Old version, which needed each value to be encoded twice
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
             const parameters = e as unknown as Parameters;
 
-            /** Allows writing to new created daily note without any `Parameters.mode` */
-            let createdDailyNote = false;
             for (const parameter in parameters) {
                 (parameters as any)[parameter] = decodeURIComponent(
                     (parameters as any)[parameter]
                 );
             }
-            this.lastParameters = { ...parameters };
-            if (parameters.uid) {
-                const res = this.tools.getFileFromUID(parameters.uid)?.path;
-                if (res != undefined) {
-                    parameters.filepath = res;
-                    parameters.uid = undefined;
-                }
-            } else if (parameters.filename) {
-                let file = this.app.metadataCache.getFirstLinkpathDest(
-                    parameters.filename,
-                    ""
-                );
-                if (!file) {
-                    file = this.app.vault
-                        .getMarkdownFiles()
-                        .find((file) =>
-                            parseFrontMatterAliases(
-                                this.app.metadataCache.getFileCache(file)
-                                    .frontmatter
-                            )?.includes(parameters.filename)
-                        );
-                }
-                const parentFolder = this.app.fileManager.getNewFileParent(
-                    this.app.workspace.getActiveFile()?.path
-                );
-                const parentFolderPath = parentFolder.isRoot()
-                    ? ""
-                    : parentFolder.path + "/";
-                parameters.filepath =
-                    file?.path ??
-                    parentFolderPath + normalizePath(parameters.filename);
-            }
-            if (parameters.filepath) {
-                parameters.filepath = normalizePath(parameters.filepath);
-                const index = parameters.filepath.lastIndexOf(".");
-                const extension = parameters.filepath.substring(
-                    index < 0 ? parameters.filepath.length : index
-                );
 
-                if (extension === "") {
-                    parameters.filepath = parameters.filepath + ".md";
-                }
-            } else if (parameters.daily === "true") {
-                if (!appHasDailyNotesPluginLoaded()) {
-                    new Notice("Daily notes plugin is not loaded");
-                    return;
-                }
-                const moment = window.moment(Date.now());
-                const allDailyNotes = getAllDailyNotes();
-                let dailyNote = getDailyNote(moment, allDailyNotes);
-                if (!dailyNote) {
-                    /// Prevent daily note from being created on existing check
-                    if (parameters.exists === "true") {
-                        parameters.filepath = await getDailyNotePath(moment);
-                    } else {
-                        dailyNote = await createDailyNote(moment);
-
-                        // delay to let Obsidian index and generate CachedMetadata
-                        await new Promise((r) => setTimeout(r, 500));
-
-                        createdDailyNote = true;
-                    }
-                }
-                if (dailyNote !== undefined) {
-                    parameters.filepath = dailyNote.path;
-                }
-            }
-            if (parameters.clipboard === "true") {
-                parameters.data = await navigator.clipboard.readText();
-            }
-
-            this.chooseHandler(parameters, createdDailyNote);
+            this.onUriCall(parameters);
         });
+
+        // New version starting with v1.44.0
+        this.registerObsidianProtocolHandler("adv-uri", async (e) => {
+            const parameters = e as unknown as Parameters;
+
+            this.onUriCall(parameters);
+        });
+
         this.registerObsidianProtocolHandler(
             "hook-get-advanced-uri",
             async (e) => {
@@ -317,6 +254,83 @@ export default class AdvancedURI extends Plugin {
                 });
             })
         );
+    }
+
+    async onUriCall(parameters: Parameters) {
+        /** Allows writing to new created daily note without any `Parameters.mode` */
+        let createdDailyNote = false;
+        this.lastParameters = { ...parameters };
+        if (parameters.uid) {
+            const res = this.tools.getFileFromUID(parameters.uid)?.path;
+            if (res != undefined) {
+                parameters.filepath = res;
+                parameters.uid = undefined;
+            }
+        } else if (parameters.filename) {
+            let file = this.app.metadataCache.getFirstLinkpathDest(
+                parameters.filename,
+                ""
+            );
+            if (!file) {
+                file = this.app.vault
+                    .getMarkdownFiles()
+                    .find((file) =>
+                        parseFrontMatterAliases(
+                            this.app.metadataCache.getFileCache(file)
+                                .frontmatter
+                        )?.includes(parameters.filename)
+                    );
+            }
+            const parentFolder = this.app.fileManager.getNewFileParent(
+                this.app.workspace.getActiveFile()?.path
+            );
+            const parentFolderPath = parentFolder.isRoot()
+                ? ""
+                : parentFolder.path + "/";
+            parameters.filepath =
+                file?.path ??
+                parentFolderPath + normalizePath(parameters.filename);
+        }
+        if (parameters.filepath) {
+            parameters.filepath = normalizePath(parameters.filepath);
+            const index = parameters.filepath.lastIndexOf(".");
+            const extension = parameters.filepath.substring(
+                index < 0 ? parameters.filepath.length : index
+            );
+
+            if (extension === "") {
+                parameters.filepath = parameters.filepath + ".md";
+            }
+        } else if (parameters.daily === "true") {
+            if (!appHasDailyNotesPluginLoaded()) {
+                new Notice("Daily notes plugin is not loaded");
+                return;
+            }
+            const moment = window.moment(Date.now());
+            const allDailyNotes = getAllDailyNotes();
+            let dailyNote = getDailyNote(moment, allDailyNotes);
+            if (!dailyNote) {
+                /// Prevent daily note from being created on existing check
+                if (parameters.exists === "true") {
+                    parameters.filepath = await getDailyNotePath(moment);
+                } else {
+                    dailyNote = await createDailyNote(moment);
+
+                    // delay to let Obsidian index and generate CachedMetadata
+                    await new Promise((r) => setTimeout(r, 500));
+
+                    createdDailyNote = true;
+                }
+            }
+            if (dailyNote !== undefined) {
+                parameters.filepath = dailyNote.path;
+            }
+        }
+        if (parameters.clipboard === "true") {
+            parameters.data = await navigator.clipboard.readText();
+        }
+
+        this.chooseHandler(parameters, createdDailyNote);
     }
 
     async chooseHandler(parameters: Parameters, createdDailyNote: boolean) {
@@ -372,8 +386,7 @@ export default class AdvancedURI extends Plugin {
         const options = {
             title: stripMD(file.name),
             advanceduri: await this.tools.generateURI(
-                { filepath: file.path },
-                false
+                { filepath: file.path }
             ),
             urlkey: "advanceduri",
             fileuri: getFileUri(this.app, file),

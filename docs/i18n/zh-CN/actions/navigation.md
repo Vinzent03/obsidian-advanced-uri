@@ -19,19 +19,19 @@ sidebar_position: 1
 打开“main”**工作区** :
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&workspace=main
+obsidian://adv-uri?vault=<your-vault>&workspace=main
 ```
 
 打开"my-file.md"中 **标题** "Goal" (**注意：** 仅 `Goal`即可，没有语法表示）:
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&heading=Goal
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&heading=Goal
 ```
 
 打开"my-file.md"中 id 为"12345" 的**块** (**注意：** 仅`12345`即可，没有语法标识）:
 
 ```uri
-obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&block=12345
 ```
 
 :::

@@ -17,22 +17,22 @@
 > [!example]
 > **Write** "Hello World" to "my-file.md":
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=Hello%2520World
+> obsidian://adv-uri?vault=<your-vault>&filepath=my-file&data=Hello%20World
 > ```
 > 
 > **Overwrite** "This text is overwritten" to "my-file.md":
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&data=This%2520text%2520is%2520overwritten&mode=overwrite
+> obsidian://adv-uri?vault=<your-vault>&filepath=my-file&data=This%20text%20is%20overwritten&mode=overwrite
 > ```
 > 
 > **Append** "Hello World" to today's **daily note**:
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&daily=true&data=Hello%2520World&mode=append
+> obsidian://adv-uri?vault=<your-vault>&daily=true&data=Hello%20World&mode=append
 > ```
 > 
 > **Append** content from the **clipboard** to today's **daily note**:
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
+> obsidian://adv-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
 > ```
 
 > [!note]

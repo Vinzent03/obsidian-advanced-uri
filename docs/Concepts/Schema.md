@@ -1,13 +1,15 @@
 # Schema
 
-Passing values to the URI is handled like every other URL.
-(Almost) every URI starts with `obsidian://advanced-uri`. Values are set in key value pairs `key=value` separated from the start with `?`. The key value pairs itself are separated with `&`.
+Passing values to the URI is handled like for every other URL.
+(Almost) every URI starts with `obsidian://adv-uri`. Values are set in key value pairs `key=value` separated from the start with `?`. The key value pairs itself are separated with `&`.
 
 An example URI looks like the following:
 
 ```url
-obsidian://advanced-uri?key1=value1&key2=value2
+obsidian://adv-uri?key1=value1&key2=value2
 ```
+
+Prior to version 1.44.0, the URI started with `obsidian://advanced-uri` and needed every value to be encoded twice. This is not necessary anymore.
 
 > [!caution]
 > Make sure your values are properly [encoded](Concepts/Encoding.md)
@@ -20,10 +22,10 @@ obsidian://advanced-uri?key1=value1&key2=value2
 > [!example]
 > Specific vault:
 > ```uri
-> obsidian://advanced-uri?vault=myVault&key1=value1
+> obsidian://adv-uri?vault=myVault&key1=value1
 > ```
 > 
 > Last used vault:
 > ```uri
-> obsidian://advanced-uri?key1=value1
+> obsidian://adv-uri?key1=value1
 > ```

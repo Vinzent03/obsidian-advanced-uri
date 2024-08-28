@@ -14,21 +14,21 @@ The file identification is optional. If left out, the currently opened canvas is
 > 
 > Focus the nodes `abc` and `xyz`
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&canvasnodes=abc%252Cxyz
+> obsidian://adv-uri?vault=<your-vault>&canvasnodes=abc%2Cxyz
 > ```
 > Set x=100, y=-300, zoom=0.5
 > 
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&canvasviewport=100%252C-300%252C0.5
+> obsidian://adv-uri?vault=<your-vault>&canvasviewport=100%2C-300%2C0.5
 > ```
 > 
 > Only set y=-300 and leave other values untouched
 > 
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&canvasviewport=-%252C-300%252C-
+> obsidian://adv-uri?vault=<your-vault>&canvasviewport=-%2C-300%2C-
 > ```
 > 
 > Increase x by 100, subtract y by 300, increase zoom by 0.5
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&canvasviewport=++100%252C--300%252C++0.5
+> obsidian://adv-uri?vault=<your-vault>&canvasviewport=++100%2C--300%2C++0.5
 > ```

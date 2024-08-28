@@ -6,12 +6,12 @@ sidebar_position: 1
 
 传递值给 URI 的方式与其他 URL 方式类似
 
-几乎每一个 URI 都开始于`obsidian://advanced-uri`。值被设置在`?`后的键值对`key=value`中。键值对本身由`&`进行分割
+几乎每一个 URI 都开始于`obsidian://adv-uri`。值被设置在`?`后的键值对`key=value`中。键值对本身由`&`进行分割
 
 例如下面的示例 URI：
 
 ```url
-obsidian://advanced-uri?key1=value1&key2=value2
+obsidian://adv-uri?key1=value1&key2=value2
 ```
 
 :::caution
@@ -26,13 +26,13 @@ obsidian://advanced-uri?key1=value1&key2=value2
 特定库:
 
 ```uri
-obsidian://advanced-uri?vault=myVault&key1=value1
+obsidian://adv-uri?vault=myVault&key1=value1
 ```
 
 最近使用的库:
 
 ```uri
-obsidian://advanced-uri?key1=value1
+obsidian://adv-uri?key1=value1
 ```
 
 :::

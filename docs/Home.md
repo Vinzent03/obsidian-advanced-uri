@@ -18,7 +18,7 @@ You can for example
 I created this [Obsidian](https://obsidian.md) plugin initially to load workspaces per URI.
 I even created a [feature request](https://forum.obsidian.md/t/load-workspace-per-url-scheme/7120) on the forum to add that feature to Obsidian's own URI schema, but I ended up solving it myself with this plugin. 
 
-Since then, many new features were added (most of them from feature requests on [GitHub](https://github.com/Vinzent03/obsidian-advanced-uri)).
+Since then, **many** new features were added (most of them from feature requests on [GitHub](https://github.com/Vinzent03/obsidian-advanced-uri)).
 
 ## External resources
 

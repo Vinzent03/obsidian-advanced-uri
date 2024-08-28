@@ -15,10 +15,10 @@ As you can see, our file path includes a space and a slash. We have to [encode](
 
 ### Construct URI
 
-As stated in the [Schema](Concepts/Schema.md) every URI has to start with `obsidian://advanced-uri`. Please refer to the [Schema](Concepts/Schema.md) for more detailed explanation. Our final URI is the following.
+As stated in the [Schema](Concepts/Schema.md) every URI has to start with `obsidian://adv-uri`. Please refer to the [Schema](Concepts/Schema.md) for more detailed explanation. Our final URI is the following.
 
 ```uri
-obsidian://advanced-uri?filepath=Home%20Index%2Ftoday
+obsidian://adv-uri?filepath=Home%20Index%2Ftoday
 ```
 
 ## Launch URI
@@ -34,29 +34,27 @@ You can simply enter the URI into the search bar. It will ask you to confirm the
 You can launch an Obsidian URI from Obsidian itself. Because `obsidian://` is a more custom protocol, it doesn't recognize it as a link directly. To fix this, wrap it in a markdown link.
 
 ```md
-[This here is shown](obsidian://advanced-uri?filepath=Home%20Index%2Ftoday)
+[This here is shown](obsidian://adv-uri?filepath=Home%20Index%2Ftoday)
 ```
 
 ### Terminal
 
 #### Linux
 
-For `xdg-open` the whole URI has to be encoded twice. See [Encoding](Concepts/Encoding.md) for more details.
-
 ```bash
-xdg-open "obsidian://advanced-uri?filepath=Home%2520Index%252Ftoday"
+xdg-open "obsidian://adv-uri?filepath=Home%20Index%2Ftoday"
 ```
 
 #### Mac
-You can use Mac shell command `open` to launch Obsidian, and with `--background` let Obsidian run in background.
+Use the Mac shell command `open` to launch Obsidian, and with `--background` let Obsidian run in background.
 
 ```bash
-open --background "obsidian://advanced-uri?vault=my-vault&filename=my-file&data=my-data"
+open --background "obsidian://adv-uri?vault=my-vault&filename=my-file&data=my-data"
 ```
 
 #### Windows PowerShell
-You can use the PowerShell command `Start-Process` to launch an Obsidian URI.
+Use the PowerShell command `Start-Process` to launch an Obsidian URI.
 
 ```bash
-Start-Process "obsidian://advanced-uri?&filepath=test"
+Start-Process "obsidian://adv-uri?filepath=test"
 ```

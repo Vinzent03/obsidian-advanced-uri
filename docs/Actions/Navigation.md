@@ -22,23 +22,23 @@
 > Open **workspace** "main":
 >
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&workspace=main
+> obsidian://adv-uri?vault=<your-vault>&workspace=main
 > ```
 >
 > Open **heading** "Goal" in "my-file.md" (**Important:** Without syntax, only `Goal`):
 >
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&heading=Goal
+> obsidian://adv-uri?vault=<your-vault>&filepath=my-file&heading=Goal
 > ```
 >
 > Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `12345`):
 >
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&filepath=my-file&block=12345
+> obsidian://adv-uri?vault=<your-vault>&filepath=my-file&block=12345
 > ```
 >
 > Searches whole vault for **block**-id "12345". Ideally that block id is unique. (**Important:** Without syntax, only `12345`):
 >
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&block=12345
+> obsidian://adv-uri?vault=<your-vault>&block=12345
 > ```

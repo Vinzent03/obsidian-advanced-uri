@@ -8,13 +8,6 @@ Some encoding examples:
 The key `myKey` and value `Hello World` need to be encoded like the following:
 
 ```uri
-obsidian://advanced-uri?myKey=Hello%20World
+obsidian://adv-uri?myKey=Hello%20World
 ```
 
-To launch that URI from terminal with `xdg-open` you have to encode the value twice
-
-```uri
-obsidian://advanced-uri?myKey=Hello%2520World
-```
-
-As you can see `%` gets replaced with `%25`.

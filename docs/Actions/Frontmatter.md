@@ -40,7 +40,7 @@ You can copy values of your frontmatter to the clipboard using a [file identifie
 
 **Complete example:**
 ```
-obsidian://advanced-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]
 ```
 
 ## Write Frontmatter
@@ -72,7 +72,7 @@ my_item:
 ```
 
 ```
-obsidian://advanced-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]&data=NewValue
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]&data=NewValue
 ```
 
 ### Complex Structure
@@ -100,6 +100,6 @@ my_item:
 ```
 
 ```
-obsidian://advanced-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]&data={%22data%22:[2,3]}
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]&data={%22data%22:[2,3]}
 ```
 

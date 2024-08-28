@@ -42,15 +42,15 @@ In addition to navigating to a specific setting, you can also navigate to a spec
 
 > [!example] Example for Obsidian Settings
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&settingid=editor
+> obsidian://adv-uri?vault=<your-vault>&settingid=editor
 > ```
 > ```uri
-> obsidian://advanced-uri?vault=<your-vault>&settingid=editor&settingsection=Behavior
+> obsidian://adv-uri?vault=<your-vault>&settingid=editor&settingsection=Behavior
 > ```
 
 > [!example] Example for Community Plugins Options Page
 > ```uri
-> obsidian://advanced-uri?vault=Manifold-Grace&settingid=<community plugin id>
+> obsidian://adv-uri?vault=Manifold-Grace&settingid=<community plugin id>
 > ```
 
 > [!note] Source
