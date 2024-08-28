@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.44.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.43.0...1.44.0) (2024-08-28)
+
+
+### Features
+
+* new shorter action string without doubled encoding ([026d8e2](https://github.com/Vinzent03/obsidian-advanced-uri/commit/026d8e2736b3b19b76bfdd57b0fbaa4f956fac4f))
+
+
+### Bug Fixes
+
+* open without viewmode parameter ([8fdb789](https://github.com/Vinzent03/obsidian-advanced-uri/commit/8fdb7890ab2119632567f987bcf15e8241a4fdd0))
+
 ## [1.43.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.42.0...1.43.0) (2024-08-25)
 
 
