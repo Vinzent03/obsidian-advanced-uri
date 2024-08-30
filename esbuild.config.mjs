@@ -22,7 +22,7 @@ const context = await esbuild.context({
     sourcemap: prod ? false : "inline",
     treeShaking: true,
     platform: "browser",
-
+    minify: prod,
     outfile: "main.js",
 });
 
