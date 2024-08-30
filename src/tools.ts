@@ -79,9 +79,9 @@ export default class Tools {
         if (this.settings.includeVaultName) {
             suffix += "?vault=";
             if (this.settings.vaultParam == "id" && this.app.appId) {
-                suffix += this.app.appId;
+                suffix += encodeURIComponent(this.app.appId);
             } else {
-                suffix += this.app.vault.getName();
+                suffix += encodeURIComponent(this.app.vault.getName());
             }
         }
         if (
@@ -116,7 +116,7 @@ export default class Tools {
         }
         // When the URI gets decoded, the %20 at the end gets somehow removed.
         // Adding a trailing & to prevent this.
-        if(suffix.endsWith("%20")) suffix += "&";
+        if (suffix.endsWith("%20")) suffix += "&";
         return prefix + suffix;
     }
 
