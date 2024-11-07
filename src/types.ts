@@ -39,7 +39,9 @@ declare module "obsidian" {
             };
             enablePluginAndSave(plugin: string): void;
             disablePluginAndSave(plugin: string): void;
+            /** Returns the plugin instance if enabled and loaded */
             getPlugin(plugin: string): Plugin | null;
+            manifests: Record<string, PluginManifest>;
             checkForUpdates(): Promise<void>;
             updates: {
                 [key: string]: {};

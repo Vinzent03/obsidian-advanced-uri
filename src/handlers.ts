@@ -23,7 +23,10 @@ export default class Handlers {
         if (parameters["enable-plugin"]) {
             const pluginId = parameters["enable-plugin"];
 
-            if (this.app.plugins.getPlugin(pluginId)) {
+            if (
+                pluginId in this.app.plugins.manifests &&
+                !this.app.plugins.getPlugin(pluginId)
+            ) {
                 this.app.plugins.enablePluginAndSave(pluginId);
                 new Notice(`Enabled ${pluginId}`);
             } else if (this.app.internalPlugins.plugins[pluginId]) {
