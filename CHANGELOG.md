@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.44.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.1...1.44.2) (2024-11-07)
+
+
+### Bug Fixes
+
+* enable plugin ([d9b581d](https://github.com/Vinzent03/obsidian-advanced-uri/commit/d9b581dddbfb98c023994c7a640d21638497ecd6))
+
 ### [1.44.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.0...1.44.1) (2024-08-30)
 
 
