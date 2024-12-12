@@ -458,9 +458,14 @@ export default class Handlers {
             const view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (!view) return;
             const cache = this.app.metadataCache.getFileCache(view.file);
-            const block = cache.blocks[parameters.block];
+            const block = cache.blocks[parameters.block.toLowerCase()];
             view.editor.focus();
-            view.editor.setCursor({ line: block.position.start.line, ch: 0 });
+            if (block) {
+                view.editor.setCursor({
+                    line: block.position.start.line,
+                    ch: 0,
+                });
+            }
         } else {
             await this.plugin.open({
                 file: parameters.filepath,
@@ -528,7 +533,7 @@ export default class Handlers {
                     ) {
                         this.tools.copyURI({
                             filepath: view.file.path,
-                            block: blockID,
+                            block: block.id,
                         });
                         return;
                     }

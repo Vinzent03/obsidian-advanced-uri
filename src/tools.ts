@@ -147,6 +147,7 @@ export default class Tools {
     getFileFromBlockID(blockId: string): TFile | undefined {
         const files = this.app.vault.getMarkdownFiles();
 
+        blockId = blockId.toLowerCase();
         for (const file of files) {
             const blockExists =
                 this.app.metadataCache.getFileCache(file)?.blocks?.[blockId] !=
