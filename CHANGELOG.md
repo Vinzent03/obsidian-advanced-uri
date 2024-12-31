@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.44.3](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.2...1.44.3) (2024-12-31)
+
+
+### Bug Fixes
+
+* handle blocks case insensitive ([f2ae357](https://github.com/Vinzent03/obsidian-advanced-uri/commit/f2ae357b4ebacdc85a60c1a3fea526927c2e7051)), closes [#192](https://github.com/Vinzent03/obsidian-advanced-uri/issues/192)
+
 ### [1.44.2](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.1...1.44.2) (2024-11-07)
 
 
