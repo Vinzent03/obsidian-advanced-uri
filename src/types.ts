@@ -122,6 +122,7 @@ export interface Parameters {
     filepath?: string;
     daily?: "true";
     data?: string;
+    separator?: string;
     mode?: "overwrite" | "append" | "prepend" | "new";
     heading?: string;
     block?: string;
