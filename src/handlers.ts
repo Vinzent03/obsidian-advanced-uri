@@ -46,119 +46,100 @@ export default class Handlers {
         }
     }
     handleFrontmatterKey(parameters: Parameters) {
-        const key = parameters.frontmatterkey;
-        const file = this.app.vault.getAbstractFileByPath(
-            parameters.filepath ?? this.app.workspace.getActiveFile().path
-        );
-        if (!(file instanceof TFile)) {
-            return;
-        }
-
-        const frontmatter =
-            this.app.metadataCache.getFileCache(file).frontmatter;
-
-        if (parameters.data) {
+        function updateFrontmatterInplace(
+            frontmatter: any,
+            key: string,
+            data: any
+        ) {
             // backups of the original frontmatter, used to recover when update process failed.
             const fmBackup = frontmatter;
+            if (key.startsWith("[") && key.endsWith("]")) {
+                // frontmatter key is a list
+                const keyList = key.substring(1, key.length - 1).split(",");
+                let currObj: any = frontmatter;
 
-            // parse data
-            let data = parameters.data;
-            try {
-                // This try catch is needed to allow passing strings as a data value without extra ".
-                data = JSON.parse(data);
-            } catch {
-                data = `"${data}"`;
-                data = JSON.parse(data);
-            }
-
-            // update frontmatter
-            this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-                if (key.startsWith("[") && key.endsWith("]")) {
-                    // frontmatter key is a list
-                    const keyList = key.substring(1, key.length - 1).split(",");
-                    let currObj: any = frontmatter;
-
-                    // iterate through key list
-                    for (let i = 0; i < keyList.length; i++) {
-                        // set currKey (and currIndex if current object is array)
-                        const currKey = keyList[i];
-                        let currIndex: number | undefined = undefined;
-                        if (currObj instanceof Array) {
-                            currIndex = parseInt(currKey);
-                            if (Number.isNaN(currIndex)) {
-                                currIndex = currObj.find((e) => e == currKey);
-                            }
-                            if (currIndex === undefined) {
-                                new Notice(
-                                    `Key error when processing array in the frontmatter: "${currKey}" is not a valid index or a valid element.`
-                                );
-                                frontmatter = fmBackup;
-                                return;
-                            }
-                            // limited the range of index
-                            currIndex = Math.min(currIndex, currObj.length);
-                            currIndex = Math.max(currIndex, 0);
+                // iterate through key list
+                for (let i = 0; i < keyList.length; i++) {
+                    // set currKey (and currIndex if current object is array)
+                    const currKey = keyList[i];
+                    let currIndex: number | undefined = undefined;
+                    if (currObj instanceof Array) {
+                        currIndex = parseInt(currKey);
+                        if (Number.isNaN(currIndex)) {
+                            currIndex = currObj.find((e) => e == currKey);
                         }
-                        // at this point, if cache is of `Array` type, currIndex should always be a valid number
-
-                        // reach the last key, update data
-                        if (i == keyList.length - 1) {
-                            try {
-                                if (currObj instanceof Array) {
-                                    currObj[currIndex] = data;
-                                } else {
-                                    currObj[currKey] = data;
-                                }
-                            } catch (e) {
-                                new Notice(
-                                    "Failed to update the frontmatter, check console for more details"
-                                );
-                                console.log(e);
-                                frontmatter = fmBackup;
-                            }
-                            return;
-                        }
-
-                        // enter next level
-                        // 
-                        // here if next level is undefined, we need to create a new list/object
-                        // based on what does the next key looks like.
-                        // - looks like an index => create a new list
-                        // - looks like a string key => create a new object
-                        let nextKeyLooksLikeIndex = !Number.isNaN(
-                            parseInt(keyList[i + 1])
-                        );
-                        const newObj = nextKeyLooksLikeIndex ? [] : {};
-                        
-                        try {
-                            if (currObj instanceof Array) {
-                                if (currIndex >= currObj.length) {
-                                    currObj.push(newObj);
-                                    currObj = newObj;
-                                } else {
-                                    currObj = currObj[Math.max(currIndex, 0)];
-                                }
-                            } else {
-                                if (currObj[currKey] === undefined) {
-                                    currObj[currKey] = newObj;
-                                    currObj = newObj;
-                                } else {
-                                    currObj = currObj[currKey];
-                                }
-                            }
-                        } catch (e) {
+                        if (currIndex === undefined) {
                             new Notice(
-                                `Failed to resolve path key: "${currKey}", check console for more details.`
+                                `Key error when processing array in the frontmatter: "${currKey}" is not a valid index or a valid element.`
                             );
                             frontmatter = fmBackup;
                             return;
                         }
+                        // limited the range of index
+                        currIndex = Math.min(currIndex, currObj.length);
+                        currIndex = Math.max(currIndex, 0);
                     }
-                } else {
-                    frontmatter[key] = data;
+                    // at this point, if cache is of `Array` type, currIndex should always be a valid number
+
+                    // reach the last key, update data
+                    if (i == keyList.length - 1) {
+                        try {
+                            if (currObj instanceof Array) {
+                                currObj[currIndex] = data;
+                            } else {
+                                currObj[currKey] = data;
+                            }
+                        } catch (e) {
+                            new Notice(
+                                "Failed to update the frontmatter, check console for more details"
+                            );
+                            console.log(e);
+                            frontmatter = fmBackup;
+                        }
+                        return;
+                    }
+
+                    // enter next level
+                    //
+                    // here if next level is undefined, we need to create a new list/object
+                    // based on what does the next key looks like.
+                    // - looks like an index => create a new list
+                    // - looks like a string key => create a new object
+                    let nextKeyLooksLikeIndex = !Number.isNaN(
+                        parseInt(keyList[i + 1])
+                    );
+                    const newObj = nextKeyLooksLikeIndex ? [] : {};
+
+                    try {
+                        if (currObj instanceof Array) {
+                            if (currIndex >= currObj.length) {
+                                currObj.push(newObj);
+                                currObj = newObj;
+                            } else {
+                                currObj = currObj[Math.max(currIndex, 0)];
+                            }
+                        } else {
+                            if (currObj[currKey] === undefined) {
+                                currObj[currKey] = newObj;
+                                currObj = newObj;
+                            } else {
+                                currObj = currObj[currKey];
+                            }
+                        }
+                    } catch (e) {
+                        new Notice(
+                            `Failed to resolve path key: "${currKey}", check console for more details.`
+                        );
+                        frontmatter = fmBackup;
+                        return;
+                    }
                 }
-            });
-        } else {
+            } else {
+                frontmatter[key] = data;
+            }
+        }
+
+        function retriveFrontmatterData(key: string): string {
             let res: string;
             if (key.startsWith("[") && key.endsWith("]")) {
                 const list = key.substring(1, key.length - 1).split(",");
@@ -178,9 +159,41 @@ export default class Handlers {
             } else {
                 res = frontmatter[key];
             }
-
-            copyText(res);
+            return res;
         }
+
+        const key = parameters.frontmatterkey;
+        const file = this.app.vault.getAbstractFileByPath(
+            parameters.filepath ?? this.app.workspace.getActiveFile().path
+        );
+        if (!(file instanceof TFile)) {
+            return;
+        }
+
+        const frontmatter =
+            this.app.metadataCache.getFileCache(file).frontmatter;
+
+        // update frontmatter if user passed data
+        if (parameters.data) {
+            // parse data
+            let data = parameters.data;
+            try {
+                // This try catch is needed to allow passing strings as a data value without extra ".
+                data = JSON.parse(data);
+            } catch {
+                data = `"${data}"`;
+                data = JSON.parse(data);
+            }
+
+            // update frontmatter
+            this.app.fileManager.processFrontMatter(file, (fm) => {
+                updateFrontmatterInplace(fm, key, data);
+            });
+            return;
+        }
+
+        // no data passed, read frontmatter data
+        copyText(retriveFrontmatterData(key));
     }
 
     handleWorkspace(parameters: Parameters) {
