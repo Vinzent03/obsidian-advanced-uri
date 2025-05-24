@@ -424,12 +424,23 @@ export default class AdvancedURI extends Plugin {
             // determine which line to perform append operation
             let line: number = undefined; // 1-indexed
             if (parameters.heading) {
-                line = getEndAndBeginningOfHeading(
+                const lineInfo = getEndAndBeginningOfHeading(
                     this.app,
                     file,
                     parameters.heading
-                )?.lastLine;
+                );
+                line = lineInfo?.lastLine;
                 if (line === undefined) return;
+
+                // When the specified heading has no content, we should
+                // add a newline before the separator to make sure the content
+                // does not inserted after the heading.
+                if (
+                    lineInfo.firstLine == lineInfo.lastLine &&
+                    parameters.separator
+                ) {
+                    parameters.separator = "\n" + parameters.separator;
+                }
             } else if (parameters.line) {
                 line = Number(parameters.line);
             } else {
@@ -437,7 +448,10 @@ export default class AdvancedURI extends Plugin {
             }
 
             line = Math.max(1, line);
-            lines[line - 1] += (parameters.separator ?? "\n") + parameters.data;
+            lines[line - 1] =
+                (lines[line - 1] ?? "") +
+                (parameters.separator ?? "\n") +
+                parameters.data;
             dataToWrite = lines.join("\n");
         } else {
             path = file;
@@ -488,7 +502,7 @@ export default class AdvancedURI extends Plugin {
             line = Math.max(1, line);
             lines[line - 1] = `${parameters.data}${
                 parameters.separator ?? "\n"
-            }${lines[line - 1]}`;
+            }${lines[line - 1] ?? ""}`;
             dataToWrite = lines.join("\n");
         } else {
             path = file;
