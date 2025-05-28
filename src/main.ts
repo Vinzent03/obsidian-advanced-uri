@@ -385,9 +385,7 @@ export default class AdvancedURI extends Plugin {
 
         const options = {
             title: stripMD(file.name),
-            advanceduri: await this.tools.generateURI(
-                { filepath: file.path }
-            ),
+            advanceduri: await this.tools.generateURI({ filepath: file.path }),
             urlkey: "advanceduri",
             fileuri: getFileUri(this.app, file),
         };
@@ -417,39 +415,49 @@ export default class AdvancedURI extends Plugin {
     async append(file: TFile | string, parameters: Parameters): Promise<TFile> {
         let path: string;
         let dataToWrite: string;
-        if (parameters.heading) {
-            if (file instanceof TFile) {
-                path = file.path;
-                const line = getEndAndBeginningOfHeading(
+
+        if (file instanceof TFile) {
+            path = file.path;
+            const data = await this.app.vault.read(file);
+            const lines = data.split("\n");
+
+            // determine which line to perform append operation
+            let line: number = undefined; // 1-indexed
+            if (parameters.heading) {
+                const lineInfo = getEndAndBeginningOfHeading(
                     this.app,
                     file,
                     parameters.heading
-                )?.lastLine;
+                );
+                line = lineInfo?.lastLine;
                 if (line === undefined) return;
 
-                const data = await this.app.vault.read(file);
-                const lines = data.split("\n");
-
-                lines.splice(line, 0, ...parameters.data.split("\n"));
-                dataToWrite = lines.join("\n");
-            }
-        } else {
-            if (file instanceof TFile) {
-                path = file.path;
-                const fileData = await this.app.vault.read(file);
-                if (parameters.line) {
-                    let line = Math.max(Number(parameters.line), 0);
-                    const lines = fileData.split("\n");
-                    lines.splice(line, 0, parameters.data);
-                    dataToWrite = lines.join("\n");
-                } else {
-                    dataToWrite = fileData + "\n" + parameters.data;
+                // When the specified heading has no content, we should
+                // add a newline before the separator to make sure the content
+                // does not inserted after the heading.
+                if (
+                    lineInfo.firstLine == lineInfo.lastLine &&
+                    parameters.separator
+                ) {
+                    parameters.separator = "\n" + parameters.separator;
                 }
+            } else if (parameters.line) {
+                line = Number(parameters.line);
             } else {
-                path = file;
-                dataToWrite = parameters.data;
+                line = lines.length;
             }
+
+            line = Math.max(1, line);
+            lines[line - 1] =
+                (lines[line - 1] ?? "") +
+                (parameters.separator ?? "\n") +
+                parameters.data;
+            dataToWrite = lines.join("\n");
+        } else {
+            path = file;
+            dataToWrite = parameters.data;
         }
+
         return this.writeAndOpenFile(path, dataToWrite, parameters);
     }
 
@@ -459,40 +467,46 @@ export default class AdvancedURI extends Plugin {
     ): Promise<TFile> {
         let path: string;
         let dataToWrite: string;
-        if (parameters.heading) {
-            if (file instanceof TFile) {
-                path = file.path;
-                const line = getEndAndBeginningOfHeading(
+
+        if (file instanceof TFile) {
+            path = file.path;
+            const data = await this.app.vault.read(file);
+            const cache = this.app.metadataCache.getFileCache(file);
+
+            const lines = data.split("\n");
+
+            // determine which line to perform prepend operation
+            let line = undefined; // 1-indexed
+            if (parameters.heading) {
+                line = getEndAndBeginningOfHeading(
                     this.app,
                     file,
                     parameters.heading
                 )?.firstLine;
-                if (line === undefined) return;
-
-                const data = await this.app.vault.read(file);
-                const lines = data.split("\n");
-
-                lines.splice(line, 0, ...parameters.data.split("\n"));
-                dataToWrite = lines.join("\n");
-            }
-        } else {
-            if (file instanceof TFile) {
-                path = file.path;
-                const fileData = await this.app.vault.read(file);
-                const cache = this.app.metadataCache.getFileCache(file);
-                let line = 0;
-                if (parameters.line) {
-                    line += Math.max(Number(parameters.line) - 1, 0);
-                } else if (cache.frontmatterPosition) {
-                    line += cache.frontmatterPosition.end.line + 1;
+                if (line === undefined) {
+                    return;
+                } else {
+                    line += 1;
                 }
-                const lines = fileData.split("\n");
-                lines.splice(line, 0, parameters.data);
-                dataToWrite = lines.join("\n");
+            } else if (parameters.line) {
+                line = Number(parameters.line);
+            } else if (cache.frontmatterPosition) {
+                // +1 to convert 0-indexed to 1-indexed
+                // another +1 to ensure prepend operation performed
+                // at the next line of the end of frontmatter
+                line = cache.frontmatterPosition.end.line + 2;
             } else {
-                path = file;
-                dataToWrite = parameters.data;
+                line = 1;
             }
+
+            line = Math.max(1, line);
+            lines[line - 1] = `${parameters.data}${
+                parameters.separator ?? "\n"
+            }${lines[line - 1] ?? ""}`;
+            dataToWrite = lines.join("\n");
+        } else {
+            path = file;
+            dataToWrite = parameters.data;
         }
 
         return this.writeAndOpenFile(path, dataToWrite, parameters);

@@ -122,6 +122,12 @@ export interface Parameters {
     filepath?: string;
     daily?: "true";
     data?: string;
+    /**
+     * Separator used between previous data and new data when performing
+     * an append or prepend command.
+     * @default "\n"
+     */
+    separator?: string;
     mode?: "overwrite" | "append" | "prepend" | "new";
     heading?: string;
     block?: string;
