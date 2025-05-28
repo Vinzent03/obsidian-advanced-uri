@@ -36,17 +36,21 @@
 > ```
 
 > [!note]
-> When using `prepend` / `append` mode, the default separator is `\n`. The `separator` parameter 
-> could be used to customize the separator.
-> 
-> For example:
+> When using `append` or `prepend` mode, the default separator between the existing and new content is a newline (`\n`).
 > 
 > ```
+> original_data
+> new_data
+> ```
+> 
+> You can customize this by using the `separator` parameter. Check out the example below.
+>
+> ```uri
 > obsidian://adv-uri?vault=<your-vault>&filepath=my-file&data=new_data&mode=append&separator=,
 > ```
-> 
-> This will result in the original data and the new data being separated by a comma `,`
-> 
+>
+> In this example, the original content and the new data will be separated by a comma (`,`):
+>
 > ```
 > original_data,new_data
 > ```
