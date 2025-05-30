@@ -11,7 +11,13 @@ import { EnterDataModal } from "./modals/enter_data_modal";
 import { FileModal } from "./modals/file_modal";
 import Tools from "./tools";
 import { CanvasView, Parameters } from "./types";
-import { copyText, getAlternativeFilePath } from "./utils";
+import {
+    copyText,
+    getAlternativeFilePath,
+    getObjFieldByPath,
+    updateObjectFieldInplace,
+    KeyPathError,
+} from "./utils";
 export default class Handlers {
     constructor(private readonly plugin: AdvancedURI) {}
     app = this.plugin.app;
@@ -45,127 +51,14 @@ export default class Handlers {
             }
         }
     }
+
     handleFrontmatterKey(parameters: Parameters) {
-        function updateFrontmatterInplace(
-            frontmatter: any,
-            key: string,
-            data: any
-        ) {
-            // backups of the original frontmatter, used to recover when update process failed.
-            const fmBackup = frontmatter;
-            if (key.startsWith("[") && key.endsWith("]")) {
-                // frontmatter key is a list
-                const keyList = key.substring(1, key.length - 1).split(",");
-                let currObj: any = frontmatter;
-
-                // iterate through key list
-                for (let i = 0; i < keyList.length; i++) {
-                    // set currKey (and currIndex if current object is array)
-                    const currKey = keyList[i];
-                    let currIndex: number | undefined = undefined;
-                    if (currObj instanceof Array) {
-                        currIndex = parseInt(currKey);
-                        if (Number.isNaN(currIndex)) {
-                            currIndex = currObj.find((e) => e == currKey);
-                        }
-                        if (currIndex === undefined) {
-                            new Notice(
-                                `Key error when processing array in the frontmatter: "${currKey}" is not a valid index or a valid element.`
-                            );
-                            frontmatter = fmBackup;
-                            return;
-                        }
-                        // limited the range of index
-                        currIndex = Math.min(currIndex, currObj.length);
-                        currIndex = Math.max(currIndex, 0);
-                    }
-                    // at this point, if cache is of `Array` type, currIndex should always be a valid number
-
-                    // reach the last key, update data
-                    if (i == keyList.length - 1) {
-                        try {
-                            if (currObj instanceof Array) {
-                                currObj[currIndex] = data;
-                            } else {
-                                currObj[currKey] = data;
-                            }
-                        } catch (e) {
-                            new Notice(
-                                "Failed to update the frontmatter, check console for more details"
-                            );
-                            console.log(e);
-                            frontmatter = fmBackup;
-                        }
-                        return;
-                    }
-
-                    // enter next level
-                    //
-                    // here if next level is undefined, we need to create a new list/object
-                    // based on what does the next key looks like.
-                    // - looks like an index => create a new list
-                    // - looks like a string key => create a new object
-                    let nextKeyLooksLikeIndex = !Number.isNaN(
-                        parseInt(keyList[i + 1])
-                    );
-                    const newObj = nextKeyLooksLikeIndex ? [] : {};
-
-                    try {
-                        if (currObj instanceof Array) {
-                            if (currIndex >= currObj.length) {
-                                currObj.push(newObj);
-                                currObj = newObj;
-                            } else {
-                                currObj = currObj[Math.max(currIndex, 0)];
-                            }
-                        } else {
-                            if (currObj[currKey] === undefined) {
-                                currObj[currKey] = newObj;
-                                currObj = newObj;
-                            } else {
-                                currObj = currObj[currKey];
-                            }
-                        }
-                    } catch (e) {
-                        new Notice(
-                            `Failed to resolve path key: "${currKey}", check console for more details.`
-                        );
-                        frontmatter = fmBackup;
-                        return;
-                    }
-                }
-            } else {
-                frontmatter[key] = data;
-            }
-        }
-
-        function retriveFrontmatterData(key: string): string {
-            let res: string;
-            if (key.startsWith("[") && key.endsWith("]")) {
-                const list = key.substring(1, key.length - 1).split(",");
-                let cache: any = frontmatter;
-                for (const item of list) {
-                    if (cache instanceof Array) {
-                        const index = parseInt(item);
-                        if (Number.isNaN(index)) {
-                            cache = cache.find((e) => e == item);
-                        }
-                        cache = cache[parseInt(item)];
-                    } else {
-                        cache = cache[item];
-                    }
-                }
-                res = cache;
-            } else {
-                res = frontmatter[key];
-            }
-            return res;
-        }
-
         const key = parameters.frontmatterkey;
         const file = this.app.vault.getAbstractFileByPath(
             parameters.filepath ?? this.app.workspace.getActiveFile().path
         );
+
+        // could not handle frontmatter key that is not a TFile
         if (!(file instanceof TFile)) {
             return;
         }
@@ -181,19 +74,38 @@ export default class Handlers {
                 // This try catch is needed to allow passing strings as a data value without extra ".
                 data = JSON.parse(data);
             } catch {
-                data = `"${data}"`;
-                data = JSON.parse(data);
+                try {
+                    data = `"${data}"`;
+                    data = JSON.parse(data);
+                } catch (e) {
+                    new Notice(
+                        "Failed to parse data, check console for more details"
+                    );
+                    console.error(e);
+                    return;
+                }
             }
 
             // update frontmatter
             this.app.fileManager.processFrontMatter(file, (fm) => {
-                updateFrontmatterInplace(fm, key, data);
+                try {
+                    updateObjectFieldInplace({ originalObject: fm, key, data });
+                } catch (e) {
+                    if (e instanceof KeyPathError) {
+                        new Notice(`Invalid key in path.\n${e.message}`);
+                    } else {
+                        new Notice(
+                            "Failed to update frontmatter, check console for more details"
+                        );
+                        console.error(e);
+                    }
+                }
             });
             return;
         }
 
-        // no data passed, read frontmatter data
-        copyText(retriveFrontmatterData(key));
+        // if no data is passed, just copy the frontmatter key value to clipboard
+        copyText(getObjFieldByPath({ obj: frontmatter, key }));
     }
 
     handleWorkspace(parameters: Parameters) {

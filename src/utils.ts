@@ -107,6 +107,22 @@ interface UpdateObjectFieldInplaceParams {
 }
 
 /**
+ * Custom error class for key path errors in updateObjectFieldInplace.
+ */
+export class KeyPathError extends Error {
+    public errKey: string;
+
+    constructor(message: string, errKey: string, cause?: unknown) {
+        super(message);
+        this.name = "KeyPathError";
+        this.errKey = errKey;
+        if (cause) {
+            (this as any).cause = cause;
+        }
+    }
+}
+
+/**
  * Updates a field in the given object in place, supporting nested keys specified as a string path.
  *
  * `-1` or a number index greater than the maximum index could be used to achieve
@@ -139,7 +155,10 @@ export function updateObjectFieldInplace(
                     currIndex = currObj.find((e) => e == currKey);
                 }
                 if (currIndex === undefined) {
-                    throw new Error("invalid_arr_key");
+                    throw new KeyPathError(
+                        `Failed to resolve or convert "${currKey}" to a valid array index.`,
+                        currKey
+                    );
                 }
                 // limited the range of index
                 currIndex = Math.min(currIndex, currObj.length);
@@ -191,10 +210,44 @@ export function updateObjectFieldInplace(
                     }
                 }
             } catch (e) {
-                throw new Error("invalid_obj_key", { cause: e });
+                throw new KeyPathError(
+                    `Failed to resolve "${currKey}" as a valid object key`,
+                    currKey,
+                    e
+                );
             }
         }
     } else {
         (originalObject as any)[key] = data;
+    }
+}
+
+/**
+ * Retrieves a field from the given object, supporting nested keys specified as a string path.
+ * @param params - The parameters for retrieving the object field.
+ * @returns The value at the specified path, or undefined if not found.
+ */
+export function getObjFieldByPath(params: { obj: any; key: string }): any {
+    const { obj: originalObject, key } = params;
+    if (key.startsWith("[") && key.endsWith("]")) {
+        const list = key.substring(1, key.length - 1).split(",");
+        let cache: any = originalObject;
+        for (const item of list) {
+            if (cache instanceof Array) {
+                const index = parseInt(item);
+                if (Number.isNaN(index)) {
+                    cache = cache.find((e: any) => e == item);
+                } else {
+                    cache = cache[index];
+                }
+            } else if (cache && typeof cache === "object") {
+                cache = cache[item];
+            } else {
+                return undefined;
+            }
+        }
+        return cache;
+    } else {
+        return originalObject ? originalObject[key] : undefined;
     }
 }
