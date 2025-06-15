@@ -11,7 +11,13 @@ import { EnterDataModal } from "./modals/enter_data_modal";
 import { FileModal } from "./modals/file_modal";
 import Tools from "./tools";
 import { CanvasView, Parameters } from "./types";
-import { copyText, getAlternativeFilePath } from "./utils";
+import {
+    copyText,
+    getAlternativeFilePath,
+    getObjFieldByPath,
+    updateObjectFieldInplace,
+    KeyPathError,
+} from "./utils";
 export default class Handlers {
     constructor(private readonly plugin: AdvancedURI) {}
     app = this.plugin.app;
@@ -45,77 +51,61 @@ export default class Handlers {
             }
         }
     }
+
     handleFrontmatterKey(parameters: Parameters) {
         const key = parameters.frontmatterkey;
         const file = this.app.vault.getAbstractFileByPath(
             parameters.filepath ?? this.app.workspace.getActiveFile().path
         );
+
+        // could not handle frontmatter key that is not a TFile
         if (!(file instanceof TFile)) {
             return;
         }
+
         const frontmatter =
             this.app.metadataCache.getFileCache(file).frontmatter;
 
+        // update frontmatter if user passed data
         if (parameters.data) {
+            // parse data
             let data = parameters.data;
             try {
                 // This try catch is needed to allow passing strings as a data value without extra ".
                 data = JSON.parse(data);
             } catch {
-                data = `"${data}"`;
-                data = JSON.parse(data);
-            }
-            this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-                if (key.startsWith("[") && key.endsWith("]")) {
-                    const list = key.substring(1, key.length - 1).split(",");
-                    let cache: any = frontmatter;
-                    for (let i = 0; i < list.length; i++) {
-                        const item = list[i];
-                        if (cache instanceof Array) {
-                            const index = parseInt(item);
-                            if (Number.isNaN(index)) {
-                                cache = cache.find((e) => e == item);
-                            }
-                            if (i == list.length - 1) {
-                                cache[parseInt(item)] = data;
-                            } else {
-                                cache = cache[parseInt(item)];
-                            }
-                        } else {
-                            if (i == list.length - 1) {
-                                cache[item] = data;
-                            } else {
-                                cache = cache[item];
-                            }
-                        }
-                    }
-                } else {
-                    frontmatter[key] = data;
+                try {
+                    data = `"${data}"`;
+                    data = JSON.parse(data);
+                } catch (e) {
+                    new Notice(
+                        "Failed to parse data, check console for more details"
+                    );
+                    console.error(e);
+                    return;
                 }
-            });
-        } else {
-            let res: string;
-            if (key.startsWith("[") && key.endsWith("]")) {
-                const list = key.substring(1, key.length - 1).split(",");
-                let cache: any = frontmatter;
-                for (const item of list) {
-                    if (cache instanceof Array) {
-                        const index = parseInt(item);
-                        if (Number.isNaN(index)) {
-                            cache = cache.find((e) => e == item);
-                        }
-                        cache = cache[parseInt(item)];
-                    } else {
-                        cache = cache[item];
-                    }
-                }
-                res = cache;
-            } else {
-                res = frontmatter[key];
             }
 
-            copyText(res);
+            // update frontmatter
+            this.app.fileManager.processFrontMatter(file, (fm) => {
+                try {
+                    updateObjectFieldInplace({ originalObject: fm, key, data });
+                } catch (e) {
+                    console.error(e);
+                    if (e instanceof KeyPathError) {
+                        new Notice(`Invalid key in path.\n${e.message}`);
+                    } else {
+                        new Notice(
+                            "Failed to update frontmatter, check console for more details"
+                        );
+                    }
+                }
+            });
+            return;
         }
+
+        // if no data is passed, just copy the frontmatter key value to clipboard
+        copyText(getObjFieldByPath({ obj: frontmatter, key }));
     }
 
     handleWorkspace(parameters: Parameters) {
