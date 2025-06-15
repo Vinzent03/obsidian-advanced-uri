@@ -130,14 +130,12 @@ export class KeyPathError extends Error {
  *
  * @param params - The parameters for updating the object field.
  *
- * @throws `invalid_arr_key` if an invalid array key is detected.
- * @throws `invalid_obj_key` if an invalid object key is detected.
+ * @throws `KeyPathError` if an invalid array key is detected.
  */
 export function updateObjectFieldInplace(
-    params: UpdateObjectFieldInplaceParams
+    param: UpdateObjectFieldInplaceParams
 ) {
-    const { key, data } = params;
-    let originalObject = params.originalObject;
+    const { originalObject, key, data } = param;
 
     if (key.startsWith("[") && key.endsWith("]")) {
         // frontmatter key is a list

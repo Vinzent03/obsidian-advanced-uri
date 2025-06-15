@@ -91,13 +91,13 @@ export default class Handlers {
                 try {
                     updateObjectFieldInplace({ originalObject: fm, key, data });
                 } catch (e) {
+                    console.error(e);
                     if (e instanceof KeyPathError) {
                         new Notice(`Invalid key in path.\n${e.message}`);
                     } else {
                         new Notice(
                             "Failed to update frontmatter, check console for more details"
                         );
-                        console.error(e);
                     }
                 }
             });
