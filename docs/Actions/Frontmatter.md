@@ -103,3 +103,42 @@ my_item:
 obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]&data={%22data%22:[2,3]}
 ```
 
+### Prepend/Append To List
+
+When using number as index of a list in frontmatter, you could:
+
+- Use any number less than `0` (E.g. `-1`) to prepend data to that list.
+- Use any number greater than the maximum index to append data to that list.
+
+Check the example below:
+
+```yaml
+my_item:
+  second_item:
+    - A
+    - data:
+        - 2
+        - 3
+```
+
+```
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,-1]&data=prepended_data
+```
+
+```
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,3]&data=appended_data
+```
+
+The frontmatter will be updated to the following after this operation:
+
+```yaml
+my_item:
+  second_item:
+	- prepend_data
+    - A
+    - data:
+	    - 1
+        - 2
+        - 3
+	- appended_data
+```
