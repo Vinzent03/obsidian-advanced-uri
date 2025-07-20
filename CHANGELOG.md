@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.45.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.3...1.45.0) (2025-07-20)
+
+
+### Features
+
+* allow user to customize separator when using prepend/append ([#204](https://github.com/Vinzent03/obsidian-advanced-uri/issues/204)) ([46af7e4](https://github.com/Vinzent03/obsidian-advanced-uri/commit/46af7e448f9ecbb12d265d85c2cadc790bfdabf2))
+
+
+### Bug Fixes
+
+* update nested frontmatter ([#206](https://github.com/Vinzent03/obsidian-advanced-uri/issues/206)) ([e564815](https://github.com/Vinzent03/obsidian-advanced-uri/commit/e564815c60381607fa53b321a1457005735af630))
+* use core daily-notes api ([4bc36cc](https://github.com/Vinzent03/obsidian-advanced-uri/commit/4bc36cc9718763be82831f6a6cb656c95786ae74)), closes [#202](https://github.com/Vinzent03/obsidian-advanced-uri/issues/202)
+
 ### [1.44.3](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.2...1.44.3) (2024-12-31)
 
 
