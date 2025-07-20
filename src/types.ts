@@ -1,4 +1,4 @@
-import { PaneType, View } from "obsidian";
+import { PaneType, View, moment } from "obsidian";
 import { CanvasNodeData } from "obsidian/canvas";
 
 declare module "obsidian" {
@@ -61,6 +61,14 @@ declare module "obsidian" {
                 workspaces: { [key: string]: any };
                 saveWorkspace(workspace: string): void;
                 loadWorkspace(workspace: string): void;
+            } | null;
+            getEnabledPluginById(plugin: "daily-notes"): {
+                readonly options: {
+                    folder: string;
+                    format: string;
+                    template: string;
+                };
+                getDailyNote(moment?: moment.Moment): Promise<TFile>;
             } | null;
             plugins: {
                 [key: string]: {

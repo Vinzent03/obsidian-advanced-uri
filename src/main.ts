@@ -13,15 +13,12 @@ import {
     WorkspaceLeaf,
 } from "obsidian";
 import { stripMD } from "obsidian-community-lib";
-import {
-    appHasDailyNotesPluginLoaded,
-    createDailyNote,
-    getAllDailyNotes,
-    getDailyNote,
-} from "obsidian-daily-notes-interface";
 import { BlockUtils } from "./block_utils";
 import { DEFAULT_SETTINGS } from "./constants";
-import { getDailyNotePath } from "./daily_note_utils";
+import {
+    appHasDailyNotesPluginLoaded,
+    getDailyNotePath,
+} from "./daily_note_utils";
 import Handlers from "./handlers";
 import { CommandModal } from "./modals/command_modal";
 import { EnterDataModal } from "./modals/enter_data_modal";
@@ -302,28 +299,28 @@ export default class AdvancedURI extends Plugin {
                 parameters.filepath = parameters.filepath + ".md";
             }
         } else if (parameters.daily === "true") {
-            if (!appHasDailyNotesPluginLoaded()) {
+            if (!appHasDailyNotesPluginLoaded(this.app)) {
                 new Notice("Daily notes plugin is not loaded");
                 return;
             }
             const moment = window.moment(Date.now());
-            const allDailyNotes = getAllDailyNotes();
-            let dailyNote = getDailyNote(moment, allDailyNotes);
-            if (!dailyNote) {
+            const dailyNotePath = await getDailyNotePath(moment, this.app);
+            let dailyNoteFile =
+                this.app.vault.getAbstractFileByPath(dailyNotePath);
+            if (!dailyNoteFile) {
                 /// Prevent daily note from being created on existing check
                 if (parameters.exists === "true") {
-                    parameters.filepath = await getDailyNotePath(moment);
+                    parameters.filepath = dailyNotePath;
                 } else {
-                    dailyNote = await createDailyNote(moment);
-
-                    // delay to let Obsidian index and generate CachedMetadata
-                    await new Promise((r) => setTimeout(r, 500));
+                    dailyNoteFile = await this.app.internalPlugins
+                        .getEnabledPluginById("daily-notes")
+                        .getDailyNote();
 
                     createdDailyNote = true;
                 }
             }
-            if (dailyNote !== undefined) {
-                parameters.filepath = dailyNote.path;
+            if (dailyNoteFile) {
+                parameters.filepath = dailyNoteFile.path;
             }
         }
         if (parameters.clipboard === "true") {

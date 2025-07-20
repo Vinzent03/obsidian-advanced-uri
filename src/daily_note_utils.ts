@@ -1,7 +1,15 @@
-import { normalizePath } from "obsidian";
-import { getDailyNoteSettings } from "obsidian-daily-notes-interface";
+import { App, normalizePath } from "obsidian";
 
 //! All of these methods are taken from https://www.npmjs.com/package/obsidian-daily-notes-interface.
+
+export function appHasDailyNotesPluginLoaded(app: App): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dailyNotesPlugin = (<any>app).internalPlugins.plugins["daily-notes"];
+    if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
+        return true;
+    }
+}
+
 function join(...partSegments: string[]): string {
     // Split the inputs into a list of path commands.
     let parts: string[] = [];
@@ -24,36 +32,13 @@ function join(...partSegments: string[]): string {
     return newParts.join("/");
 }
 
-async function getNotePath(
-    directory: string,
-    filename: string
-): Promise<string> {
+export async function getDailyNotePath(date: any, app: App): Promise<string> {
+    const { format, folder } =
+        app.internalPlugins.getEnabledPluginById("daily-notes").options;
+
+    let filename = date.format(format);
     if (!filename.endsWith(".md")) {
         filename += ".md";
     }
-    const path = normalizePath(join(directory, filename));
-
-    await ensureFolderExists(path);
-
-    return path;
-}
-
-async function ensureFolderExists(path: string): Promise<void> {
-    const dirs = path.replace(/\\/g, "/").split("/");
-    dirs.pop(); // remove basename
-
-    if (dirs.length) {
-        const dir = join(...dirs);
-        if (!(window as any).app.vault.getAbstractFileByPath(dir)) {
-            await (window as any).app.vault.createFolder(dir);
-        }
-    }
-}
-
-export async function getDailyNotePath(date: any): Promise<string> {
-    const { format, folder } = getDailyNoteSettings();
-
-    const filename = date.format(format);
-    const normalizedPath = await getNotePath(folder, filename);
-    return normalizedPath;
+    return normalizePath(join(folder, filename));
 }
