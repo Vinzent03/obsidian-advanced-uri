@@ -551,13 +551,7 @@ export default class AdvancedURI extends Plugin {
                 setting: this.settings.openFileOnWriteInNewPane,
                 parameters,
             });
-            if (
-                parameters.line != undefined ||
-                parameters.column != undefined ||
-                parameters.offset != undefined
-            ) {
-                await this.setCursorInLine(parameters);
-            }
+            await this.setCursorInLine(parameters);
         }
     }
 
@@ -721,6 +715,14 @@ export default class AdvancedURI extends Plugin {
             const pos = view.editor.offsetToPos(Number(parameters.offset));
             line = pos.line;
             column = pos.ch;
+        } else if (parameters.mode === "append") {
+            const lastLine = view.editor.lastLine();
+            const lastLineLength = view.editor.getLine(lastLine).length;
+            line = lastLine;
+            column = lastLineLength;
+        } else if (parameters.mode === "prepend") {
+            line = 1;
+            column = 1;
         } else {
             line =
                 rawLine != undefined
