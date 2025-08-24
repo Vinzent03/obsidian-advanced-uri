@@ -557,6 +557,8 @@ export default class AdvancedURI extends Plugin {
                 parameters.offset != undefined
             ) {
                 await this.setCursorInLine(parameters);
+            } else if (parameters.mode != undefined) {
+                await this.setCursor(parameters);
             }
         }
     }
@@ -689,10 +691,24 @@ export default class AdvancedURI extends Plugin {
             await view.leaf.setViewState(viewState, { focus: true });
 
             editor.setCursor({ ch: lastLineLength, line: lastLine });
+            view.editor.scrollIntoView(
+                {
+                    from: { line: lastLine, ch: lastLineLength },
+                    to: { line: lastLine, ch: lastLineLength },
+                },
+                true
+            );
         } else if (mode === "prepend") {
             await view.leaf.setViewState(viewState, { focus: true });
 
             editor.setCursor({ ch: 0, line: 0 });
+            view.editor.scrollIntoView(
+                {
+                    from: { line: 0, ch: 0 },
+                    to: { line: 0, ch: 0 },
+                },
+                true
+            );
         }
 
         await new Promise((resolve) => setTimeout(resolve, 10));
