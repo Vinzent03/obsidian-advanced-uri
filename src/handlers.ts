@@ -494,9 +494,10 @@ export default class Handlers {
         }
     }
 
-    handleCopyFileURI(withoutData: boolean, file?: TFile) {
+    handleCopyFileURI(withoutData: boolean, withFormat: boolean, file?: TFile) {
         const view = this.app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
+        file = file ?? view.file;
         if (view instanceof MarkdownView) {
             const pos = view.editor.getCursor();
             const cache = this.app.metadataCache.getFileCache(view.file);
@@ -506,10 +507,14 @@ export default class Handlers {
                         heading.position.start.line <= pos.line &&
                         heading.position.end.line >= pos.line
                     ) {
-                        this.tools.copyURI({
-                            filepath: view.file.path,
-                            heading: heading.heading,
-                        });
+                        this.tools.copyURI(
+                            {
+                                filepath: view.file.path,
+                                heading: heading.heading,
+                            },
+                            withFormat,
+                            file
+                        );
                         return;
                     }
                 }
@@ -521,10 +526,14 @@ export default class Handlers {
                         block.position.start.line <= pos.line &&
                         block.position.end.line >= pos.line
                     ) {
-                        this.tools.copyURI({
-                            filepath: view.file.path,
-                            block: block.id,
-                        });
+                        this.tools.copyURI(
+                            {
+                                filepath: view.file.path,
+                                block: block.id,
+                            },
+                            withFormat,
+                            file
+                        );
                         return;
                     }
                 }
@@ -537,9 +546,13 @@ export default class Handlers {
                 new Notice("No file opened");
                 return;
             }
-            this.tools.copyURI({
-                filepath: file2.path,
-            });
+            this.tools.copyURI(
+                {
+                    filepath: file2.path,
+                },
+                withFormat,
+                file
+            );
         } else {
             const fileModal = new FileModal(
                 this.plugin,
@@ -548,7 +561,7 @@ export default class Handlers {
             );
             fileModal.open();
             fileModal.onChooseItem = (item, _) => {
-                new EnterDataModal(this.plugin, item.source).open();
+                new EnterDataModal(this.plugin, withFormat, item.source).open();
             };
         }
     }

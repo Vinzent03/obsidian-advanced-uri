@@ -56,19 +56,31 @@ export default class AdvancedURI extends Plugin {
         this.addCommand({
             id: "copy-uri-current-file",
             name: "Copy URI for file with options",
-            callback: () => this.handlers.handleCopyFileURI(false),
+            callback: () => this.handlers.handleCopyFileURI(false, false),
         });
 
         this.addCommand({
             id: "copy-uri-current-file-simple",
             name: "Copy URI for current file",
-            callback: () => this.handlers.handleCopyFileURI(true),
+            callback: () => this.handlers.handleCopyFileURI(true, false),
+        });
+
+        this.addCommand({
+            id: "copy-uri-current-file-with-format",
+            name: "Copy formatted URI for file with options ",
+            callback: () => this.handlers.handleCopyFileURI(false, true),
+        });
+
+        this.addCommand({
+            id: "copy-uri-current-file-simple-with-format",
+            name: "Copy formatted URI for current file",
+            callback: () => this.handlers.handleCopyFileURI(true, true),
         });
 
         this.addCommand({
             id: "copy-uri-daily",
             name: "Copy URI for daily note",
-            callback: () => new EnterDataModal(this).open(),
+            callback: () => new EnterDataModal(this, false).open(),
         });
 
         this.addCommand({
@@ -116,10 +128,35 @@ export default class AdvancedURI extends Plugin {
                 if (checking) return view != undefined;
                 const id = BlockUtils.getBlockId(this.app);
                 if (id) {
-                    this.tools.copyURI({
-                        filepath: view.file.path,
-                        block: id,
-                    });
+                    this.tools.copyURI(
+                        {
+                            filepath: view.file.path,
+                            block: id,
+                        },
+                        false,
+                        view.file
+                    );
+                }
+            },
+        });
+
+        this.addCommand({
+            id: "copy-uri-block-with-format",
+            name: "Copy formatted URI for current block",
+            checkCallback: (checking) => {
+                const view =
+                    this.app.workspace.getActiveViewOfType(MarkdownView);
+                if (checking) return view != undefined;
+                const id = BlockUtils.getBlockId(this.app);
+                if (id) {
+                    this.tools.copyURI(
+                        {
+                            filepath: view.file.path,
+                            block: id,
+                        },
+                        true,
+                        view.file
+                    );
                 }
             },
         });
@@ -154,10 +191,14 @@ export default class AdvancedURI extends Plugin {
                     ids.push(node.id);
                 });
 
-                this.tools.copyURI({
-                    canvasnodes: ids.join(","),
-                    filepath: activeView.file.path,
-                });
+                this.tools.copyURI(
+                    {
+                        canvasnodes: ids.join(","),
+                        filepath: activeView.file.path,
+                    },
+                    false,
+                    activeView.file
+                );
             },
         });
 
@@ -178,10 +219,14 @@ export default class AdvancedURI extends Plugin {
                 const tx = canvas.tx.toFixed(0),
                     ty = canvas.ty.toFixed(0),
                     tZoom = canvas.tZoom.toFixed(3);
-                this.tools.copyURI({
-                    filepath: activeView.file.path,
-                    canvasviewport: `${tx},${ty},${tZoom}`,
-                });
+                this.tools.copyURI(
+                    {
+                        filepath: activeView.file.path,
+                        canvasviewport: `${tx},${ty},${tZoom}`,
+                    },
+                    false,
+                    activeView.file
+                );
             },
         });
 
@@ -246,7 +291,15 @@ export default class AdvancedURI extends Plugin {
                         .setIcon("link")
                         .setSection("info")
                         .onClick((_) =>
-                            this.handlers.handleCopyFileURI(true, file)
+                            this.handlers.handleCopyFileURI(true, false, file)
+                        );
+                });
+                menu.addItem((item) => {
+                    item.setTitle(`Copy formatted Advanced URI`)
+                        .setIcon("link")
+                        .setSection("info")
+                        .onClick((_) =>
+                            this.handlers.handleCopyFileURI(true, true, file)
                         );
                 });
             })

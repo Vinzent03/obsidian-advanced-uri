@@ -123,6 +123,12 @@ export interface AdvancedURISettings {
     allowEval: boolean;
     includeVaultName: boolean;
     vaultParam: "id" | "name";
+    linkFormats: LinkFormat[];
+}
+
+export interface LinkFormat {
+    name: string;
+    format: string;
 }
 
 export interface Parameters {

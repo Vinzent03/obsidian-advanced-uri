@@ -9,6 +9,7 @@ export class EnterDataModal extends SuggestModal<EnterData> {
 
     constructor(
         plugin: AdvancedURI,
+        private readonly withFormat: boolean,
         private file?: string | undefined
     ) {
         super(plugin.app);
@@ -44,17 +45,25 @@ export class EnterDataModal extends SuggestModal<EnterData> {
                     mode: mode,
                     func: () => {
                         if (this.file) {
-                            this.plugin.tools.copyURI({
-                                filepath: this.file,
-                                data: query,
-                                mode: mode as Parameters["mode"],
-                            });
+                            this.plugin.tools.copyURI(
+                                {
+                                    filepath: this.file,
+                                    data: query,
+                                    mode: mode as Parameters["mode"],
+                                },
+                                this.withFormat,
+                                this.app.vault.getFileByPath(this.file)
+                            );
                         } else {
-                            this.plugin.tools.copyURI({
-                                daily: "true",
-                                data: query,
-                                mode: mode as Parameters["mode"],
-                            });
+                            this.plugin.tools.copyURI(
+                                {
+                                    daily: "true",
+                                    data: query,
+                                    mode: mode as Parameters["mode"],
+                                },
+                                this.withFormat,
+                                undefined
+                            );
                         }
                     },
                 });

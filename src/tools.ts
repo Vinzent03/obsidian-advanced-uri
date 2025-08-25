@@ -1,8 +1,15 @@
-import { CachedMetadata, Notice, parseFrontMatterEntry, TFile } from "obsidian";
+import {
+    CachedMetadata,
+    Notice,
+    parseFrontMatterAliases,
+    parseFrontMatterEntry,
+    TFile,
+} from "obsidian";
 import { v4 as uuidv4 } from "uuid";
 import AdvancedURI from "./main";
-import { Parameters } from "./types";
+import { LinkFormat, Parameters } from "./types";
 import { copyText } from "./utils";
+import { GeneralModal } from "./modals/general_modal";
 /**
  * These methods depend on the plugins settings in contrast to the utils.ts file, which's functions are independent of the plugins settings.
  */
@@ -44,7 +51,7 @@ export default class Tools {
         return uid;
     }
 
-    async getUIDFromFile(file: TFile): Promise<string> {
+    async getUIDFromFile(file: TFile): Promise<string | undefined> {
         //await parsing of frontmatter
         const cache =
             this.app.metadataCache.getFileCache(file) ??
@@ -69,7 +76,6 @@ export default class Tools {
                 return uid;
             }
         }
-        return await this.writeUIDToFile(file, uuidv4());
     }
 
     async generateURI(parameters: Parameters) {
@@ -91,7 +97,9 @@ export default class Tools {
         ) {
             if (!this.settings.addFilepathWhenUsingUID)
                 parameters.filepath = undefined;
-            parameters.uid = await this.getUIDFromFile(file);
+            parameters.uid =
+                (await this.getUIDFromFile(file)) ??
+                (await this.writeUIDToFile(file, uuidv4()));
         }
         const sortedParameterKeys = (
             Object.keys(parameters) as (keyof Parameters)[]
@@ -120,8 +128,61 @@ export default class Tools {
         return prefix + suffix;
     }
 
-    async copyURI(parameters: Parameters) {
+    async copyURI(
+        parameters: Parameters,
+        withFormat = false,
+        file: TFile = undefined
+    ) {
         const uri = await this.generateURI(parameters);
+        if (withFormat) {
+            const linkFormats = this.settings.linkFormats;
+            if (linkFormats.length == 0) {
+                new Notice("No link formats defined in the settings");
+                return;
+            }
+            let linkFormat: LinkFormat;
+            if (linkFormats.length == 1) {
+                linkFormat = linkFormats[0];
+            } else {
+                const linkFormatNames = linkFormats.map(
+                    (format) => format.name
+                );
+                const selected = await new GeneralModal(this.plugin, {
+                    options: linkFormatNames,
+                    onlySelection: true,
+                    placeholder: "Select link format",
+                }).openAndGetResult();
+                if (!selected) {
+                    new Notice("No link format selected");
+                    return;
+                }
+                linkFormat = linkFormats.find((f) => f.name == selected)!;
+            }
+
+            let formattedLink = linkFormat.format
+                .replace(/\{\{uri\}\}/g, uri)
+                .replace(/\{\{path\}\}/g, file?.path)
+                .replace(/\{\{folder\}\}/g, file?.parent?.path)
+                .replace(/\{\{name\}\}/g, file?.basename)
+                .replace(/\{\{vaultName\}\}/g, this.app.vault.getName())
+                .replace(/\{\{vaultId\}\}/g, this.app.appId);
+            if (file && formattedLink.match(/\{\{uid\}\}/g)) {
+                const uid = (await this.getUIDFromFile(file)) ?? file.basename;
+                formattedLink = formattedLink.replace(/\{\{uid\}\}/g, uid);
+            }
+            if (file && formattedLink.match(/\{\{alias\}\}/g)) {
+                const aliases = parseFrontMatterAliases(
+                    this.app.metadataCache.getFileCache(file).frontmatter
+                );
+                const alias = aliases ? aliases[0] : file?.basename;
+                formattedLink = formattedLink.replace(/\{\{alias\}\}/g, alias);
+            }
+            await copyText(formattedLink);
+            new Notice(
+                `Advanced URI in format "${linkFormat.name}" copied to your clipboard`
+            );
+            return;
+        }
         await copyText(uri);
 
         new Notice("Advanced URI copied to your clipboard");

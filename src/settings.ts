@@ -138,6 +138,83 @@ export class SettingsTab extends PluginSettingTab {
                     })
             );
 
+        const formatsHeading = new Setting(containerEl)
+            .setName("Link formats")
+            .setDesc(
+                "Define custom link formats to use when using 'Copy formatted URI for ...' commands. Specify a name to identify and the format template. Available variables:"
+            )
+            .setHeading();
+
+        formatsHeading.descEl
+            .createEl("p")
+            .setText("{{uri}} - The Advanced URI");
+        formatsHeading.descEl.createEl("p").setText("{{path}} - The file path");
+        formatsHeading.descEl.createEl("p").setText("{{name}} - The file name");
+        formatsHeading.descEl
+            .createEl("p")
+            .setText("{{folder}} - The path of the file folder");
+        formatsHeading.descEl
+            .createEl("p")
+            .setText(`{{vaultName}} - The vault name`);
+        formatsHeading.descEl
+            .createEl("p")
+            .setText(`{{vaultId}} - The vault id`);
+        formatsHeading.descEl
+            .createEl("p")
+            .setText(
+                "{{uid}} - The file's UID, defaults to file name if not available"
+            );
+        formatsHeading.descEl
+            .createEl("p")
+            .setText(
+                "{{alias}} - The file's first alias, defaults to file name if not available"
+            );
+
+        new Setting(containerEl).setName("Add link format").addButton((cb) =>
+            cb.setButtonText("Add format").onClick(() => {
+                this.plugin.settings.linkFormats.push({
+                    name: "",
+                    format: "",
+                });
+                this.plugin.saveSettings();
+                this.display();
+            })
+        );
+        const linkFormats = this.plugin.settings.linkFormats;
+        for (let i = 0; i < linkFormats.length; i++) {
+            const linkFormatSetting = new Setting(containerEl).setName(
+                `#${i + 1} Format`
+            );
+
+            linkFormatSetting.addText((cb) =>
+                cb
+                    .setPlaceholder("Name")
+                    .setValue(linkFormats[i].name)
+                    .onChange((value) => {
+                        linkFormats[i].name = value;
+                        this.plugin.saveSettings();
+                    })
+            );
+            linkFormatSetting.addText((cb) =>
+                cb
+                    .setPlaceholder("[{{path}}]({{uri}})")
+                    .setValue(linkFormats[i].format)
+                    .onChange((value) => {
+                        linkFormats[i].format = value;
+                        this.plugin.saveSettings();
+                    })
+            );
+            linkFormatSetting.addExtraButton((cb) =>
+                cb.setIcon("trash").onClick(() => {
+                    linkFormats.splice(i, 1);
+                    this.plugin.saveSettings();
+                    this.display();
+                })
+            );
+        }
+
+        new Setting(containerEl).setName("Support").setHeading();
+
         new Setting(containerEl)
             .setName("Donate")
             .setDesc(

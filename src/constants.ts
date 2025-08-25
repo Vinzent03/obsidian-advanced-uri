@@ -11,4 +11,10 @@ export const DEFAULT_SETTINGS: AdvancedURISettings = {
     allowEval: false,
     includeVaultName: true,
     vaultParam: "name",
+    linkFormats: [
+        {
+            name: "Markdown",
+            format: "[{{name}}]({{uri}})",
+        },
+    ],
 };
