@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.46.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.45.0...1.46.0) (2025-08-26)
+
+
+### Features
+
+* copy formatted link ([84b3cd8](https://github.com/Vinzent03/obsidian-advanced-uri/commit/84b3cd89c9e16b25e9550f14c6c47e266f025fa5)), closes [#167](https://github.com/Vinzent03/obsidian-advanced-uri/issues/167) [#156](https://github.com/Vinzent03/obsidian-advanced-uri/issues/156)
+
+
+### Bug Fixes
+
+* set cursor after append and prepend ([b46c185](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b46c185506fc7526d7f58775ddbddcebd2013433)), closes [#99](https://github.com/Vinzent03/obsidian-advanced-uri/issues/99) [#207](https://github.com/Vinzent03/obsidian-advanced-uri/issues/207)
+
 ## [1.45.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.44.3...1.45.0) (2025-07-20)
 
 
