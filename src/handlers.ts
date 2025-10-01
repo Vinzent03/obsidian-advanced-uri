@@ -218,6 +218,9 @@ export default class Handlers {
             }
         }
         this.plugin.success(parameters);
+        // Add huge delay to allow for example the frontmatter to be properly
+        // cached before editing in `handleFrontmatterKey`
+        await new Promise((r) => setTimeout(r, 4000));
     }
 
     async handleEval(parameters: Parameters) {

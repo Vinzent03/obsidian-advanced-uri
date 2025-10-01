@@ -386,12 +386,17 @@ export default class AdvancedURI extends Plugin {
     async chooseHandler(parameters: Parameters, createdDailyNote: boolean) {
         if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
             this.handlers.handlePluginManagement(parameters);
-        } else if (parameters.frontmatterkey) {
-            this.handlers.handleFrontmatterKey(parameters);
         } else if (parameters.workspace || parameters.saveworkspace == "true") {
             this.handlers.handleWorkspace(parameters);
         } else if (parameters.commandname || parameters.commandid) {
-            this.handlers.handleCommand(parameters);
+            await this.handlers.handleCommand(parameters);
+            parameters.filepath = undefined;
+            parameters.commandid = undefined;
+            parameters.commandname = undefined;
+            // Allow for example search after going to a heading
+            await this.chooseHandler(parameters, createdDailyNote);
+        } else if (parameters.frontmatterkey) {
+            this.handlers.handleFrontmatterKey(parameters);
         } else if (parameters.bookmark) {
             this.handlers.handleBookmarks(parameters);
         } else if (parameters.eval) {
@@ -406,11 +411,13 @@ export default class AdvancedURI extends Plugin {
             await this.handlers.handleOpen(parameters);
             parameters.filepath = undefined;
             parameters.heading = undefined;
+            // Allow for example search after going to a heading
             this.chooseHandler(parameters, createdDailyNote);
         } else if (parameters.filepath && parameters.block) {
             await this.handlers.handleOpen(parameters);
             parameters.filepath = undefined;
             parameters.block = undefined;
+            // Allow for example search after going to a block
             this.chooseHandler(parameters, createdDailyNote);
         } else if (
             (parameters.search || parameters.searchregex) &&
