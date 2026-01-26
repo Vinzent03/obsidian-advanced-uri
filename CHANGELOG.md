@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.46.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.46.0...1.46.1) (2026-01-26)
+
+
+### Bug Fixes
+
+* allow frontmatter edit after command ([4a52df5](https://github.com/Vinzent03/obsidian-advanced-uri/commit/4a52df5de276de1206628a93090b39699c6bb47b)), closes [#197](https://github.com/Vinzent03/obsidian-advanced-uri/issues/197)
+* daily note integration when a default note directory has not been set ([#220](https://github.com/Vinzent03/obsidian-advanced-uri/issues/220)) ([75b1288](https://github.com/Vinzent03/obsidian-advanced-uri/commit/75b1288af4ad172612f522fb79ace56307c0595a))
+
 ## [1.46.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.45.0...1.46.0) (2025-08-26)
 
 
