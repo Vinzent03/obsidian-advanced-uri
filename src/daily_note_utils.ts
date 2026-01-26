@@ -14,6 +14,9 @@ function join(...partSegments: string[]): string {
     // Split the inputs into a list of path commands.
     let parts: string[] = [];
     for (let i = 0, l = partSegments.length; i < l; i++) {
+        if (!partSegments[i]) {
+            continue;
+        }
         parts = parts.concat(partSegments[i].split("/"));
     }
     // Interpret the path commands to get the new resolved path.
