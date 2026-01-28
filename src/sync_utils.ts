@@ -4,6 +4,7 @@ type SyncInstance = {
     syncing: boolean;
     ready: boolean;
     syncStatus: string;
+    plugin: { enabled: boolean };
 };
 
 const getSyncInstance = (app: App): SyncInstance => {
@@ -14,6 +15,11 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
     let sync = getSyncInstance(app);
     if (!sync) {
         console.log("sync instance not found, not waiting");
+        return;
+    }
+
+    if (sync?.plugin?.enabled !== true) {
+        console.log("sync plugin is disabled, not waiting");
         return;
     }
 
