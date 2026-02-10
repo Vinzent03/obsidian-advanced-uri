@@ -1,4 +1,4 @@
-import { App } from "obsidian";
+import { App, Notice } from "obsidian";
 
 type SyncInstance = {
     syncing: boolean;
@@ -38,11 +38,19 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    while (sync.syncing === true) {
+    let notice;
+    while (sync.syncing === true && sync.syncStatus !== 'Indexing...') {
         console.log(
             "waiting for sync to complete, current status:",
             sync.syncStatus
         );
+        if (!notice) {
+            notice = new Notice("Waiting for sync to complete...");
+        }
         await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    if (notice) {
+        notice.hide();
     }
 };
