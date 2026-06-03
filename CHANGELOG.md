@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### Unreleased
+
+### Features
+
+* **Anki Integration**: Added "Add to Card" option to the right-click menu for highlighted text. This feature uses AnkiConnect (running on port 8765) to fetch the currently studied card and add an Advanced URI link pointing back to the Obsidian block into a designated custom Anki field. Configurable in settings to Append or Replace.
+
 ### [1.46.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.46.0...1.46.1) (2026-01-26)
 
 

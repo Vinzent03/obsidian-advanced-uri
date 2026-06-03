@@ -124,6 +124,8 @@ export interface AdvancedURISettings {
     includeVaultName: boolean;
     vaultParam: "id" | "name";
     linkFormats: LinkFormat[];
+    ankiField: string;
+    ankiAction: "append" | "replace";
 }
 
 export interface LinkFormat {

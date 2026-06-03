@@ -17,4 +17,6 @@ export const DEFAULT_SETTINGS: AdvancedURISettings = {
             format: "[{{name}}]({{uri}})",
         },
     ],
+    ankiField: "Obsidian Link",
+    ankiAction: "append",
 };

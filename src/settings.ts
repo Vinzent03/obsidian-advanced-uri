@@ -213,6 +213,32 @@ export class SettingsTab extends PluginSettingTab {
             );
         }
 
+        new Setting(containerEl).setName("Anki Connect").setHeading();
+
+        new Setting(containerEl)
+            .setName("Anki Custom Field Name")
+            .setDesc("The case-sensitive name of the custom field in your Anki cards where the URI will be added.")
+            .addText((cb) =>
+                cb.setValue(this.plugin.settings.ankiField).onChange((value) => {
+                    this.plugin.settings.ankiField = value;
+                    this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName("Anki Action")
+            .setDesc("Whether to append the URI to the existing field content, or replace it.")
+            .addDropdown((cb) =>
+                cb
+                    .addOption("append", "Append")
+                    .addOption("replace", "Replace")
+                    .setValue(this.plugin.settings.ankiAction)
+                    .onChange((value: "append" | "replace") => {
+                        this.plugin.settings.ankiAction = value;
+                        this.plugin.saveSettings();
+                    })
+            );
+
         new Setting(containerEl).setName("Support").setHeading();
 
         new Setting(containerEl)

@@ -42,6 +42,7 @@ import {
     getViewStateFromMode as getOpenViewStateFromMode,
 } from "./utils";
 import { WorkspaceModal } from "./modals/workspace_modal";
+import { addUriToCurrentCard } from "./anki";
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
@@ -301,6 +302,51 @@ export default class AdvancedURI extends Plugin {
                         .onClick((_) =>
                             this.handlers.handleCopyFileURI(true, true, file)
                         );
+                });
+            })
+        );
+
+        this.registerEvent(
+            this.app.workspace.on("editor-menu", (menu, editor, view) => {
+                const selection = editor.getSelection();
+                
+                // Only show if text is highlighted
+                if (!selection) return;
+
+                menu.addItem((item) => {
+                    item
+                        .setTitle("Add to Card (Anki)")
+                        .setIcon("graduation-cap")
+                        .onClick(async () => {
+                            try {
+                                const id = BlockUtils.getBlockId(this.app);
+                                if (!id) {
+                                    new Notice("Anki Add to Card: Could not determine block ID.");
+                                    return;
+                                }
+
+                                const uri = await this.tools.generateURI({ 
+                                    filepath: view.file.path,
+                                    block: id
+                                });
+
+                                const { ankiField, ankiAction } = this.settings;
+
+                                if (!ankiField) {
+                                    new Notice("Anki Add to Card: Custom field name is not configured in settings.");
+                                    return;
+                                }
+
+                                new Notice("Sending to Anki...");
+                                await addUriToCurrentCard(uri, ankiField, ankiAction);
+                                
+                                new Notice("Successfully added to Anki card!");
+                                
+                            } catch (error) {
+                                new Notice(`Anki Sync Error: ${error.message}`, 5000);
+                                console.error(error);
+                            }
+                        });
                 });
             })
         );
