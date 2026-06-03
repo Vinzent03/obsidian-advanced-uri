@@ -350,6 +350,43 @@ export default class AdvancedURI extends Plugin {
                 });
             })
         );
+
+        this.addCommand({
+            id: "advanced-uri-add-to-anki",
+            name: "Add selection to active Anki Card",
+            editorCallback: async (editor, view) => {
+                const selection = editor.getSelection();
+
+                try {
+                    let uriParams: any = { filepath: view.file.path };
+
+                    if (selection) {
+                        const id = BlockUtils.getBlockId(this.app);
+                        if (id) {
+                            uriParams.block = id;
+                        }
+                    }
+
+                    const uri = await this.tools.generateURI(uriParams);
+
+                    const { ankiField, ankiAction } = this.settings;
+
+                    if (!ankiField) {
+                        new Notice("Anki Add to Card: Custom field name is not configured in settings.");
+                        return;
+                    }
+
+                    new Notice("Sending to Anki...");
+                    await addUriToCurrentCard(uri, ankiField, ankiAction);
+                    
+                    new Notice("Successfully added to Anki card!");
+                    
+                } catch (error) {
+                    new Notice(`Anki Sync Error: ${error.message}`, 5000);
+                    console.error(error);
+                }
+            }
+        });
     }
 
     async onUriCall(parameters: Parameters) {
