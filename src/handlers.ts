@@ -10,13 +10,20 @@ import AdvancedURI from "./main";
 import { EnterDataModal } from "./modals/enter_data_modal";
 import { FileModal } from "./modals/file_modal";
 import Tools from "./tools";
-import { CanvasView, Parameters } from "./types";
+import {
+    CanvasView,
+    MetadataEditor,
+    MetadataFocusMode,
+    Parameters,
+} from "./types";
+import "./types.ts";
 import {
     copyText,
     getAlternativeFilePath,
     getObjFieldByPath,
     updateObjectFieldInplace,
     KeyPathError,
+    waitForFileCache,
 } from "./utils";
 export default class Handlers {
     constructor(private readonly plugin: AdvancedURI) {}
@@ -52,7 +59,7 @@ export default class Handlers {
         }
     }
 
-    handleFrontmatterKey(parameters: Parameters) {
+    async handleFrontmatterKey(parameters: Parameters) {
         const key = parameters.frontmatterkey;
         const file = this.app.vault.getAbstractFileByPath(
             parameters.filepath ?? this.app.workspace.getActiveFile().path
@@ -63,8 +70,11 @@ export default class Handlers {
             return;
         }
 
-        const frontmatter =
-            this.app.metadataCache.getFileCache(file).frontmatter;
+        const cache = await waitForFileCache(this.app, file);
+        if (!cache) {
+            return;
+        }
+        const frontmatter = cache.frontmatter;
 
         // update frontmatter if user passed data
         if (parameters.data) {
@@ -87,7 +97,7 @@ export default class Handlers {
             }
 
             // update frontmatter
-            this.app.fileManager.processFrontMatter(file, (fm) => {
+            await this.app.fileManager.processFrontMatter(file, (fm) => {
                 try {
                     updateObjectFieldInplace({ originalObject: fm, key, data });
                 } catch (e) {
@@ -101,11 +111,37 @@ export default class Handlers {
                     }
                 }
             });
-            return;
         }
 
-        // if no data is passed, just copy the frontmatter key value to clipboard
-        copyText(getObjFieldByPath({ obj: frontmatter, key }));
+        if (frontmatter && !parameters.data) {
+            // if no data is passed, just copy the frontmatter key value to clipboard
+            copyText(getObjFieldByPath({ obj: frontmatter, key }));
+        }
+        const leaf = await this.plugin.open({
+            parameters,
+            file,
+            setting: this.plugin.settings.openFileWithoutWriteInNewPane,
+        });
+
+        if (leaf && parameters.mode) {
+            if (leaf.view instanceof MarkdownView) {
+                const metadataEditor = (leaf.view as any)
+                    .metadataEditor as MetadataEditor;
+                let mode: MetadataFocusMode;
+                switch (parameters.mode) {
+                    case "append":
+                        mode = "end";
+                        break;
+                    case "prepend":
+                        mode = "start";
+                        break;
+                    case "overwrite":
+                        mode = "both";
+                        break;
+                }
+                metadataEditor.focusValue(key, mode);
+            }
+        }
     }
 
     handleWorkspace(parameters: Parameters) {

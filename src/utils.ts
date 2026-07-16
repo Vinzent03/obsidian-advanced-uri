@@ -1,4 +1,12 @@
-import { App, Notice, OpenViewState, TFile } from "obsidian";
+import {
+    App,
+    CachedMetadata,
+    EventRef,
+    MetadataCache,
+    Notice,
+    OpenViewState,
+    TFile,
+} from "obsidian";
 import { stripMD } from "obsidian-community-lib";
 import { Parameters } from "./types";
 
@@ -248,4 +256,33 @@ export function getObjFieldByPath(params: { obj: any; key: string }): any {
     } else {
         return originalObject ? originalObject[key] : undefined;
     }
+}
+
+/**
+ * Waits for the file cache to be available for the given file by listening to
+ * the "resolve" event of the metadata cache for a maximum of 5 seconds.
+ */
+export async function waitForFileCache(
+    app: App,
+    file: TFile
+): Promise<CachedMetadata | null> {
+    let cache = app.metadataCache.getFileCache(file);
+    if (!cache) {
+        return new Promise((resolve) => {
+            let event: EventRef;
+            const timeout = activeWindow.setTimeout(() => {
+                resolve(null);
+                app.metadataCache.offref(event);
+            }, 5000); // Timeout after 5 seconds
+            event = app.metadataCache.on("resolve", (resolvedFile) => {
+                if (resolvedFile === file) {
+                    cache = app.metadataCache.getFileCache(file);
+                    activeWindow.clearTimeout(timeout);
+                    app.metadataCache.offref(event);
+                    resolve(cache);
+                }
+            });
+        });
+    }
+    return cache;
 }

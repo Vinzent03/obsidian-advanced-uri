@@ -12,6 +12,7 @@ Actions on the frontmatter are done using the `frontmatterkey` parameter.
 ## `frontmatterkey` parameter structure
 
 ### Simple Structure
+
 ```yaml
 my_item: my_value
 ```
@@ -19,26 +20,29 @@ my_item: my_value
 To select the field `my_value` set the parameter `frontmatterkey=my_item`.
 
 ### Complex Structure
+
 ```yaml
 my_item:
     second_item: my_value
 ```
-To select the field `my_value` use `frontmatterkey=[my_item,second_item]`.  The value of `frontmatterkey` is the ordered list of keys to access your value to copy. Each key needs to be separated via `,`.
+
+To select the field `my_value` use `frontmatterkey=[my_item,second_item]`. The value of `frontmatterkey` is the ordered list of keys to access your value to copy. Each key needs to be separated via `,`.
 
 ```yaml
 my_item:
     second_item:
-    - A
-    - B
+        - A
+        - B
 ```
-To select `B` use `frontmatterkey=[my_item,second_item,1]`, because `B` is at index `1` in the list.
 
+To select `B` use `frontmatterkey=[my_item,second_item,1]`, because `B` is at index `1` in the list.
 
 ## Read Frontmatter
 
 You can copy values of your frontmatter to the clipboard using a [file identifier](File%20identifiers.md) and the `frontmatterkey` paramteter.
 
 **Complete example:**
+
 ```
 obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_item,1]
 ```
@@ -47,7 +51,20 @@ obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=[my_item,second_
 
 You can also write to your frontmatter using the `frontmatterkey` and `data` parameter. If the key does not exist, it will be created.
 
-The `data` parameter is the value you want to write to the frontmatter field. It can be a string, a number, a boolean, a list, or any other JSON object.
+The `data` parameter is the value you want to write to the frontmatter field. It can be a string, a number, a boolean, a list, or any other JSON object. Use `null` for an empty value.
+
+> [!NOTE]
+> For both read and write the associated file is opened by default. To prevent it from opening or control the behavior, use the `openmode` parameter. See [[Navigation Parameters]] for more information.
+
+## Focus Property
+
+To focus the cursor on a specific property in the frontmatter, use the values `append`, `prepend`, or `overwrite` for the `mode` parameter.
+
+E.g. to focus on the property `my_item` in the frontmatter, use the following URI:
+
+```
+obsidian://adv-uri?vault=<vault>&filepath=MyFile&frontmatterkey=my&mode=append
+```
 
 ### Simple Structure
 
@@ -57,18 +74,18 @@ Before:
 
 ```yaml
 my_item:
-  second_item:
-    - A
-    - B
+    second_item:
+        - A
+        - B
 ```
 
 After:
 
 ```yaml
 my_item:
-  second_item:
-    - A
-    - newValue
+    second_item:
+        - A
+        - newValue
 ```
 
 ```
@@ -83,20 +100,20 @@ Before:
 
 ```yaml
 my_item:
-  second_item:
-    - A
-    - B
+    second_item:
+        - A
+        - B
 ```
 
 After:
 
 ```yaml
 my_item:
-  second_item:
-    - A
-    - data:
-        - 2
-        - 3
+    second_item:
+        - A
+        - data:
+              - 2
+              - 3
 ```
 
 ```
@@ -114,11 +131,11 @@ Check the example below:
 
 ```yaml
 my_item:
-  second_item:
-    - A
-    - data:
-        - 2
-        - 3
+    second_item:
+        - A
+        - data:
+              - 2
+              - 3
 ```
 
 ```

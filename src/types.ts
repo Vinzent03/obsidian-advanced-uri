@@ -100,6 +100,12 @@ declare module "obsidian" {
     }
 }
 
+export interface MetadataEditor {
+    focusValue(key: string, mode: MetadataFocusMode): void;
+}
+
+export type MetadataFocusMode = "start" | "end" | "both";
+
 export interface FileModalData {
     source: string;
     display: string;

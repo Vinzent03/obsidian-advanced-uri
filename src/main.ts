@@ -401,7 +401,7 @@ export default class AdvancedURI extends Plugin {
             // Allow for example search after going to a heading
             await this.chooseHandler(parameters, createdDailyNote);
         } else if (parameters.frontmatterkey) {
-            this.handlers.handleFrontmatterKey(parameters);
+            await this.handlers.handleFrontmatterKey(parameters);
         } else if (parameters.bookmark) {
             this.handlers.handleBookmarks(parameters);
         } else if (parameters.eval) {
