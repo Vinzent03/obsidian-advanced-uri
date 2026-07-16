@@ -693,7 +693,8 @@ export default class AdvancedURI extends Plugin {
                 if (isBoolean(openMode)) {
                     this.app.workspace.iterateAllLeaves((existingLeaf) => {
                         if (
-                            existingLeaf.view.file?.path === parameters.filepath
+                            existingLeaf.getViewState().state.file ===
+                            parameters.filepath
                         ) {
                             if (fileIsAlreadyOpened && existingLeaf.width == 0)
                                 return;
