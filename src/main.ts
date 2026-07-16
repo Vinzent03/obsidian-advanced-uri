@@ -752,7 +752,18 @@ export default class AdvancedURI extends Plugin {
         viewState.state.mode = "source";
 
         if (mode === "append") {
-            const lastLine = editor.lastLine();
+            let lastLine: number;
+            if (parameters.heading) {
+                const headingInfo = getEndAndBeginningOfHeading(
+                    this.app,
+                    view.file,
+                    parameters.heading
+                );
+
+                lastLine = headingInfo.lastLine;
+            } else {
+                lastLine = editor.lastLine();
+            }
             const lastLineLength = editor.getLine(lastLine).length;
             await view.leaf.setViewState(viewState, { focus: true });
 
@@ -764,14 +775,26 @@ export default class AdvancedURI extends Plugin {
                 },
                 true
             );
-        } else if (mode === "prepend") {
+        } else if (mode === "prepend" || (!mode && parameters.heading)) {
             await view.leaf.setViewState(viewState, { focus: true });
 
-            editor.setCursor({ ch: 0, line: 0 });
+            let firstLine: number;
+            if (parameters.heading) {
+                const headingInfo = getEndAndBeginningOfHeading(
+                    this.app,
+                    view.file,
+                    parameters.heading
+                );
+                firstLine = headingInfo.firstLine;
+            } else {
+                firstLine = 0;
+            }
+
+            editor.setCursor({ line: firstLine, ch: 0 });
             view.editor.scrollIntoView(
                 {
-                    from: { line: 0, ch: 0 },
-                    to: { line: 0, ch: 0 },
+                    from: { line: firstLine, ch: 0 },
+                    to: { line: firstLine, ch: 0 },
                 },
                 true
             );

@@ -426,21 +426,16 @@ export default class Handlers {
 
     async handleOpen(parameters: Parameters) {
         if (parameters.heading != undefined) {
+            let suffix = "";
+            if (!parameters.mode) {
+                // If mode is specified we set the cursor ourself in `setCursor`
+                // and prevent the highlighting
+                suffix = "#" + parameters.heading;
+            }
             await this.plugin.open({
-                file: parameters.filepath + "#" + parameters.heading,
+                file: parameters.filepath + suffix,
                 setting: this.plugin.settings.openFileWithoutWriteInNewPane,
                 parameters: parameters,
-            });
-            const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-            if (!view) return;
-            const cache = this.app.metadataCache.getFileCache(view.file);
-            const heading = cache.headings.find(
-                (e) => e.heading === parameters.heading
-            );
-            view.editor.focus();
-            view.editor.setCursor({
-                line: heading.position.start.line + 1,
-                ch: 0,
             });
         } else if (parameters.block != undefined) {
             await this.plugin.open({
@@ -473,7 +468,7 @@ export default class Handlers {
                 await this.plugin.setCursorInLine(parameters);
             }
         }
-        if (parameters.mode != undefined) {
+        if (parameters.mode != undefined || parameters.heading) {
             await this.plugin.setCursor(parameters);
         }
         if (parameters.uid) {
