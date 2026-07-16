@@ -188,6 +188,7 @@ export interface Parameters {
     canvasviewport?: string;
     confirm?: string;
     offset?: string;
+    "await-sync"?: "true" | "false";
 }
 
 export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";

@@ -57,3 +57,6 @@
 
 > [!note]
 You may use the `heading` or `line` parameter to append and prepend data to a heading or line. More information in [Navigation](Actions/Navigation)
+
+> [!note]
+When using Obsidian Sync, you can add the parameter `await-sync=true` to wait until the sync is complete before proceeding with the write operation. This ensures that any changes are synchronized across your devices before the write action is executed.

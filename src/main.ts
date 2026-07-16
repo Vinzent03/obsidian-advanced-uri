@@ -19,6 +19,7 @@ import {
     appHasDailyNotesPluginLoaded,
     getDailyNotePath,
 } from "./daily_note_utils";
+import { awaitSyncCompletion } from "./sync_utils";
 import Handlers from "./handlers";
 import { CommandModal } from "./modals/command_modal";
 import { EnterDataModal } from "./modals/enter_data_modal";
@@ -384,6 +385,10 @@ export default class AdvancedURI extends Plugin {
     }
 
     async chooseHandler(parameters: Parameters, createdDailyNote: boolean) {
+        if (parameters["await-sync"] === "true") {
+            await awaitSyncCompletion(this.app);
+        }
+
         if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
             this.handlers.handlePluginManagement(parameters);
         } else if (parameters.workspace || parameters.saveworkspace == "true") {
