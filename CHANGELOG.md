@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.47.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.46.1...1.47.0) (2026-07-16)
+
+
+### Features
+
+* new 'await-sync' parameter ([#221](https://github.com/Vinzent03/obsidian-advanced-uri/issues/221)) ([85421d6](https://github.com/Vinzent03/obsidian-advanced-uri/commit/85421d66de69ecda604f4482585a36da79339e37))
+
+
+### Bug Fixes
+
+* open file in existing deferred view ([5d8ac59](https://github.com/Vinzent03/obsidian-advanced-uri/commit/5d8ac59a80a60ac799e7c8cf5d829c3f9b02f251))
+* open heading in append/prepend mode and prevent highlight ([df448fc](https://github.com/Vinzent03/obsidian-advanced-uri/commit/df448fc310d6c17e833ae55dba570bdc8b2d1170)), closes [#223](https://github.com/Vinzent03/obsidian-advanced-uri/issues/223)
+* overhaul frontmatter feature with property focus and wait for new files ([eaf7522](https://github.com/Vinzent03/obsidian-advanced-uri/commit/eaf7522e622d232c9694537cfa3605b998e56908)), closes [#227](https://github.com/Vinzent03/obsidian-advanced-uri/issues/227)
+
 ### [1.46.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.46.0...1.46.1) (2026-01-26)
 
 
