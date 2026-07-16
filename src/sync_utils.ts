@@ -30,27 +30,41 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
         return;
     }
 
+    let notice: Notice | null = null;
+    let tryCount = 0;
     while (sync.ready === false) {
-        console.log(
-            "waiting for sync to be ready, current status:",
-            sync.syncStatus
-        );
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-
-    let notice;
-    while (sync.syncing === true && sync.syncStatus !== 'Indexing...') {
-        console.log(
-            "waiting for sync to complete, current status:",
-            sync.syncStatus
-        );
-        if (!notice) {
-            notice = new Notice("Waiting for sync to complete...");
+        tryCount++;
+        // Wait for up to 10 seconds for sync to be ready
+        if (tryCount > 40) {
+            console.log(
+                "sync instance not ready after 10 seconds, not waiting"
+            );
+            notice?.hide();
+            return;
         }
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        if (tryCount > 6 && !notice) {
+            notice = new Notice("Adv. URI: Waiting for sync to complete...", 0);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 250));
     }
 
-    if (notice) {
-        notice.hide();
+    while (sync.syncing === true && sync.syncStatus !== "Indexing...") {
+        tryCount++;
+        // Wait for up to 60 seconds for syncing to complete
+        if (tryCount > 240) {
+            console.log(
+                "sync instance still syncing after 60 seconds, not waiting"
+            );
+
+            notice?.hide();
+            return;
+        }
+        if (tryCount > 6 && !notice) {
+            notice = new Notice("Adv. URI: Waiting for sync to complete...", 0);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 250));
     }
+
+    notice?.hide();
 };
