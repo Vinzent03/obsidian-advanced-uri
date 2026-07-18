@@ -16,7 +16,6 @@
     "author": "Vinzent",
     "license": "MIT",
     "devDependencies": {
-        "@types/uuid": "^8.3.4",
         "obsidian": "^1.1.1",
         "standard-version": "^9.5.0",
         "tslib": "^2.4.1",
@@ -25,6 +24,6 @@
     },
     "dependencies": {
         "obsidian-community-lib": "git://github.com/obsidian-community/obsidian-community-lib.git",
-        "uuid": "^8.3.2"
+        "uuid": "^14.0.1"
     }
 }
