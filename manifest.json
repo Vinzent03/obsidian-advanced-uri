@@ -1,9 +1,8 @@
 {
     "id": "obsidian-advanced-uri",
     "name": "Advanced URI",
-    "description": "Advanced modes for Obsidian URI",
+    "description": "Control various aspects through URIs, including opening files, creating new files, and executing commands.",
     "isDesktopOnly": false,
-    "js": "main.js",
     "fundingUrl": "https://ko-fi.com/vinzent",
     "version": "1.47.0",
     "author": "Vinzent",
