@@ -43,16 +43,9 @@ export default defineConfig(
             "@typescript-eslint/no-unsafe-member-access": "off",
             "@typescript-eslint/no-unsafe-return": "off",
             "@typescript-eslint/no-unused-vars": "off",
-            "no-empty": "off",
-            "no-undef": "off",
             "obsidianmd/commands/no-command-in-command-id": "off",
             "obsidianmd/commands/no-command-in-command-name": "off",
-            "obsidianmd/no-tfile-tfolder-cast": "off",
-            "obsidianmd/object-assign": "off",
-            "obsidianmd/rule-custom-message": "off",
-            "obsidianmd/settings-tab/no-manual-html-headings": "off",
             "obsidianmd/settings-tab/prefer-setting-definitions": "off",
-            "obsidianmd/ui/sentence-case": "off",
         },
     }
 );

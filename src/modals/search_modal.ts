@@ -8,7 +8,7 @@ export class SearchModal extends SuggestModal<SearchModalData> {
     constructor(plugin: AdvancedURI) {
         super(plugin.app);
         this.plugin = plugin;
-        this.setPlaceholder("Searched text. RegEx is supported");
+        this.setPlaceholder("Searched text. Regex is supported");
     }
 
     getSuggestions(query: string): SearchModalData[] {
@@ -18,7 +18,9 @@ export class SearchModal extends SuggestModal<SearchModalData> {
         let regex: RegExp;
         try {
             regex = new RegExp(query);
-        } catch (error) {}
+        } catch {
+            regex = undefined;
+        }
         return [
             {
                 source: query,
@@ -40,5 +42,7 @@ export class SearchModal extends SuggestModal<SearchModalData> {
     onChooseSuggestion(
         item: SearchModalData,
         _: MouseEvent | KeyboardEvent
-    ): void {}
+    ): void {
+        void item;
+    }
 }

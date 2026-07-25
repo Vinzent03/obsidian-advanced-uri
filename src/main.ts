@@ -605,7 +605,7 @@ export default class AdvancedURI extends Plugin {
         }
         await this.openExistingFileAndSetCursor(outputFileName, parameters);
 
-        return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
+        return this.app.vault.getFileByPath(outputFileName);
     }
 
     async openExistingFileAndSetCursor(file: string, parameters: Parameters) {
@@ -647,7 +647,7 @@ export default class AdvancedURI extends Plugin {
                 this.app.plugins.plugins["obsidian-hover-editor"];
             if (!hoverEditor) {
                 new Notice(
-                    "Cannot find Hover Editor plugin. Please file an issue."
+                    "Cannot find hover editor plugin. Please file an issue."
                 );
                 this.failure(parameters);
             }
@@ -675,6 +675,7 @@ export default class AdvancedURI extends Plugin {
                     Platform.isMobile &&
                     parameters.openmode == "window"
                 ) {
+                    openMode = false;
                 } else {
                     openMode = parameters.openmode;
                 }
@@ -856,7 +857,10 @@ export default class AdvancedURI extends Plugin {
     }
 
     async loadSettings() {
-        this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
+        this.settings = {
+            ...DEFAULT_SETTINGS,
+            ...(await this.loadData()),
+        };
     }
 
     async saveSettings() {

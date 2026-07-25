@@ -9,9 +9,12 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     display(): void {
-        let { containerEl } = this;
+        const { containerEl } = this;
         containerEl.empty();
-        containerEl.createEl("h2", { text: this.plugin.manifest.name });
+
+        new Setting(containerEl)
+            .setName(this.plugin.manifest.name)
+            .setHeading();
 
         new Setting(containerEl).setName("Open file on write").addToggle((cb) =>
             cb
@@ -85,7 +88,7 @@ export class SettingsTab extends PluginSettingTab {
             new Setting(containerEl)
                 .setName("Vault identifying parameter")
                 .setDesc(
-                    "Choose whether to use the vault Name or its internal ID as the identifying parameter."
+                    "Choose whether to use the vault name or its internal ID as the identifying parameter."
                 )
                 .addDropdown((cb) =>
                     cb
@@ -103,7 +106,7 @@ export class SettingsTab extends PluginSettingTab {
             new Setting(containerEl)
                 .setName("Add filepath parameter")
                 .setDesc(
-                    "When using UID instead of file paths, you can still add the filepath parameter to know what this URI is about. It's NOT actually used."
+                    "When using uid instead of file paths, you can still add the filepath parameter to know what this URI is about. It's not actually used."
                 )
                 .addToggle((cb) =>
                     cb
@@ -204,7 +207,7 @@ export class SettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName("Donate")
             .setDesc(
-                "If you like this Plugin, consider donating to support continued development."
+                "If you like this plugin, consider donating to support continued development."
             )
             .addButton((bt) => {
                 const link = createEl("a", {

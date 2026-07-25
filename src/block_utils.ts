@@ -17,7 +17,7 @@ export abstract class BlockUtils {
         const fileCache = app.metadataCache.getFileCache(file);
         const sections = fileCache?.sections;
         if (!sections || sections.length === 0) {
-            console.log('error reading FileCache (empty file?)');
+            console.warn(`No sections found in file ${file.path}`);
             return;
         }
         const foundSectionIndex = sections.findIndex(section => section.position.start.line > cursor.line);

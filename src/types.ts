@@ -1,4 +1,14 @@
-import { PaneType, View, moment } from "obsidian";
+import {
+    Command,
+    PaneType,
+    Plugin,
+    PluginManifest,
+    SettingTab,
+    TFile,
+    View,
+    WorkspaceLeaf,
+    moment,
+} from "obsidian";
 import { CanvasNodeData } from "obsidian/canvas";
 
 declare module "obsidian" {

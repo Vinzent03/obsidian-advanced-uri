@@ -14,17 +14,17 @@ const getSyncInstance = (app: App): SyncInstance => {
 export const awaitSyncCompletion = async (app: App): Promise<void> => {
     let sync = getSyncInstance(app);
     if (!sync) {
-        console.log("sync instance not found, not waiting");
+        console.warn("sync instance not found, not waiting");
         return;
     }
 
     if (sync?.plugin?.enabled !== true) {
-        console.log("sync plugin is disabled, not waiting");
+        console.warn("sync plugin is disabled, not waiting");
         return;
     }
 
     if (!("syncing" in sync) || !("ready" in sync)) {
-        console.log(
+        console.warn(
             "sync instance does not have expected properties, not waiting"
         );
         return;
@@ -36,7 +36,7 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
         tryCount++;
         // Wait for up to 10 seconds for sync to be ready
         if (tryCount > 40) {
-            console.log(
+            console.warn(
                 "sync instance not ready after 10 seconds, not waiting"
             );
             notice?.hide();
@@ -52,7 +52,7 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
         tryCount++;
         // Wait for up to 60 seconds for syncing to complete
         if (tryCount > 240) {
-            console.log(
+            console.warn(
                 "sync instance still syncing after 60 seconds, not waiting"
             );
 
