@@ -4,7 +4,7 @@
     "description": "Control various aspects through URIs, including opening files, creating new files, and executing commands.",
     "isDesktopOnly": false,
     "fundingUrl": "https://ko-fi.com/vinzent",
-    "version": "1.47.0",
+    "version": "2.0.0",
     "author": "Vinzent",
     "authorUrl": "https://github.com/Vinzent03",
     "minAppVersion": "1.5.7"

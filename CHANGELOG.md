@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.47.0...2.0.0) (2026-07-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove eval feature due to security concerns
+
+### Features
+
+* append and prepend to block ([b6745cb](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b6745cb7ffd7909db254e2699cfe6d5a2896ba58)), closes [#161](https://github.com/Vinzent03/obsidian-advanced-uri/issues/161)
+* focus-aware split and window open modes ([b2843f7](https://github.com/Vinzent03/obsidian-advanced-uri/commit/b2843f7a515044e68c1de9d3aed46598146b177b)), closes [#154](https://github.com/Vinzent03/obsidian-advanced-uri/issues/154)
+
+
+### Bug Fixes
+
+* place command cursor in heading ([52e1dbd](https://github.com/Vinzent03/obsidian-advanced-uri/commit/52e1dbdf1d5cad42159678d0ed6490f010bdb874)), closes [#147](https://github.com/Vinzent03/obsidian-advanced-uri/issues/147)
+
+
+* remove eval feature due to security concerns ([29ee921](https://github.com/Vinzent03/obsidian-advanced-uri/commit/29ee9213848550ded6965a25b80ae6f7ea63c9f2))
+
 ## [1.47.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.46.1...1.47.0) (2026-07-16)
 
 
