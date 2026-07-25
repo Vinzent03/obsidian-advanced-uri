@@ -56,7 +56,9 @@
 > ```
 
 > [!note]
-You may use the `heading` or `line` parameter to append and prepend data to a heading or line. More information in [Navigation](Actions/Navigation)
+You may use the `heading`, `block`, or `line` parameter to append and prepend data to a heading, block, or line. More information in [Navigation](Actions/Navigation)
+>
+> When using `block`, the data is inserted literally before or after the resolved block range. Lists are not handled specially: to create a new list item, include the list marker in `data`, for example `data=-%20new%20item`.
 
 > [!note]
 When using Obsidian Sync, you can add the parameter `await-sync=true` to wait until the sync is complete before proceeding with the write operation. This ensures that any changes are synchronized across your devices before the write action is executed.

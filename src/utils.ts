@@ -94,6 +94,24 @@ export function getEndAndBeginningOfHeading(
     }
 }
 
+export function getEndAndBeginningOfBlock(
+    app: App,
+    file: TFile,
+    blockId: string
+): { lastLine: number; firstLine: number } {
+    const cache = app.metadataCache.getFileCache(file);
+    const block = cache?.blocks?.[blockId.toLowerCase()];
+
+    if (block) {
+        return {
+            lastLine: block.position.end.line,
+            firstLine: block.position.start.line,
+        };
+    } else {
+        new Notice("Can't find block");
+    }
+}
+
 interface UpdateObjectFieldInplaceParams {
     /** The object to update. */
     originalObject: Record<string, unknown>;

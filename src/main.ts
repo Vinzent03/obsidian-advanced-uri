@@ -36,6 +36,7 @@ import {
     SearchModalData,
 } from "./types";
 import {
+    getEndAndBeginningOfBlock,
     getEndAndBeginningOfHeading,
     getFileUri,
     getViewStateFromMode as getOpenViewStateFromMode,
@@ -518,6 +519,14 @@ export default class AdvancedURI extends Plugin {
                 ) {
                     parameters.separator = "\n" + parameters.separator;
                 }
+            } else if (parameters.block) {
+                const lineInfo = getEndAndBeginningOfBlock(
+                    this.app,
+                    file,
+                    parameters.block
+                );
+                if (lineInfo === undefined) return;
+                line = lineInfo.lastLine + 1;
             } else if (parameters.line) {
                 line = Number(parameters.line);
             } else {
@@ -565,6 +574,14 @@ export default class AdvancedURI extends Plugin {
                 } else {
                     line += 1;
                 }
+            } else if (parameters.block) {
+                const lineInfo = getEndAndBeginningOfBlock(
+                    this.app,
+                    file,
+                    parameters.block
+                );
+                if (lineInfo === undefined) return;
+                line = lineInfo.firstLine + 1;
             } else if (parameters.line) {
                 line = Number(parameters.line);
             } else if (cache.frontmatterPosition) {
@@ -776,10 +793,19 @@ export default class AdvancedURI extends Plugin {
                     parameters.heading
                 );
 
-                lastLine = headingInfo.lastLine;
+                lastLine = headingInfo?.lastLine;
+            } else if (parameters.block) {
+                const blockInfo = getEndAndBeginningOfBlock(
+                    this.app,
+                    view.file,
+                    parameters.block
+                );
+
+                lastLine = blockInfo?.lastLine;
             } else {
                 lastLine = editor.lastLine();
             }
+            if (lastLine === undefined) return;
             const lastLineLength = editor.getLine(lastLine).length;
             await view.leaf.setViewState(viewState, { focus: true });
 
@@ -801,10 +827,18 @@ export default class AdvancedURI extends Plugin {
                     view.file,
                     parameters.heading
                 );
-                firstLine = headingInfo.firstLine;
+                firstLine = headingInfo?.firstLine;
+            } else if (parameters.block) {
+                const blockInfo = getEndAndBeginningOfBlock(
+                    this.app,
+                    view.file,
+                    parameters.block
+                );
+                firstLine = blockInfo?.firstLine;
             } else {
                 firstLine = 0;
             }
+            if (firstLine === undefined) return;
 
             editor.setCursor({ line: firstLine, ch: 0 });
             view.editor.scrollIntoView(
