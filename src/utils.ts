@@ -270,14 +270,14 @@ export async function waitForFileCache(
     if (!cache) {
         return new Promise((resolve) => {
             let event: EventRef;
-            const timeout = activeWindow.setTimeout(() => {
+            const timeout = window.setTimeout(() => {
                 resolve(null);
                 app.metadataCache.offref(event);
             }, 5000); // Timeout after 5 seconds
             event = app.metadataCache.on("resolve", (resolvedFile) => {
                 if (resolvedFile === file) {
                     cache = app.metadataCache.getFileCache(file);
-                    activeWindow.clearTimeout(timeout);
+                    window.clearTimeout(timeout);
                     app.metadataCache.offref(event);
                     resolve(cache);
                 }

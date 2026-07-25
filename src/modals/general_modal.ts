@@ -1,5 +1,4 @@
 import { SuggestModal } from "obsidian";
-import type ObsidianGit from "src/main";
 import AdvancedURI from "src/main";
 
 export interface OptionalGeneralModalConfig {

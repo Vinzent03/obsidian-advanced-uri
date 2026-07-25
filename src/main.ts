@@ -46,7 +46,7 @@ import { WorkspaceModal } from "./modals/workspace_modal";
 
 export default class AdvancedURI extends Plugin {
     settings: AdvancedURISettings;
-    lastParameters?: Object;
+    lastParameters?: object;
     handlers = new Handlers(this);
     tools = new Tools(this);
 
@@ -246,7 +246,7 @@ export default class AdvancedURI extends Plugin {
 
         // New version starting with v1.44.0
         this.registerObsidianProtocolHandler("adv-uri", async (e) => {
-            const parameters = e as unknown as Parameters;
+            const parameters = e as Parameters;
 
             this.onUriCall(parameters);
         });

@@ -44,11 +44,11 @@ declare module "obsidian" {
             manifests: Record<string, PluginManifest>;
             checkForUpdates(): Promise<void>;
             updates: {
-                [key: string]: {};
+                [key: string]: unknown;
             };
         };
         internalPlugins: {
-            getEnabledPluginById(plugin: String): Plugin;
+            getEnabledPluginById(plugin: string): Plugin;
             getEnabledPluginById(plugin: "bookmarks"): {
                 openBookmark(
                     bookmark: Bookmark,
@@ -116,7 +116,7 @@ export interface EnterData {
     mode: string;
     data: string;
     display: string;
-    func: Function;
+    func: () => void;
 }
 
 export interface AdvancedURISettings {
