@@ -820,14 +820,21 @@ export default class AdvancedURI extends Plugin {
                 lastLine = editor.lastLine();
             }
             if (lastLine === undefined) return;
-            const lastLineLength = editor.getLine(lastLine).length;
+            const targetLine =
+                parameters.heading && lastLine < editor.lineCount()
+                    ? Math.max(0, lastLine - 1)
+                    : Math.min(lastLine, editor.lastLine());
+            const cursor = {
+                line: targetLine,
+                ch: editor.getLine(targetLine).length,
+            };
             await view.leaf.setViewState(viewState, { focus: true });
 
-            editor.setCursor({ ch: lastLineLength, line: lastLine });
+            editor.setCursor(cursor);
             view.editor.scrollIntoView(
                 {
-                    from: { line: lastLine, ch: lastLineLength },
-                    to: { line: lastLine, ch: lastLineLength },
+                    from: cursor,
+                    to: cursor,
                 },
                 true
             );

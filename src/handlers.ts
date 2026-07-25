@@ -18,6 +18,8 @@ import {
 import "./types.ts";
 import {
     copyText,
+    getEndAndBeginningOfBlock,
+    getEndAndBeginningOfHeading,
     getAlternativeFilePath,
     getObjFieldByPath,
     updateObjectFieldInplace,
@@ -204,14 +206,10 @@ export default class Handlers {
                     this.app.workspace.getActiveViewOfType(MarkdownView);
                 if (view) {
                     const editor = view.editor;
-                    const data = editor.getValue();
                     if (parameters.mode === "append") {
-                        editor.setValue(data + "\n");
-                        const lines = editor.lineCount();
-                        editor.setCursor({ ch: 0, line: lines });
+                        this.insertCommandLine(view, parameters, "append");
                     } else if (parameters.mode === "prepend") {
-                        editor.setValue("\n" + data);
-                        editor.setCursor({ ch: 0, line: 0 });
+                        this.insertCommandLine(view, parameters, "prepend");
                     } else if (parameters.mode === "overwrite") {
                         editor.setValue("");
                     }
@@ -271,6 +269,77 @@ export default class Handlers {
         // Add huge delay to allow for example the frontmatter to be properly
         // cached before editing in `handleFrontmatterKey`
         await new Promise((r) => window.setTimeout(r, 4000));
+    }
+
+    private insertCommandLine(
+        view: MarkdownView,
+        parameters: Parameters,
+        mode: "append" | "prepend"
+    ) {
+        const editor = view.editor;
+        const lineCount = editor.lineCount();
+        const lastExistingLine = editor.lastLine();
+        let cursor: { line: number; ch: number };
+        let keepCursorBeforeInsertedText = false;
+
+        if (parameters.heading) {
+            const headingInfo = getEndAndBeginningOfHeading(
+                this.app,
+                view.file,
+                parameters.heading
+            );
+            if (!headingInfo) return;
+
+            const line =
+                mode === "append" ? headingInfo.lastLine : headingInfo.firstLine;
+            if (line >= lineCount) {
+                cursor = {
+                    line: lastExistingLine,
+                    ch: editor.getLine(lastExistingLine).length,
+                };
+            } else {
+                cursor = { line, ch: 0 };
+                keepCursorBeforeInsertedText = true;
+            }
+        } else if (parameters.block) {
+            const blockInfo = getEndAndBeginningOfBlock(
+                this.app,
+                view.file,
+                parameters.block
+            );
+            if (!blockInfo) return;
+
+            cursor =
+                mode === "append"
+                    ? {
+                          line: blockInfo.lastLine,
+                          ch: editor.getLine(blockInfo.lastLine).length,
+                      }
+                    : { line: blockInfo.firstLine, ch: 0 };
+            keepCursorBeforeInsertedText = mode === "prepend";
+        } else if (mode === "append") {
+            cursor = {
+                line: lastExistingLine,
+                ch: editor.getLine(lastExistingLine).length,
+            };
+        } else {
+            cursor = { line: 0, ch: 0 };
+            keepCursorBeforeInsertedText = true;
+        }
+
+        editor.replaceRange("\n", cursor);
+        editor.setCursor(
+            keepCursorBeforeInsertedText
+                ? cursor
+                : { line: cursor.line + 1, ch: 0 }
+        );
+        editor.scrollIntoView(
+            {
+                from: editor.getCursor(),
+                to: editor.getCursor(),
+            },
+            true
+        );
     }
 
     async handleDoesFileExist(parameters: Parameters) {
