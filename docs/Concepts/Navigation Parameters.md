@@ -11,11 +11,13 @@ Every action opening a pane supports the parameter `openmode`. Accepted values:
 - `true` opens file in new pane if not already opened
 - `false` opens file in current pane if not already opened
 - `window`
+- `window-or-focus` opens file in new window if not already opened
 - `split`
+- `split-or-focus` opens file in new split if not already opened
 - `tab`
 - `silent` doesn't open the file
 - `popover` which requires the [Hover Editor plugin](obsidian://show-plugin?id=obsidian-hover-editor) to be installed and enabled
 
-If the file is already opened in another pane, it gets focused.
+For `true`, `false`, `window-or-focus`, and `split-or-focus`, if the file is already opened in another pane, it gets focused.
 
 You can set a default value in the plugin's settings. The value from the setting gets overwritten by specifying it in the URI.

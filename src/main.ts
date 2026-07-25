@@ -692,8 +692,10 @@ export default class AdvancedURI extends Plugin {
             });
         } else {
             let openMode: OpenMode | boolean = setting;
+            let focusExisting = isBoolean(openMode);
             if (parameters.newpane !== undefined) {
                 openMode = parameters.newpane == "true";
+                focusExisting = true;
             }
             if (parameters.openmode !== undefined) {
                 if (
@@ -701,15 +703,26 @@ export default class AdvancedURI extends Plugin {
                     parameters.openmode == "false"
                 ) {
                     openMode = parameters.openmode == "true";
+                    focusExisting = true;
                 } else if (parameters.openmode == "popover") {
                     openMode = false;
+                    focusExisting = false;
+                } else if (parameters.openmode == "split-or-focus") {
+                    openMode = "split";
+                    focusExisting = true;
                 } else if (
                     Platform.isMobile &&
-                    parameters.openmode == "window"
+                    (parameters.openmode == "window" ||
+                        parameters.openmode == "window-or-focus")
                 ) {
                     openMode = false;
+                    focusExisting = parameters.openmode == "window-or-focus";
+                } else if (parameters.openmode == "window-or-focus") {
+                    openMode = "window";
+                    focusExisting = true;
                 } else {
                     openMode = parameters.openmode;
+                    focusExisting = false;
                 }
             }
             if (openMode == "silent") {
@@ -723,11 +736,12 @@ export default class AdvancedURI extends Plugin {
 
             if (file != undefined) {
                 let fileIsAlreadyOpened = false;
-                if (isBoolean(openMode)) {
+                if (focusExisting) {
+                    const targetPath =
+                        file instanceof TFile ? file.path : parameters.filepath;
                     this.app.workspace.iterateAllLeaves((existingLeaf) => {
                         if (
-                            existingLeaf.getViewState().state.file ===
-                            parameters.filepath
+                            existingLeaf.getViewState().state.file === targetPath
                         ) {
                             if (fileIsAlreadyOpened && existingLeaf.width == 0)
                                 return;

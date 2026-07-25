@@ -206,7 +206,14 @@ export interface Parameters {
     "await-sync"?: "true" | "false";
 }
 
-export type OpenMode = "silent" | "popover" | PaneType | "true" | "false";
+export type OpenMode =
+    | "silent"
+    | "popover"
+    | PaneType
+    | "split-or-focus"
+    | "window-or-focus"
+    | "true"
+    | "false";
 
 export interface HookParameters {
     "x-success": string;
