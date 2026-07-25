@@ -3,8 +3,7 @@ import { App, normalizePath } from "obsidian";
 //! All of these methods are taken from https://www.npmjs.com/package/obsidian-daily-notes-interface.
 
 export function appHasDailyNotesPluginLoaded(app: App): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const dailyNotesPlugin = (<any>app).internalPlugins.plugins["daily-notes"];
+    const dailyNotesPlugin = app.internalPlugins.plugins["daily-notes"];
     if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
         return true;
     }

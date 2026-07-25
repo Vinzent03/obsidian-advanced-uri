@@ -74,6 +74,7 @@ declare module "obsidian" {
                 [key: string]: {
                     disable(_: boolean): void;
                     enable(_: boolean): void;
+                    enabled: boolean;
                 };
             };
         };
