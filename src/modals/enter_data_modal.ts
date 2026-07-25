@@ -45,7 +45,7 @@ export class EnterDataModal extends SuggestModal<EnterData> {
                     mode: mode,
                     func: () => {
                         if (this.file) {
-                            this.plugin.tools.copyURI(
+                            void this.plugin.tools.copyURI(
                                 {
                                     filepath: this.file,
                                     data: query,
@@ -55,7 +55,7 @@ export class EnterDataModal extends SuggestModal<EnterData> {
                                 this.app.vault.getFileByPath(this.file)
                             );
                         } else {
-                            this.plugin.tools.copyURI(
+                            void this.plugin.tools.copyURI(
                                 {
                                     daily: "true",
                                     data: query,

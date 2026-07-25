@@ -35,11 +35,8 @@ export default defineConfig(
     ...obsidianmd.configs.recommended,
     {
         rules: {
-            "@microsoft/sdl/no-inner-html": "off",
             "@typescript-eslint/no-deprecated": "off",
             "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-floating-promises": "off",
-            "@typescript-eslint/no-unnecessary-type-assertion": "off",
             "@typescript-eslint/no-unsafe-argument": "off",
             "@typescript-eslint/no-unsafe-assignment": "off",
             "@typescript-eslint/no-unsafe-call": "off",
@@ -52,11 +49,10 @@ export default defineConfig(
             "obsidianmd/commands/no-command-in-command-name": "off",
             "obsidianmd/no-tfile-tfolder-cast": "off",
             "obsidianmd/object-assign": "off",
-            "obsidianmd/prefer-window-timers": "off",
             "obsidianmd/rule-custom-message": "off",
             "obsidianmd/settings-tab/no-manual-html-headings": "off",
             "obsidianmd/settings-tab/prefer-setting-definitions": "off",
             "obsidianmd/ui/sentence-case": "off",
         },
-    },
+    }
 );

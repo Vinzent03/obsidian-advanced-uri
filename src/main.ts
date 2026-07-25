@@ -129,7 +129,7 @@ export default class AdvancedURI extends Plugin {
                 if (checking) return view != undefined;
                 const id = BlockUtils.getBlockId(this.app);
                 if (id) {
-                    this.tools.copyURI(
+                    void this.tools.copyURI(
                         {
                             filepath: view.file.path,
                             block: id,
@@ -150,7 +150,7 @@ export default class AdvancedURI extends Plugin {
                 if (checking) return view != undefined;
                 const id = BlockUtils.getBlockId(this.app);
                 if (id) {
-                    this.tools.copyURI(
+                    void this.tools.copyURI(
                         {
                             filepath: view.file.path,
                             block: id,
@@ -192,7 +192,7 @@ export default class AdvancedURI extends Plugin {
                     ids.push(node.id);
                 });
 
-                this.tools.copyURI(
+                void this.tools.copyURI(
                     {
                         canvasnodes: ids.join(","),
                         filepath: activeView.file.path,
@@ -220,7 +220,7 @@ export default class AdvancedURI extends Plugin {
                 const tx = canvas.tx.toFixed(0),
                     ty = canvas.ty.toFixed(0),
                     tZoom = canvas.tZoom.toFixed(3);
-                this.tools.copyURI(
+                void this.tools.copyURI(
                     {
                         filepath: activeView.file.path,
                         canvasviewport: `${tx},${ty},${tZoom}`,
@@ -241,14 +241,14 @@ export default class AdvancedURI extends Plugin {
                 );
             }
 
-            this.onUriCall(parameters);
+            void this.onUriCall(parameters);
         });
 
         // New version starting with v1.44.0
         this.registerObsidianProtocolHandler("adv-uri", async (e) => {
             const parameters = e as Parameters;
 
-            this.onUriCall(parameters);
+            void this.onUriCall(parameters);
         });
 
         this.registerObsidianProtocolHandler(
@@ -262,9 +262,9 @@ export default class AdvancedURI extends Plugin {
                 }
                 const file = this.app.workspace.getActiveFile();
                 if (file) {
-                    this.hookSuccess(parameters, file);
+                    void this.hookSuccess(parameters, file);
                 } else {
-                    this.failure(parameters, {
+                    void this.failure(parameters, {
                         errorMessage: "No file opened",
                     });
                 }
@@ -381,7 +381,7 @@ export default class AdvancedURI extends Plugin {
             parameters.data = await navigator.clipboard.readText();
         }
 
-        this.chooseHandler(parameters, createdDailyNote);
+        await this.chooseHandler(parameters, createdDailyNote);
     }
 
     async chooseHandler(parameters: Parameters, createdDailyNote: boolean) {
@@ -392,7 +392,7 @@ export default class AdvancedURI extends Plugin {
         if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
             this.handlers.handlePluginManagement(parameters);
         } else if (parameters.workspace || parameters.saveworkspace == "true") {
-            this.handlers.handleWorkspace(parameters);
+            await this.handlers.handleWorkspace(parameters);
         } else if (parameters.commandname || parameters.commandid) {
             await this.handlers.handleCommand(parameters);
             parameters.filepath = undefined;
@@ -403,42 +403,42 @@ export default class AdvancedURI extends Plugin {
         } else if (parameters.frontmatterkey) {
             await this.handlers.handleFrontmatterKey(parameters);
         } else if (parameters.bookmark) {
-            this.handlers.handleBookmarks(parameters);
+            void this.handlers.handleBookmarks(parameters);
         } else if (parameters.eval) {
             this.handlers.handleRemovedEval(parameters);
         } else if (parameters.filepath && parameters.exists === "true") {
-            this.handlers.handleDoesFileExist(parameters);
+            await this.handlers.handleDoesFileExist(parameters);
         } else if (parameters.canvasnodes || parameters.canvasviewport) {
-            this.handlers.handleCanvas(parameters);
+            void this.handlers.handleCanvas(parameters);
         } else if (parameters.data) {
-            this.handlers.handleWrite(parameters, createdDailyNote);
+            await this.handlers.handleWrite(parameters, createdDailyNote);
         } else if (parameters.filepath && parameters.heading) {
             await this.handlers.handleOpen(parameters);
             parameters.filepath = undefined;
             parameters.heading = undefined;
             // Allow for example search after going to a heading
-            this.chooseHandler(parameters, createdDailyNote);
+            await this.chooseHandler(parameters, createdDailyNote);
         } else if (parameters.filepath && parameters.block) {
             await this.handlers.handleOpen(parameters);
             parameters.filepath = undefined;
             parameters.block = undefined;
             // Allow for example search after going to a block
-            this.chooseHandler(parameters, createdDailyNote);
+            await this.chooseHandler(parameters, createdDailyNote);
         } else if (
             (parameters.search || parameters.searchregex) &&
             parameters.replace != undefined
         ) {
-            this.handlers.handleSearchAndReplace(parameters);
+            await this.handlers.handleSearchAndReplace(parameters);
         } else if (parameters.search) {
-            this.handlers.handleSearch(parameters);
+            void this.handlers.handleSearch(parameters);
         } else if (parameters.filepath) {
-            this.handlers.handleOpen(parameters);
+            await this.handlers.handleOpen(parameters);
         } else if (parameters.block) {
-            this.handlers.handleOpenBlock(parameters);
+            await this.handlers.handleOpenBlock(parameters);
         } else if (parameters.settingid) {
-            this.handlers.handleOpenSettings(parameters);
+            void this.handlers.handleOpenSettings(parameters);
         } else if (parameters.updateplugins) {
-            this.handlers.handleUpdatePlugins(parameters);
+            void this.handlers.handleUpdatePlugins(parameters);
         }
     }
 
@@ -603,7 +603,7 @@ export default class AdvancedURI extends Plugin {
                 await this.app.vault.create(outputFileName, text);
             }
         }
-        this.openExistingFileAndSetCursor(outputFileName, parameters);
+        await this.openExistingFileAndSetCursor(outputFileName, parameters);
 
         return this.app.vault.getAbstractFileByPath(outputFileName) as TFile;
     }
@@ -800,7 +800,7 @@ export default class AdvancedURI extends Plugin {
             );
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise((resolve) => window.setTimeout(resolve, 10));
 
         if (parameters.viewmode == "preview") {
             viewState.state.mode = "preview";
@@ -847,7 +847,7 @@ export default class AdvancedURI extends Plugin {
             true
         );
 
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise((resolve) => window.setTimeout(resolve, 10));
 
         if (parameters.viewmode == "preview") {
             viewState.state.mode = "preview";

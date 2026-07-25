@@ -18,7 +18,7 @@ export class SettingsTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.openFileOnWrite)
                 .onChange((value) => {
                     this.plugin.settings.openFileOnWrite = value;
-                    this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                 })
         );
 
@@ -30,7 +30,7 @@ export class SettingsTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.openFileOnWriteInNewPane)
                     .onChange((value) => {
                         this.plugin.settings.openFileOnWriteInNewPane = value;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings();
                     })
             );
 
@@ -41,7 +41,7 @@ export class SettingsTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.openDailyInNewPane)
                     .onChange((value) => {
                         this.plugin.settings.openDailyInNewPane = value;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings();
                     })
             );
 
@@ -55,7 +55,7 @@ export class SettingsTab extends PluginSettingTab {
                     .onChange((value) => {
                         this.plugin.settings.openFileWithoutWriteInNewPane =
                             value;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings();
                     })
             );
 
@@ -64,7 +64,7 @@ export class SettingsTab extends PluginSettingTab {
             .addToggle((cb) =>
                 cb.setValue(this.plugin.settings.useUID).onChange((value) => {
                     this.plugin.settings.useUID = value;
-                    this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                     this.display();
                 })
             );
@@ -76,7 +76,7 @@ export class SettingsTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.includeVaultName)
                     .onChange((value) => {
                         this.plugin.settings.includeVaultName = value;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings();
                         this.display();
                     })
             );
@@ -94,7 +94,7 @@ export class SettingsTab extends PluginSettingTab {
                         .setValue(this.plugin.settings.vaultParam)
                         .onChange((value: "id" | "name") => {
                             this.plugin.settings.vaultParam = value;
-                            this.plugin.saveSettings();
+                            void this.plugin.saveSettings();
                         })
                 );
         }
@@ -111,7 +111,7 @@ export class SettingsTab extends PluginSettingTab {
                         .onChange((value) => {
                             this.plugin.settings.addFilepathWhenUsingUID =
                                 value;
-                            this.plugin.saveSettings();
+                            void this.plugin.saveSettings();
                         })
                 );
         }
@@ -120,7 +120,7 @@ export class SettingsTab extends PluginSettingTab {
             .addText((cb) =>
                 cb.setValue(this.plugin.settings.idField).onChange((value) => {
                     this.plugin.settings.idField = value;
-                    this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                 })
             );
 
@@ -162,7 +162,7 @@ export class SettingsTab extends PluginSettingTab {
                     name: "",
                     format: "",
                 });
-                this.plugin.saveSettings();
+                void this.plugin.saveSettings();
                 this.display();
             })
         );
@@ -178,7 +178,7 @@ export class SettingsTab extends PluginSettingTab {
                     .setValue(linkFormats[i].name)
                     .onChange((value) => {
                         linkFormats[i].name = value;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings();
                     })
             );
             linkFormatSetting.addText((cb) =>
@@ -187,13 +187,13 @@ export class SettingsTab extends PluginSettingTab {
                     .setValue(linkFormats[i].format)
                     .onChange((value) => {
                         linkFormats[i].format = value;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings();
                     })
             );
             linkFormatSetting.addExtraButton((cb) =>
                 cb.setIcon("trash").onClick(() => {
                     linkFormats.splice(i, 1);
-                    this.plugin.saveSettings();
+                    void this.plugin.saveSettings();
                     this.display();
                 })
             );
@@ -207,8 +207,22 @@ export class SettingsTab extends PluginSettingTab {
                 "If you like this Plugin, consider donating to support continued development."
             )
             .addButton((bt) => {
-                bt.buttonEl.outerHTML =
-                    "<a href='https://ko-fi.com/F1F195IQ5' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>";
+                const link = createEl("a", {
+                    href: "https://ko-fi.com/F1F195IQ5",
+                    attr: {
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                    },
+                });
+                link.createEl("img", {
+                    attr: {
+                        height: "36",
+                        src: "https://cdn.ko-fi.com/cdn/kofi3.png?v=3",
+                        alt: "Buy Me a Coffee at ko-fi.com",
+                        style: "border: 0; height: 36px;",
+                    },
+                });
+                bt.buttonEl.replaceWith(link);
             });
     }
 }

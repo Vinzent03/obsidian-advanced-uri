@@ -45,7 +45,7 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
         if (tryCount > 6 && !notice) {
             notice = new Notice("Adv. URI: Waiting for sync to complete...", 0);
         }
-        await new Promise((resolve) => setTimeout(resolve, 250));
+        await new Promise((resolve) => window.setTimeout(resolve, 250));
     }
 
     while (sync.syncing === true && sync.syncStatus !== "Indexing...") {
@@ -63,7 +63,7 @@ export const awaitSyncCompletion = async (app: App): Promise<void> => {
             notice = new Notice("Adv. URI: Waiting for sync to complete...", 0);
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 250));
+        await new Promise((resolve) => window.setTimeout(resolve, 250));
     }
 
     notice?.hide();

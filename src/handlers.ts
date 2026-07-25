@@ -115,7 +115,7 @@ export default class Handlers {
 
         if (frontmatter && !parameters.data) {
             // if no data is passed, just copy the frontmatter key value to clipboard
-            copyText(getObjFieldByPath({ obj: frontmatter, key }));
+            await copyText(getObjFieldByPath({ obj: frontmatter, key }));
         }
         const leaf = await this.plugin.open({
             parameters,
@@ -144,7 +144,7 @@ export default class Handlers {
         }
     }
 
-    handleWorkspace(parameters: Parameters) {
+    async handleWorkspace(parameters: Parameters): Promise<void> {
         const workspaces =
             this.app.internalPlugins.getEnabledPluginById("workspaces");
         if (!workspaces) {
@@ -157,7 +157,7 @@ export default class Handlers {
                 new Notice(`Saved current workspace to ${active}`);
             }
             if (parameters.clipboard && parameters.clipboard != "false") {
-                this.tools.copyURI({
+                await this.tools.copyURI({
                     workspace: workspaces.activeWorkspace,
                 });
             } else if (parameters.workspace != undefined) {
@@ -245,10 +245,11 @@ export default class Handlers {
         }
 
         if (parameters.confirm && parameters.confirm != "false") {
-            await new Promise((r) => setTimeout(r, 750));
-            const button = document.querySelector(
+            await new Promise((r) => window.setTimeout(r, 750));
+            const element = document.querySelector(
                 ".mod-cta:not([style*='display: none'])"
-            ) as any;
+            );
+            const button = element as HTMLButtonElement;
             if (button.click instanceof Function) {
                 button.click();
             }
@@ -256,13 +257,13 @@ export default class Handlers {
         this.plugin.success(parameters);
         // Add huge delay to allow for example the frontmatter to be properly
         // cached before editing in `handleFrontmatterKey`
-        await new Promise((r) => setTimeout(r, 4000));
+        await new Promise((r) => window.setTimeout(r, 4000));
     }
 
     async handleDoesFileExist(parameters: Parameters) {
         const exists = await this.app.vault.adapter.exists(parameters.filepath);
 
-        copyText((exists ? 1 : 0).toString());
+        await copyText((exists ? 1 : 0).toString());
         this.plugin.success(parameters);
     }
 
@@ -368,18 +369,21 @@ export default class Handlers {
                         parameters.data,
                         parameters
                     );
-                    this.plugin.hookSuccess(parameters, outFile);
+                    await this.plugin.hookSuccess(parameters, outFile);
                 } else {
                     outFile = await this.plugin.writeAndOpenFile(
                         path,
                         parameters.data,
                         parameters
                     );
-                    this.plugin.hookSuccess(parameters, outFile);
+                    await this.plugin.hookSuccess(parameters, outFile);
                 }
             } else if (!createdDailyNote && file instanceof TFile) {
                 new Notice("File already exists");
-                this.plugin.openExistingFileAndSetCursor(file.path, parameters);
+                await this.plugin.openExistingFileAndSetCursor(
+                    file.path,
+                    parameters
+                );
                 this.plugin.failure(parameters);
             } else {
                 outFile = await this.plugin.writeAndOpenFile(
@@ -390,7 +394,7 @@ export default class Handlers {
                 this.plugin.success(parameters);
             }
             if (parameters.uid) {
-                this.tools.writeUIDToFile(outFile, parameters.uid);
+                await this.tools.writeUIDToFile(outFile, parameters.uid);
             }
         } else {
             new Notice("Cannot find file");
@@ -448,7 +452,7 @@ export default class Handlers {
         if (parameters.uid) {
             const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
-            this.tools.writeUIDToFile(view.file, parameters.uid);
+            await this.tools.writeUIDToFile(view.file, parameters.uid);
         }
         this.plugin.success(parameters);
     }
@@ -466,7 +470,11 @@ export default class Handlers {
         }
     }
 
-    handleCopyFileURI(withoutData: boolean, withFormat: boolean, file?: TFile) {
+    async handleCopyFileURI(
+        withoutData: boolean,
+        withFormat: boolean,
+        file?: TFile
+    ): Promise<void> {
         const view = this.app.workspace.getActiveViewOfType(FileView);
         if (!view && !file) return;
         file = file ?? view.file;
@@ -479,7 +487,7 @@ export default class Handlers {
                         heading.position.start.line <= pos.line &&
                         heading.position.end.line >= pos.line
                     ) {
-                        this.tools.copyURI(
+                        await this.tools.copyURI(
                             {
                                 filepath: view.file.path,
                                 heading: heading.heading,
@@ -498,7 +506,7 @@ export default class Handlers {
                         block.position.start.line <= pos.line &&
                         block.position.end.line >= pos.line
                     ) {
-                        this.tools.copyURI(
+                        await this.tools.copyURI(
                             {
                                 filepath: view.file.path,
                                 block: block.id,
@@ -518,7 +526,7 @@ export default class Handlers {
                 new Notice("No file opened");
                 return;
             }
-            this.tools.copyURI(
+            await this.tools.copyURI(
                 {
                     filepath: file2.path,
                 },

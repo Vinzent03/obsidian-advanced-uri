@@ -28,13 +28,13 @@ export class ReplaceModal extends SuggestModal<string> {
 
     onChooseSuggestion(item: string, _: MouseEvent | KeyboardEvent): void {
         if (this.search.isRegEx) {
-            this.plugin.tools.copyURI({
+            void this.plugin.tools.copyURI({
                 filepath: this.filepath,
                 searchregex: this.search.source,
                 replace: item == this.emptyText ? "" : item,
             });
         } else {
-            this.plugin.tools.copyURI({
+            void this.plugin.tools.copyURI({
                 filepath: this.filepath,
                 search: this.search.source,
                 replace: item == this.emptyText ? "" : item,

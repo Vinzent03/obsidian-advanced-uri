@@ -24,6 +24,6 @@ export class WorkspaceModal extends FuzzySuggestModal<string> {
     }
 
     onChooseItem(item: string, _: MouseEvent | KeyboardEvent): void {
-        this.plugin.tools.copyURI({ workspace: item });
+        void this.plugin.tools.copyURI({ workspace: item });
     }
 }
