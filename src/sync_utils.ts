@@ -7,12 +7,19 @@ type SyncInstance = {
     plugin: { enabled: boolean };
 };
 
-const getSyncInstance = (app: App): SyncInstance => {
-    return (app.internalPlugins?.plugins?.sync as any)?.instance;
+type SyncPlugin = {
+    instance?: SyncInstance;
+};
+
+const getSyncInstance = (app: App): SyncInstance | undefined => {
+    const syncPlugin = app.internalPlugins?.plugins?.sync as
+        | SyncPlugin
+        | undefined;
+    return syncPlugin?.instance;
 };
 
 export const awaitSyncCompletion = async (app: App): Promise<void> => {
-    let sync = getSyncInstance(app);
+    const sync = getSyncInstance(app);
     if (!sync) {
         console.warn("sync instance not found, not waiting");
         return;

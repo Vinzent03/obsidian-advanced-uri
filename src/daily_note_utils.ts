@@ -1,12 +1,10 @@
-import { App, normalizePath } from "obsidian";
+import { App, normalizePath, moment } from "obsidian";
 
 //! All of these methods are taken from https://www.npmjs.com/package/obsidian-daily-notes-interface.
 
 export function appHasDailyNotesPluginLoaded(app: App): boolean {
     const dailyNotesPlugin = app.internalPlugins.plugins["daily-notes"];
-    if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
-        return true;
-    }
+    return !!(dailyNotesPlugin && dailyNotesPlugin.enabled);
 }
 
 function join(...partSegments: string[]): string {
@@ -34,9 +32,17 @@ function join(...partSegments: string[]): string {
     return newParts.join("/");
 }
 
-export async function getDailyNotePath(date: any, app: App): Promise<string> {
-    const { format, folder } =
-        app.internalPlugins.getEnabledPluginById("daily-notes").options;
+export async function getDailyNotePath(
+    date: moment.Moment,
+    app: App
+): Promise<string> {
+    const dailyNotesPlugin =
+        app.internalPlugins.getEnabledPluginById("daily-notes");
+    if (!dailyNotesPlugin) {
+        throw new Error("Daily notes plugin is not enabled");
+    }
+
+    const { format, folder } = dailyNotesPlugin.options;
 
     let filename = date.format(format);
     if (!filename.endsWith(".md")) {

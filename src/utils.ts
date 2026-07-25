@@ -2,7 +2,6 @@ import {
     App,
     CachedMetadata,
     EventRef,
-    MetadataCache,
     Notice,
     OpenViewState,
     TFile,
@@ -97,7 +96,7 @@ export function getEndAndBeginningOfHeading(
 
 interface UpdateObjectFieldInplaceParams {
     /** The object to update. */
-    originalObject: object;
+    originalObject: Record<string, unknown>;
     /**
      * The string key or a string path to the key to update. e.g.: "[key1,key2,0]".
      * Number index in the path should be zero-indexed.
@@ -111,7 +110,17 @@ interface UpdateObjectFieldInplaceParams {
      * */
     key: string;
     /** The new value to set. */
-    data: any;
+    data: unknown;
+}
+
+type PathContainer = Record<string, unknown> | unknown[];
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isPathContainer(value: unknown): value is PathContainer {
+    return Array.isArray(value) || isRecord(value);
 }
 
 /**
@@ -119,13 +128,14 @@ interface UpdateObjectFieldInplaceParams {
  */
 export class KeyPathError extends Error {
     public errKey: string;
+    public override cause?: unknown;
 
     constructor(message: string, errKey: string, cause?: unknown) {
         super(message);
         this.name = "KeyPathError";
         this.errKey = errKey;
         if (cause) {
-            (this as any).cause = cause;
+            this.cause = cause;
         }
     }
 }
@@ -148,7 +158,7 @@ export function updateObjectFieldInplace(
     if (key.startsWith("[") && key.endsWith("]")) {
         // frontmatter key is a list
         const keyList = key.substring(1, key.length - 1).split(",");
-        let currObj: any = originalObject;
+        let currObj: PathContainer = originalObject;
 
         // iterate through key list
         for (let i = 0; i < keyList.length; i++) {
@@ -158,9 +168,9 @@ export function updateObjectFieldInplace(
             if (currObj instanceof Array) {
                 currIndex = parseInt(currKey);
                 if (Number.isNaN(currIndex)) {
-                    currIndex = currObj.find((e) => e == currKey);
+                    currIndex = currObj.findIndex((e) => e == currKey);
                 }
-                if (currIndex === undefined) {
+                if (currIndex === -1) {
                     throw new KeyPathError(
                         `Failed to resolve or convert "${currKey}" to a valid array index.`,
                         currKey
@@ -193,8 +203,10 @@ export function updateObjectFieldInplace(
             // based on what does the next key looks like.
             // - looks like an index => create a new list
             // - looks like a string key => create a new object
-            let nextKeyLooksLikeIndex = !Number.isNaN(parseInt(keyList[i + 1]));
-            const newObj = nextKeyLooksLikeIndex ? [] : {};
+            const nextKeyLooksLikeIndex = !Number.isNaN(
+                parseInt(keyList[i + 1])
+            );
+            const newObj: PathContainer = nextKeyLooksLikeIndex ? [] : {};
 
             try {
                 if (currObj instanceof Array) {
@@ -205,14 +217,28 @@ export function updateObjectFieldInplace(
                         currObj.unshift(newObj);
                         currObj = newObj;
                     } else {
-                        currObj = currObj[Math.max(currIndex, 0)];
+                        const nextValue = currObj[Math.max(currIndex, 0)];
+                        if (!isPathContainer(nextValue)) {
+                            throw new KeyPathError(
+                                `Failed to resolve "${currKey}" as a valid object key`,
+                                currKey
+                            );
+                        }
+                        currObj = nextValue;
                     }
                 } else {
                     if (currObj[currKey] === undefined) {
                         currObj[currKey] = newObj;
                         currObj = newObj;
                     } else {
-                        currObj = currObj[currKey];
+                        const nextValue = currObj[currKey];
+                        if (!isPathContainer(nextValue)) {
+                            throw new KeyPathError(
+                                `Failed to resolve "${currKey}" as a valid object key`,
+                                currKey
+                            );
+                        }
+                        currObj = nextValue;
                     }
                 }
             } catch (e) {
@@ -224,7 +250,7 @@ export function updateObjectFieldInplace(
             }
         }
     } else {
-        (originalObject as any)[key] = data;
+        originalObject[key] = data;
     }
 }
 
@@ -233,20 +259,23 @@ export function updateObjectFieldInplace(
  * @param params - The parameters for retrieving the object field.
  * @returns The value at the specified path, or undefined if not found.
  */
-export function getObjFieldByPath(params: { obj: any; key: string }): any {
+export function getObjFieldByPath(params: {
+    obj: unknown;
+    key: string;
+}): unknown {
     const { obj: originalObject, key } = params;
     if (key.startsWith("[") && key.endsWith("]")) {
         const list = key.substring(1, key.length - 1).split(",");
-        let cache: any = originalObject;
+        let cache: unknown = originalObject;
         for (const item of list) {
             if (cache instanceof Array) {
                 const index = parseInt(item);
                 if (Number.isNaN(index)) {
-                    cache = cache.find((e: any) => e == item);
+                    cache = cache.find((e) => e == item);
                 } else {
                     cache = cache[index];
                 }
-            } else if (cache && typeof cache === "object") {
+            } else if (isRecord(cache)) {
                 cache = cache[item];
             } else {
                 return undefined;
@@ -254,7 +283,7 @@ export function getObjFieldByPath(params: { obj: any; key: string }): any {
         }
         return cache;
     } else {
-        return originalObject ? originalObject[key] : undefined;
+        return isRecord(originalObject) ? originalObject[key] : undefined;
     }
 }
 

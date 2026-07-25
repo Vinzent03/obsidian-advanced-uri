@@ -1,6 +1,5 @@
 import {
     base64ToArrayBuffer,
-    getLinkpath,
     MarkdownView,
     normalizePath,
     Notice,
@@ -32,7 +31,6 @@ import {
     AdvancedURISettings,
     CanvasView,
     FileModalData,
-    HookParameters,
     OpenMode,
     Parameters,
     SearchModalData,
@@ -49,6 +47,22 @@ export default class AdvancedURI extends Plugin {
     lastParameters?: object;
     handlers = new Handlers(this);
     tools = new Tools(this);
+
+    private getActiveView(): View | undefined {
+        return this.app.workspace.activeLeaf?.view;
+    }
+
+    private decodeParameterValues<T extends Record<string, string | undefined>>(
+        parameters: T
+    ): T {
+        for (const parameter in parameters) {
+            const value = parameters[parameter];
+            if (typeof value === "string") {
+                parameters[parameter] = decodeURIComponent(value);
+            }
+        }
+        return parameters;
+    }
 
     async onload() {
         await this.loadSettings();
@@ -175,8 +189,8 @@ export default class AdvancedURI extends Plugin {
             id: "copy-uri-canvas-node",
             name: "Copy URI for selected canvas nodes",
             checkCallback: (checking) => {
-                const activeView = (this.app.workspace as any).activeLeaf
-                    .view as View;
+                const activeView = this.getActiveView();
+                if (!activeView) return false;
                 if (checking) {
                     return (
                         activeView.getViewType() === "canvas" &&
@@ -207,8 +221,8 @@ export default class AdvancedURI extends Plugin {
             id: "copy-uri-canvas-viewport",
             name: "Copy URI for current canvas viewport",
             checkCallback: (checking) => {
-                const activeView = (this.app.workspace as any).activeLeaf
-                    .view as View;
+                const activeView = this.getActiveView();
+                if (!activeView) return false;
                 if (checking) {
                     return activeView.getViewType() === "canvas";
                 }
@@ -233,20 +247,14 @@ export default class AdvancedURI extends Plugin {
 
         // Old version, which needed each value to be encoded twice
         this.registerObsidianProtocolHandler("advanced-uri", async (e) => {
-            const parameters = e as unknown as Parameters;
-
-            for (const parameter in parameters) {
-                (parameters as any)[parameter] = decodeURIComponent(
-                    (parameters as any)[parameter]
-                );
-            }
+            const parameters = this.decodeParameterValues(e);
 
             void this.onUriCall(parameters);
         });
 
         // New version starting with v1.44.0
         this.registerObsidianProtocolHandler("adv-uri", async (e) => {
-            const parameters = e as Parameters;
+            const parameters = e;
 
             void this.onUriCall(parameters);
         });
@@ -254,12 +262,7 @@ export default class AdvancedURI extends Plugin {
         this.registerObsidianProtocolHandler(
             "hook-get-advanced-uri",
             async (e) => {
-                const parameters = e as unknown as HookParameters;
-                for (const parameter in parameters) {
-                    (parameters as any)[parameter] = decodeURIComponent(
-                        (parameters as any)[parameter]
-                    );
-                }
+                const parameters = this.decodeParameterValues(e);
                 const file = this.app.workspace.getActiveFile();
                 if (file) {
                     void this.hookSuccess(parameters, file);
@@ -454,21 +457,33 @@ export default class AdvancedURI extends Plugin {
         this.success(parameters, options);
     }
 
-    success(parameters: Parameters, options?: Record<string, any>): void {
+    success(
+        parameters: Parameters,
+        options?: Record<string, string | number | boolean | undefined>
+    ): void {
         if (parameters["x-success"]) {
             const url = new URL(parameters["x-success"]);
             for (const param in options) {
-                url.searchParams.set(param, options[param]);
+                const value = options[param];
+                if (value !== undefined) {
+                    url.searchParams.set(param, String(value));
+                }
             }
             window.open(url.toString());
         }
     }
 
-    failure(parameters: Parameters, options?: Record<string, any>): void {
+    failure(
+        parameters: Parameters,
+        options?: Record<string, string | number | boolean | undefined>
+    ): void {
         if (parameters["x-error"]) {
             const url = new URL(parameters["x-error"]);
             for (const param in options) {
-                url.searchParams.set(param, options[param]);
+                const value = options[param];
+                if (value !== undefined) {
+                    url.searchParams.set(param, String(value));
+                }
             }
             window.open(url.toString());
         }
@@ -857,9 +872,11 @@ export default class AdvancedURI extends Plugin {
     }
 
     async loadSettings() {
+        const storedSettings =
+            (await this.loadData()) as Partial<AdvancedURISettings> | null;
         this.settings = {
             ...DEFAULT_SETTINGS,
-            ...(await this.loadData()),
+            ...storedSettings,
         };
     }
 

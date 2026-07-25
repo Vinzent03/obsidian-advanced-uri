@@ -8,6 +8,14 @@ import {
 } from "obsidian";
 
 export abstract class BlockUtils {
+    private static getBlockType(
+        block: SectionCache | ListItemCache
+    ): string | undefined {
+        return "type" in block && typeof block.type === "string"
+            ? block.type
+            : undefined;
+    }
+
     private static getBlock(
         app: App,
         editor: Editor,
@@ -58,16 +66,17 @@ export abstract class BlockUtils {
     private static shouldInsertAfter(
         block: SectionCache | ListItemCache
     ): boolean {
-        if ((block as any).type) {
-            return [
-                "blockquote",
-                "code",
-                "table",
-                "heading",
-                "comment",
-                "footnoteDefinition",
-            ].includes((block as any).type);
-        }
+        const blockType = BlockUtils.getBlockType(block);
+        if (!blockType) return false;
+
+        return [
+            "blockquote",
+            "code",
+            "table",
+            "heading",
+            "comment",
+            "footnoteDefinition",
+        ].includes(blockType);
     }
 
     public static getBlockId(app: App): string | undefined {

@@ -22,6 +22,28 @@ export default class Tools {
         return this.plugin.settings;
     }
 
+    private static getFrontmatterString(
+        frontmatter: CachedMetadata["frontmatter"] | undefined,
+        key: string
+    ): string | undefined {
+        const entry: unknown = parseFrontMatterEntry(frontmatter, key);
+        if (typeof entry === "string") return entry;
+        if (entry instanceof Array && typeof entry[0] === "string") {
+            return entry[0];
+        }
+    }
+
+    private static getFrontmatterStringArray(
+        frontmatter: CachedMetadata["frontmatter"] | undefined,
+        key: string
+    ): string[] | undefined {
+        const entry: unknown = parseFrontMatterEntry(frontmatter, key);
+        return entry instanceof Array &&
+            entry.every((item) => typeof item === "string")
+            ? entry
+            : undefined;
+    }
+
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
         const frontmatter =
             this.app.metadataCache.getFileCache(file)?.frontmatter;
@@ -65,16 +87,12 @@ export default class Tools {
                 });
             }));
 
-        const uid = parseFrontMatterEntry(
+        const uid = Tools.getFrontmatterString(
             cache.frontmatter,
             this.plugin.settings.idField
         );
         if (uid != undefined) {
-            if (uid instanceof Array) {
-                return uid[0];
-            } else {
-                return uid;
-            }
+            return uid;
         }
     }
 
@@ -172,7 +190,7 @@ export default class Tools {
             }
             if (file && formattedLink.match(/\{\{alias\}\}/g)) {
                 const aliases = parseFrontMatterAliases(
-                    this.app.metadataCache.getFileCache(file).frontmatter
+                    this.app.metadataCache.getFileCache(file)?.frontmatter
                 );
                 const alias = aliases ? aliases[0] : file?.basename;
                 formattedLink = formattedLink.replace(/\{\{alias\}\}/g, alias);
@@ -192,15 +210,17 @@ export default class Tools {
         const files = this.app.vault.getMarkdownFiles();
         const idKey = this.settings.idField;
         for (const file of files) {
-            const fieldValue = parseFrontMatterEntry(
+            const fieldValue = Tools.getFrontmatterStringArray(
                 this.app.metadataCache.getFileCache(file)?.frontmatter,
                 idKey
             );
 
-            if (fieldValue instanceof Array) {
-                if (fieldValue.contains(uid)) return file;
-            } else {
-                if (fieldValue == uid) return file;
+            if (fieldValue?.includes(uid)) return file;
+            if (Tools.getFrontmatterString(
+                this.app.metadataCache.getFileCache(file)?.frontmatter,
+                idKey
+            ) == uid) {
+                return file;
             }
         }
     }

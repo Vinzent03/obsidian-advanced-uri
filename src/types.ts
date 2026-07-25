@@ -6,7 +6,6 @@ import {
     SettingTab,
     TFile,
     View,
-    WorkspaceLeaf,
     moment,
 } from "obsidian";
 import { CanvasNodeData } from "obsidian/canvas";
@@ -68,7 +67,7 @@ declare module "obsidian" {
             } | null;
             getEnabledPluginById(plugin: "workspaces"): {
                 activeWorkspace: string;
-                workspaces: { [key: string]: any };
+                workspaces: Record<string, unknown>;
                 saveWorkspace(workspace: string): void;
                 loadWorkspace(workspace: string): void;
             } | null;

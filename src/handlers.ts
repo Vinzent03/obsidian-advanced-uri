@@ -4,7 +4,6 @@ import {
     Notice,
     TAbstractFile,
     TFile,
-    View,
 } from "obsidian";
 import AdvancedURI from "./main";
 import { EnterDataModal } from "./modals/enter_data_modal";
@@ -79,14 +78,13 @@ export default class Handlers {
         // update frontmatter if user passed data
         if (parameters.data) {
             // parse data
-            let data = parameters.data;
+            let data: unknown = parameters.data;
             try {
                 // This try catch is needed to allow passing strings as a data value without extra ".
-                data = JSON.parse(data);
+                data = JSON.parse(parameters.data);
             } catch {
                 try {
-                    data = `"${data}"`;
-                    data = JSON.parse(data);
+                    data = JSON.parse(`"${parameters.data}"`);
                 } catch (e) {
                     new Notice(
                         "Failed to parse data, check console for more details"
@@ -99,7 +97,11 @@ export default class Handlers {
             // update frontmatter
             await this.app.fileManager.processFrontMatter(file, (fm) => {
                 try {
-                    updateObjectFieldInplace({ originalObject: fm, key, data });
+                    updateObjectFieldInplace({
+                        originalObject: fm as Record<string, unknown>,
+                        key,
+                        data,
+                    });
                 } catch (e) {
                     console.error(e);
                     if (e instanceof KeyPathError) {
@@ -115,7 +117,14 @@ export default class Handlers {
 
         if (frontmatter && !parameters.data) {
             // if no data is passed, just copy the frontmatter key value to clipboard
-            await copyText(getObjFieldByPath({ obj: frontmatter, key }));
+            const fieldValue = getObjFieldByPath({ obj: frontmatter, key });
+            const clipboardValue =
+                typeof fieldValue === "string" ||
+                typeof fieldValue === "number" ||
+                typeof fieldValue === "boolean"
+                    ? String(fieldValue)
+                    : JSON.stringify(fieldValue ?? "");
+            await copyText(clipboardValue);
         }
         const leaf = await this.plugin.open({
             parameters,
@@ -125,8 +134,12 @@ export default class Handlers {
 
         if (leaf && parameters.mode) {
             if (leaf.view instanceof MarkdownView) {
-                const metadataEditor = (leaf.view as any)
-                    .metadataEditor as MetadataEditor;
+                const metadataEditor = (
+                    leaf.view as MarkdownView & {
+                        metadataEditor?: MetadataEditor;
+                    }
+                ).metadataEditor;
+                if (!metadataEditor) return;
                 let mode: MetadataFocusMode;
                 switch (parameters.mode) {
                     case "append":
@@ -295,7 +308,7 @@ export default class Handlers {
                     const regex = new RegExp(pattern, flags);
                     data = data.replace(regex, parameters.replace);
                     this.plugin.success(parameters);
-                } catch (error) {
+                } catch {
                     new Notice(
                         `Can't parse ${parameters.searchregex} as RegEx`
                     );
@@ -561,11 +574,11 @@ export default class Handlers {
         }
 
         if (parameters.settingsection) {
-            const elements =
-                this.app.setting.tabContentContainer.querySelectorAll("*");
-            const heading: Element = Array.prototype.find.call(
-                elements,
-                (e: Element) => e.textContent == parameters.settingsection
+            const elements = Array.from(
+                this.app.setting.tabContentContainer.querySelectorAll("*")
+            );
+            const heading = elements.find(
+                (e) => e.textContent == parameters.settingsection
             );
 
             if (heading) {
@@ -602,7 +615,7 @@ export default class Handlers {
         } else {
             openMode = parameters.openmode;
         }
-        bookmarksPlugin.openBookmark(bookmark, openMode as any);
+        bookmarksPlugin.openBookmark(bookmark, openMode);
     }
 
     async handleCanvas(parameters: Parameters) {
@@ -613,7 +626,11 @@ export default class Handlers {
                 parameters: parameters,
             });
         }
-        const activeView = (this.app.workspace as any).activeLeaf.view as View;
+        const activeView = this.app.workspace.activeLeaf?.view;
+        if (!activeView) {
+            new Notice("No active view");
+            return;
+        }
         if (activeView.getViewType() != "canvas") {
             new Notice("Active view is not a canvas");
             return;
