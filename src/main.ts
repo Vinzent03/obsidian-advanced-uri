@@ -405,7 +405,7 @@ export default class AdvancedURI extends Plugin {
         } else if (parameters.bookmark) {
             this.handlers.handleBookmarks(parameters);
         } else if (parameters.eval) {
-            this.handlers.handleEval(parameters);
+            this.handlers.handleRemovedEval(parameters);
         } else if (parameters.filepath && parameters.exists === "true") {
             this.handlers.handleDoesFileExist(parameters);
         } else if (parameters.canvasnodes || parameters.canvasviewport) {

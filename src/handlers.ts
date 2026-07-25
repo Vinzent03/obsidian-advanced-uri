@@ -259,80 +259,18 @@ export default class Handlers {
         await new Promise((r) => setTimeout(r, 4000));
     }
 
-    async handleEval(parameters: Parameters) {
-        if (parameters.filepath) {
-            if (parameters.mode) {
-                if (parameters.mode == "new") {
-                    const file = this.app.metadataCache.getFirstLinkpathDest(
-                        parameters.filepath,
-                        "/"
-                    );
-                    if (file instanceof TFile) {
-                        parameters.filepath = getAlternativeFilePath(
-                            this.app,
-                            file
-                        );
-                    }
-                }
-                await this.plugin.open({
-                    file: parameters.filepath,
-                    mode: "source",
-                    parameters: parameters,
-                });
-                const view =
-                    this.app.workspace.getActiveViewOfType(MarkdownView);
-                if (view) {
-                    const editor = view.editor;
-                    const data = editor.getValue();
-                    if (parameters.mode === "append") {
-                        editor.setValue(data + "\n");
-                        const lines = editor.lineCount();
-                        editor.setCursor({ ch: 0, line: lines });
-                    } else if (parameters.mode === "prepend") {
-                        editor.setValue("\n" + data);
-                        editor.setCursor({ ch: 0, line: 0 });
-                    } else if (parameters.mode === "overwrite") {
-                        editor.setValue("");
-                    }
-                }
-            } else if (
-                parameters.line != undefined ||
-                parameters.column != undefined ||
-                parameters.offset != undefined
-            ) {
-                await this.plugin.open({
-                    file: parameters.filepath,
-                    mode: "source",
-                    parameters: parameters,
-                });
-
-                await this.plugin.setCursorInLine(parameters);
-            } else {
-                await this.plugin.open({
-                    file: parameters.filepath,
-                    setting: this.plugin.settings.openFileWithoutWriteInNewPane,
-                    parameters: parameters,
-                });
-            }
-        }
-        if (this.plugin.settings.allowEval) {
-            //Call eval in a global scope
-            const eval2 = eval;
-            eval2(parameters.eval);
-            this.plugin.success(parameters);
-        } else {
-            new Notice(
-                "Eval is not allowed. Please enable it in the settings."
-            );
-            this.plugin.failure(parameters);
-        }
-    }
-
     async handleDoesFileExist(parameters: Parameters) {
         const exists = await this.app.vault.adapter.exists(parameters.filepath);
 
         copyText((exists ? 1 : 0).toString());
         this.plugin.success(parameters);
+    }
+
+    handleRemovedEval(parameters: Parameters) {
+        new Notice(
+            "The eval URI parameter was removed due to security concerns and newer Obsidian plugin checks."
+        );
+        this.plugin.failure(parameters);
     }
     async handleSearchAndReplace(parameters: Parameters) {
         let file: TFile;

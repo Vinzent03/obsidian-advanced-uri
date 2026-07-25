@@ -11,6 +11,8 @@ sidebar_position: 7
 | 启用插件 | enable-plugin                  | 启动 `enable-plugin` 插件                    |
 | 禁用插件 | disable-plugin                 | 禁用 `disable-plugin` 插件                   |
 
+通过 URI 执行任意 JavaScript 的功能已被移除，原因是安全风险以及新版 Obsidian 插件审核要求。
+
 ## 读取 Frontmatter
 
 你可以使用 `frontmatterkey` 参数读取 frontmatter 的值。

@@ -127,7 +127,6 @@ export interface AdvancedURISettings {
     idField: string;
     useUID: boolean;
     addFilepathWhenUsingUID: boolean;
-    allowEval: boolean;
     includeVaultName: boolean;
     vaultParam: "id" | "name";
     linkFormats: LinkFormat[];

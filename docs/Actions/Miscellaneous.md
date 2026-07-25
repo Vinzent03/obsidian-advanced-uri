@@ -5,5 +5,4 @@
 | Update plugins         | updateplugins=true             | Updates all community-plugins                                              |
 | Enable custom plugin   | enable-plugin                  | Enable `enable-plugin` plugin                                              |
 | Disable custom plugins | disable-plugin                 | Disable `disable-plugin` plugin                                            |
-| Execute arbitrary code | eval                           | Execute any javascript code via eval. Requires extra setting to be enabled |
-
+| Execute arbitrary code | Removed                        | This feature was removed due to security concerns and newer Obsidian plugin checks. |

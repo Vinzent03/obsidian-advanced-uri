@@ -124,20 +124,6 @@ export class SettingsTab extends PluginSettingTab {
                 })
             );
 
-        new Setting(containerEl)
-            .setName("Allow executing arbitrary code via eval")
-            .setDesc(
-                "⚠️ This can be dangerous as it allows executing arbitrary code. Only enable this if you trust the source of the URIs you are using and know what you are doing. ⚠️"
-            )
-            .addToggle((cb) =>
-                cb
-                    .setValue(this.plugin.settings.allowEval)
-                    .onChange((value) => {
-                        this.plugin.settings.allowEval = value;
-                        this.plugin.saveSettings();
-                    })
-            );
-
         const formatsHeading = new Setting(containerEl)
             .setName("Link formats")
             .setDesc(
