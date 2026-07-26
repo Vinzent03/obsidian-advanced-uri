@@ -2,24 +2,29 @@
 
 A plugin for [Obsidian](https://obsidian.md)
 
-[Documentation](https://publish.obsidian.md/advanced-uri-doc)
+📚 [Documentation](https://publish.obsidian.md/advanced-uri-doc)
 
 ## Overview
 
 [Advanced URI](https://github.com/Vinzent03/obsidian-advanced-uri) allows you to control many different features in Obsidian just by opening some URIs. Because they are just text and don't require any mouse clicks or keyboard inputs, they are perfect to automate your Obsidian workflow.
 
-You can for example 
-- [open files](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
-- [edit files](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
-- [create files](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
-- [open workspaces](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
+You can for example
+
+- [open files, workspaces, headings, blocks, lines, and settings](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
+- [open files in tabs, splits, windows, popovers, or silently in the background](https://publish.obsidian.md/advanced-uri-doc/Concepts/Navigation%20Parameters)
+- [switch between reading, source, and live preview mode](https://publish.obsidian.md/advanced-uri-doc/Concepts/Navigation%20Parameters)
+- [edit, overwrite, append, prepend, and create files](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
+- [append or prepend content to a specific heading, block, or line](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
+- [write clipboard content to notes, including daily notes](https://publish.obsidian.md/advanced-uri-doc/Actions/Writing)
 - [open bookmarks](https://publish.obsidian.md/advanced-uri-doc/Actions/Bookmarks)
-- [navigate to headings/blocks](https://publish.obsidian.md/advanced-uri-doc/Actions/Navigation)
-- [automated search and replace in a file](https://publish.obsidian.md/advanced-uri-doc/Actions/Search)
-- [call commands](https://publish.obsidian.md/advanced-uri-doc/Actions/Commands)
-- [edit and read from frontmatter](https://publish.obsidian.md/advanced-uri-doc/actions/frontmatter)
-- [canvas movement](https://publish.obsidian.md/advanced-uri-doc/actions/canvas)
-- and much more
+- [automated search and replace in a file, including RegEx](https://publish.obsidian.md/advanced-uri-doc/Actions/Search)
+- [call Obsidian commands and plugin commands](https://publish.obsidian.md/advanced-uri-doc/Actions/Commands)
+- [edit, read, and focus frontmatter properties](https://publish.obsidian.md/advanced-uri-doc/Actions/Frontmatter)
+- [navigate using file paths, file names, aliases, daily notes, or frontmatter UIDs](https://publish.obsidian.md/advanced-uri-doc/Concepts/File%20identifiers)
+- [create robust links that keep working after notes are renamed using ID in properties](https://publish.obsidian.md/advanced-uri-doc/Concepts/File%20identifiers)
+- [focus canvas nodes and control the canvas viewport](https://publish.obsidian.md/advanced-uri-doc/Actions/Canvas)
+- [open Obsidian settings, plugin settings, themes, and community plugin pages](https://publish.obsidian.md/advanced-uri-doc/Actions/Settings%20navigation)
+- [check whether a file exists, update community plugins, or enable/disable plugins](https://publish.obsidian.md/advanced-uri-doc/Actions/Miscellaneous)
 
 Please read the [documentation](https://publish.obsidian.md/advanced-uri-doc) for a detailed explanation.
 
@@ -58,6 +63,7 @@ You can launch these URIs in several ways:
 - Enter them in your browser address bar.
 - Use them in markdown links inside Obsidian.
 - Open them from scripts or a terminal.
+- Use the plugin's helper commands to copy generated URIs for files, daily notes, search and replace actions, commands, and canvas views.
 
 Example markdown link:
 
@@ -76,18 +82,51 @@ For parameter details, encoding rules, and more actions, see the [full documenta
 ## Examples
 
 ### Append content from the clipboard to today's daily note
+
 ```uri
 obsidian://adv-uri?vault=<your-vault>&daily=true&clipboard=true&mode=append
 ```
 
 ### Export a file to PDF by calling the command "Export to PDF" via its command ID
+
 ```uri
 obsidian://adv-uri?vault=<your-vault>&filepath=<your-file>&commandid=workspace%3Aexport-pdf
 ```
 
 ### Open heading in a file
+
 ```uri
 obsidian://adv-uri?vault=<your-vault>&filepath=my-file&heading=Goal
+```
+
+### Open a note by alias or file name
+
+```uri
+obsidian://adv-uri?vault=<your-vault>&filename=Brain%20Dumps
+```
+
+### Append content below a heading in today's daily note
+
+```uri
+obsidian://adv-uri?vault=<your-vault>&daily=true&heading=Inbox&data=-%20New%20idea&mode=append
+```
+
+### Open a file silently without focusing it
+
+```uri
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&openmode=silent
+```
+
+### Open the editor settings at a specific section
+
+```uri
+obsidian://adv-uri?vault=<your-vault>&settingid=editor&settingsection=Behavior
+```
+
+### Check whether a file exists
+
+```uri
+obsidian://adv-uri?vault=<your-vault>&filepath=my-file&exists=true
 ```
 
 If you find this plugin useful and would like to support its development, you can support me on [Ko-fi](https://Ko-fi.com/Vinzent).
