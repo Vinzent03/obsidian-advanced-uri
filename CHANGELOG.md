@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/2.0.0...2.1.0) (2026-09-23)
+
+
+### Features
+
+* new modal with new line support for write and replace text ([0a70794](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0a707949d8d62b836b05c1c42be4932e8822fb73)), closes [#234](https://github.com/Vinzent03/obsidian-advanced-uri/issues/234)
+
+
+### Bug Fixes
+
+* use numbers for file uid ([2823aad](https://github.com/Vinzent03/obsidian-advanced-uri/commit/2823aad5a566d267036e4f7fcf5228f6f4b016bf)), closes [#235](https://github.com/Vinzent03/obsidian-advanced-uri/issues/235)
+
 ## [2.0.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/1.47.0...2.0.0) (2026-07-25)
 
 
