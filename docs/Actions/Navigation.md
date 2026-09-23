@@ -10,6 +10,7 @@
 | copy URI for current workspace | workspace, clipboard=true       | Set any non-empty value to `workspace` and `clipboard=true` to copy the URI for the current workspace                           |     |
 | save current workspace         | saveworkspace=true              | Saves the current workspace. (Can be combined with `workspace` to open a new workspace afterwards)                              |     |
 | file                           | <identification\>               | Opens file                                                                                                                      |     |
+| reveal file or folder          | filepath, reveal=true            | Reveals an existing file or folder in the File Explorer without opening it                                                      |     |
 | line and/or column in file     | <identification\>, line, column | Opens `column` in `line` in file (1 indexed)                                                                                    |     |
 | offset in file                 | <identification\>, offset       | Sets the cursor at `offset` in file. Offset is the character count from the start                                               |
 | heading in file                | <identification\>, heading      | Opens the `heading` in file                                                                                                     |     |
@@ -29,6 +30,12 @@
 >
 > ```uri
 > obsidian://adv-uri?vault=<your-vault>&filepath=my-file&heading=Goal
+> ```
+>
+> Reveal an existing **folder** in the File Explorer without opening a file:
+>
+> ```uri
+> obsidian://adv-uri?vault=<your-vault>&filepath=Attachments&reveal=true
 > ```
 >
 > Open **block**-id "12345" in "my-file.md" (**Important:** Without syntax, only `12345`):

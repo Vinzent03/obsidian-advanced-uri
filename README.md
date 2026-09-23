@@ -117,6 +117,12 @@ obsidian://adv-uri?vault=<your-vault>&daily=true&heading=Inbox&data=-%20New%20id
 obsidian://adv-uri?vault=<your-vault>&filepath=my-file&openmode=silent
 ```
 
+### Reveal a file or folder in File Explorer
+
+```uri
+obsidian://adv-uri?vault=<your-vault>&filepath=Attachments&reveal=true
+```
+
 ### Open the editor settings at a specific section
 
 ```uri

@@ -15,6 +15,7 @@ There are multiple ways to identify a file:
 - Value: Relative path to the vault
 - Example: `hobbies/soccer.md` / `hobbies/soccer`
 - Note: You can omit the file extension `.md`.
+- Note: With `reveal=true`, `filepath` can also refer to an existing folder.
 
 ## File name
 
@@ -61,6 +62,5 @@ Suppose you have a note called Inbox which has an alias "Brain Dumps". Now comes
 Use this command
 `obsidian://adv-uri?filename=Brain%20Dumps`
 Example : [image](https://user-images.githubusercontent.com/95166364/205478454-b6949bf6-cf8c-4218-abaa-3d1bf22bfc1e.png)
-
 
 

@@ -343,13 +343,18 @@ export default class AdvancedURI extends Plugin {
         }
         if (parameters.filepath) {
             parameters.filepath = normalizePath(parameters.filepath);
-            const index = parameters.filepath.lastIndexOf(".");
-            const extension = parameters.filepath.substring(
-                index < 0 ? parameters.filepath.length : index
-            );
+            const revealedFile =
+                parameters.reveal === "true" &&
+                this.app.vault.getAbstractFileByPath(parameters.filepath);
+            if (!revealedFile) {
+                const index = parameters.filepath.lastIndexOf(".");
+                const extension = parameters.filepath.substring(
+                    index < 0 ? parameters.filepath.length : index
+                );
 
-            if (extension === "") {
-                parameters.filepath = parameters.filepath + ".md";
+                if (extension === "") {
+                    parameters.filepath = parameters.filepath + ".md";
+                }
             }
         } else if (parameters.daily === "true") {
             if (!appHasDailyNotesPluginLoaded(this.app)) {
@@ -388,7 +393,9 @@ export default class AdvancedURI extends Plugin {
             await awaitSyncCompletion(this.app);
         }
 
-        if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
+        if (parameters.reveal === "true") {
+            await this.handlers.handleReveal(parameters);
+        } else if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
             this.handlers.handlePluginManagement(parameters);
         } else if (parameters.workspace || parameters.saveworkspace == "true") {
             await this.handlers.handleWorkspace(parameters);

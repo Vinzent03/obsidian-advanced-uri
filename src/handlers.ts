@@ -11,6 +11,7 @@ import { FileModal } from "./modals/file_modal";
 import Tools from "./tools";
 import {
     CanvasView,
+    FileExplorerView,
     MetadataEditor,
     MetadataFocusMode,
     Parameters,
@@ -346,6 +347,26 @@ export default class Handlers {
         const exists = await this.app.vault.adapter.exists(parameters.filepath);
 
         await copyText((exists ? 1 : 0).toString());
+        this.plugin.success(parameters);
+    }
+
+    async handleReveal(parameters: Parameters) {
+        const file = this.app.vault.getAbstractFileByPath(parameters.filepath);
+        if (!file) {
+            new Notice("Cannot find file or folder");
+            this.plugin.failure(parameters);
+            return;
+        }
+
+        const leaf = this.app.workspace.getLeavesOfType("file-explorer")[0];
+        const view = leaf?.view as FileExplorerView | undefined;
+        if (!view || typeof view.revealInFolder !== "function") {
+            new Notice("File Explorer is not available");
+            this.plugin.failure(parameters);
+            return;
+        }
+
+        view.revealInFolder(file);
         this.plugin.success(parameters);
     }
 

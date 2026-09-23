@@ -4,6 +4,7 @@ import {
     Plugin,
     PluginManifest,
     SettingTab,
+    TAbstractFile,
     TFile,
     View,
     moment,
@@ -161,6 +162,7 @@ export interface Parameters {
     uid?: string;
     filename?: string;
     exists?: string;
+    reveal?: "true";
     viewmode?: "source" | "preview" | "live";
     openmode?: OpenMode;
     settingid?: string;
@@ -207,6 +209,10 @@ export type OpenMode =
     | "window-or-focus"
     | "true"
     | "false";
+
+export interface FileExplorerView extends View {
+    revealInFolder(file: TAbstractFile): void;
+}
 
 export interface HookParameters {
     "x-success": string;
