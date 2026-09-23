@@ -22,26 +22,21 @@ export default class Tools {
         return this.plugin.settings;
     }
 
-    private static getFrontmatterString(
+    private static getFrontmatterUIDs(
         frontmatter: CachedMetadata["frontmatter"] | undefined,
         key: string
-    ): string | undefined {
+    ): (string | number)[] {
         const entry: unknown = parseFrontMatterEntry(frontmatter, key);
-        if (typeof entry === "string") return entry;
-        if (entry instanceof Array && typeof entry[0] === "string") {
-            return entry[0];
+        if (typeof entry === "string" || typeof entry === "number") {
+            return [entry];
         }
-    }
-
-    private static getFrontmatterStringArray(
-        frontmatter: CachedMetadata["frontmatter"] | undefined,
-        key: string
-    ): string[] | undefined {
-        const entry: unknown = parseFrontMatterEntry(frontmatter, key);
-        return entry instanceof Array &&
-            entry.every((item) => typeof item === "string")
-            ? entry
-            : undefined;
+        if (entry instanceof Array) {
+            return entry.filter(
+                (item): item is string | number =>
+                    typeof item === "string" || typeof item === "number"
+            );
+        }
+        return [];
     }
 
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
@@ -87,12 +82,12 @@ export default class Tools {
                 });
             }));
 
-        const uid = Tools.getFrontmatterString(
+        const [uid] = Tools.getFrontmatterUIDs(
             cache.frontmatter,
             this.plugin.settings.idField
         );
         if (uid != undefined) {
-            return uid;
+            return String(uid);
         }
     }
 
@@ -210,16 +205,19 @@ export default class Tools {
         const files = this.app.vault.getMarkdownFiles();
         const idKey = this.settings.idField;
         for (const file of files) {
-            const fieldValue = Tools.getFrontmatterStringArray(
+            const fieldValues = Tools.getFrontmatterUIDs(
                 this.app.metadataCache.getFileCache(file)?.frontmatter,
                 idKey
             );
 
-            if (fieldValue?.includes(uid)) return file;
-            if (Tools.getFrontmatterString(
-                this.app.metadataCache.getFileCache(file)?.frontmatter,
-                idKey
-            ) == uid) {
+            if (
+                fieldValues.some(
+                    (value) =>
+                        value === uid ||
+                        // Preserve the numeric matching behavior used before v2.0.0.
+                        (typeof value === "number" && Number(uid) === value)
+                )
+            ) {
                 return file;
             }
         }
