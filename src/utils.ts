@@ -331,21 +331,10 @@ export function waitForFileCache(
     });
 }
 
-/** Searches the vault once the metadata cache has finished initializing. */
-export function waitForFileMatchingCache(
-    app: App,
-    matches: (file: TFile, cache: CachedMetadata) => boolean
-): Promise<TFile | null> {
+/** Waits for Obsidian's initial metadata cache resolution. */
+export function waitForMetadataCacheInitialization(app: App): Promise<void> {
     const metadataCache = app.metadataCache;
-    const findMatch = (): TFile | null => {
-        for (const file of app.vault.getMarkdownFiles()) {
-            const cache = metadataCache.getFileCache(file);
-            if (cache && matches(file, cache)) return file;
-        }
-        return null;
-    };
-
-    if (metadataCache.initialized) return Promise.resolve(findMatch());
+    if (metadataCache.initialized) return Promise.resolve();
 
     return new Promise((resolve) => {
         let settled = false;
@@ -353,10 +342,23 @@ export function waitForFileMatchingCache(
             if (settled) return;
             settled = true;
             metadataCache.offref(event);
-            resolve(findMatch());
+            resolve();
         };
         const event = metadataCache.on("resolved", finish);
         // Recheck after subscribing in case initialization completed meanwhile.
         if (metadataCache.initialized) finish();
     });
+}
+
+/** Searches the vault once the metadata cache has finished initializing. */
+export async function waitForFileMatchingCache(
+    app: App,
+    matches: (file: TFile, cache: CachedMetadata) => boolean
+): Promise<TFile | null> {
+    await waitForMetadataCacheInitialization(app);
+    for (const file of app.vault.getMarkdownFiles()) {
+        const cache = app.metadataCache.getFileCache(file);
+        if (cache && matches(file, cache)) return file;
+    }
+    return null;
 }

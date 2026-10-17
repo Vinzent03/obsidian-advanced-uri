@@ -55,31 +55,12 @@ export default class Tools {
     }
 
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
-        const frontmatter =
-            this.app.metadataCache.getFileCache(file)?.frontmatter;
-        const fileContent: string = await this.app.vault.read(file);
-        const isYamlEmpty: boolean =
-            (!frontmatter || frontmatter.length === 0) &&
-            !fileContent.match(/^-{3}\s*\n*\r*-{3}/);
-        let splitContent = fileContent.split("\n");
-        const key = `${this.plugin.settings.idField}:`;
-        if (isYamlEmpty) {
-            splitContent.unshift("---");
-            splitContent.unshift(`${key} ${uid}`);
-            splitContent.unshift("---");
-        } else {
-            const lineIndexOfKey = splitContent.findIndex((line) =>
-                line.startsWith(key)
-            );
-            if (lineIndexOfKey != -1) {
-                splitContent[lineIndexOfKey] = `${key} ${uid}`;
-            } else {
-                splitContent.splice(1, 0, `${key} ${uid}`);
+        await this.app.fileManager.processFrontMatter(
+            file,
+            (frontmatter: Record<string, unknown>) => {
+                frontmatter[this.settings.idField] = uid;
             }
-        }
-
-        const newFileContent = splitContent.join("\n");
-        await this.app.vault.modify(file, newFileContent);
+        );
         return uid;
     }
 
@@ -195,7 +176,10 @@ export default class Tools {
                 .replace(/\{\{vaultName\}\}/g, this.app.vault.getName())
                 .replace(/\{\{vaultId\}\}/g, this.app.appId);
             if (file && formattedLink.match(/\{\{uid\}\}/g)) {
-                const uid = (await this.getUIDFromFile(file)) ?? file.basename;
+                const uid =
+                    parameters.uid ??
+                    (await this.getUIDFromFile(file)) ??
+                    file.basename;
                 formattedLink = formattedLink.replace(/\{\{uid\}\}/g, uid);
             }
             if (file && formattedLink.match(/\{\{alias\}\}/g)) {
@@ -216,24 +200,9 @@ export default class Tools {
         new Notice("Advanced URI copied to your clipboard");
     }
 
-    getFileFromUID(uid: string): TFile | undefined {
-        const files = this.app.vault.getMarkdownFiles();
-        for (const file of files) {
-            if (
-                this.hasUID(
-                    this.app.metadataCache.getFileCache(file)?.frontmatter,
-                    uid
-                )
-            ) {
-                return file;
-            }
-        }
-    }
-
     async waitForFileFromUID(uid: string): Promise<TFile | undefined> {
-        const file = await waitForFileMatchingCache(
-            this.app,
-            (_file, cache) => this.hasUID(cache.frontmatter, uid)
+        const file = await waitForFileMatchingCache(this.app, (_file, cache) =>
+            this.hasUID(cache.frontmatter, uid)
         );
         return file ?? undefined;
     }

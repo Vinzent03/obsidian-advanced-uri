@@ -38,6 +38,7 @@ import {
     getEndAndBeginningOfHeading,
     getFileUri,
     getViewStateFromMode as getOpenViewStateFromMode,
+    waitForMetadataCacheInitialization,
 } from "./utils";
 import { WorkspaceModal } from "./modals/workspace_modal";
 
@@ -309,11 +310,8 @@ export default class AdvancedURI extends Plugin {
         this.lastParameters = { ...parameters };
         if (parameters.uid) {
             // A UID with a filepath may create a new file when the UID is absent.
-            const res = (
-                parameters.filepath
-                    ? this.tools.getFileFromUID(parameters.uid)
-                    : await this.tools.waitForFileFromUID(parameters.uid)
-            )?.path;
+            const res = (await this.tools.waitForFileFromUID(parameters.uid))
+                ?.path;
             if (res != undefined) {
                 parameters.filepath = res;
                 parameters.uid = undefined;
@@ -325,6 +323,7 @@ export default class AdvancedURI extends Plugin {
                 return;
             }
         } else if (parameters.filename) {
+            await waitForMetadataCacheInitialization(this.app);
             let file = this.app.metadataCache.getFirstLinkpathDest(
                 parameters.filename,
                 ""
@@ -335,7 +334,7 @@ export default class AdvancedURI extends Plugin {
                     .find((file) =>
                         parseFrontMatterAliases(
                             this.app.metadataCache.getFileCache(file)
-                                .frontmatter
+                                ?.frontmatter
                         )?.includes(parameters.filename)
                     );
             }
