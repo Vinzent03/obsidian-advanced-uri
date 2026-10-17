@@ -1,7 +1,6 @@
 import {
     App,
     CachedMetadata,
-    EventRef,
     Notice,
     OpenViewState,
     TFile,
@@ -305,31 +304,59 @@ export function getObjFieldByPath(params: {
     }
 }
 
-/**
- * Waits for the file cache to be available for the given file by listening to
- * the "resolve" event of the metadata cache for a maximum of 5 seconds.
- */
-export async function waitForFileCache(
+/** Waits for the cache of a specific file to become available. */
+export function waitForFileCache(
     app: App,
-    file: TFile
+    file: TFile,
+    timeoutMs = 5000
 ): Promise<CachedMetadata | null> {
-    let cache = app.metadataCache.getFileCache(file);
-    if (!cache) {
-        return new Promise((resolve) => {
-            let event: EventRef;
-            const timeout = window.setTimeout(() => {
-                resolve(null);
-                app.metadataCache.offref(event);
-            }, 5000); // Timeout after 5 seconds
-            event = app.metadataCache.on("resolve", (resolvedFile) => {
-                if (resolvedFile === file) {
-                    cache = app.metadataCache.getFileCache(file);
-                    window.clearTimeout(timeout);
-                    app.metadataCache.offref(event);
-                    resolve(cache);
-                }
-            });
+    return new Promise((resolve) => {
+        const metadataCache = app.metadataCache;
+        let settled = false;
+        let timeout: number;
+        const finish = (cache: CachedMetadata | null) => {
+            if (settled) return;
+            settled = true;
+            metadataCache.offref(event);
+            window.clearTimeout(timeout);
+            resolve(cache);
+        };
+        const event = metadataCache.on("changed", (changedFile, _data, cache) => {
+            if (changedFile === file) finish(cache);
         });
-    }
-    return cache;
+
+        timeout = window.setTimeout(() => finish(null), timeoutMs);
+        const cache = metadataCache.getFileCache(file);
+        if (cache) finish(cache);
+    });
+}
+
+/** Searches the vault once the metadata cache has finished initializing. */
+export function waitForFileMatchingCache(
+    app: App,
+    matches: (file: TFile, cache: CachedMetadata) => boolean
+): Promise<TFile | null> {
+    const metadataCache = app.metadataCache;
+    const findMatch = (): TFile | null => {
+        for (const file of app.vault.getMarkdownFiles()) {
+            const cache = metadataCache.getFileCache(file);
+            if (cache && matches(file, cache)) return file;
+        }
+        return null;
+    };
+
+    if (metadataCache.initialized) return Promise.resolve(findMatch());
+
+    return new Promise((resolve) => {
+        let settled = false;
+        const finish = () => {
+            if (settled) return;
+            settled = true;
+            metadataCache.offref(event);
+            resolve(findMatch());
+        };
+        const event = metadataCache.on("resolved", finish);
+        // Recheck after subscribing in case initialization completed meanwhile.
+        if (metadataCache.initialized) finish();
+    });
 }

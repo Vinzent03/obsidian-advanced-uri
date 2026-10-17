@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import AdvancedURI from "./main";
 import { LinkFormat, Parameters } from "./types";
-import { copyText } from "./utils";
+import { copyText, waitForFileMatchingCache } from "./utils";
 import { GeneralModal } from "./modals/general_modal";
 /**
  * These methods depend on the plugins settings in contrast to the utils.ts file, which's functions are independent of the plugins settings.
@@ -37,6 +37,21 @@ export default class Tools {
             );
         }
         return [];
+    }
+
+    private hasUID(
+        frontmatter: CachedMetadata["frontmatter"] | undefined,
+        uid: string
+    ): boolean {
+        return Tools.getFrontmatterUIDs(
+            frontmatter,
+            this.settings.idField
+        ).some(
+            (value) =>
+                value === uid ||
+                // Preserve the numeric matching behavior used before v2.0.0.
+                (typeof value === "number" && Number(uid) === value)
+        );
     }
 
     async writeUIDToFile(file: TFile, uid: string): Promise<string> {
@@ -203,24 +218,24 @@ export default class Tools {
 
     getFileFromUID(uid: string): TFile | undefined {
         const files = this.app.vault.getMarkdownFiles();
-        const idKey = this.settings.idField;
         for (const file of files) {
-            const fieldValues = Tools.getFrontmatterUIDs(
-                this.app.metadataCache.getFileCache(file)?.frontmatter,
-                idKey
-            );
-
             if (
-                fieldValues.some(
-                    (value) =>
-                        value === uid ||
-                        // Preserve the numeric matching behavior used before v2.0.0.
-                        (typeof value === "number" && Number(uid) === value)
+                this.hasUID(
+                    this.app.metadataCache.getFileCache(file)?.frontmatter,
+                    uid
                 )
             ) {
                 return file;
             }
         }
+    }
+
+    async waitForFileFromUID(uid: string): Promise<TFile | undefined> {
+        const file = await waitForFileMatchingCache(
+            this.app,
+            (_file, cache) => this.hasUID(cache.frontmatter, uid)
+        );
+        return file ?? undefined;
     }
 
     getFileFromBlockID(blockId: string): TFile | undefined {

@@ -107,10 +107,7 @@ export default class AdvancedURI extends Plugin {
                 );
                 fileModal.open();
                 fileModal.onChooseItem = (filePath: FileModalData) => {
-                    new SearchAndReplaceModal(
-                        this,
-                        filePath?.source
-                    ).open();
+                    new SearchAndReplaceModal(this, filePath?.source).open();
                 };
             },
         });
@@ -311,10 +308,21 @@ export default class AdvancedURI extends Plugin {
         let createdDailyNote = false;
         this.lastParameters = { ...parameters };
         if (parameters.uid) {
-            const res = this.tools.getFileFromUID(parameters.uid)?.path;
+            // A UID with a filepath may create a new file when the UID is absent.
+            const res = (
+                parameters.filepath
+                    ? this.tools.getFileFromUID(parameters.uid)
+                    : await this.tools.waitForFileFromUID(parameters.uid)
+            )?.path;
             if (res != undefined) {
                 parameters.filepath = res;
                 parameters.uid = undefined;
+            } else if (!parameters.filepath) {
+                new Notice(`Cannot find file with UID ${parameters.uid}`);
+                this.failure(parameters, {
+                    errorMessage: `Cannot find file with UID ${parameters.uid}`,
+                });
+                return;
             }
         } else if (parameters.filename) {
             let file = this.app.metadataCache.getFirstLinkpathDest(
@@ -395,7 +403,10 @@ export default class AdvancedURI extends Plugin {
 
         if (parameters.reveal === "true") {
             await this.handlers.handleReveal(parameters);
-        } else if (parameters["enable-plugin"] || parameters["disable-plugin"]) {
+        } else if (
+            parameters["enable-plugin"] ||
+            parameters["disable-plugin"]
+        ) {
             this.handlers.handlePluginManagement(parameters);
         } else if (parameters.workspace || parameters.saveworkspace == "true") {
             await this.handlers.handleWorkspace(parameters);
@@ -743,7 +754,8 @@ export default class AdvancedURI extends Plugin {
                         file instanceof TFile ? file.path : parameters.filepath;
                     this.app.workspace.iterateAllLeaves((existingLeaf) => {
                         if (
-                            existingLeaf.getViewState().state.file === targetPath
+                            existingLeaf.getViewState().state.file ===
+                            targetPath
                         ) {
                             if (fileIsAlreadyOpened && existingLeaf.width == 0)
                                 return;

@@ -12,6 +12,11 @@ import {
 import { CanvasNodeData } from "obsidian/canvas";
 
 declare module "obsidian" {
+    interface MetadataCache {
+        /** Internal Obsidian flag indicating that the initial cache load finished. */
+        initialized: boolean;
+    }
+
     interface App {
         setting: {
             containerEl: HTMLElement;
