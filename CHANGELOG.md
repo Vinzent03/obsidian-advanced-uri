@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/Vinzent03/obsidian-advanced-uri/compare/2.2.0...2.2.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* prevent metadata state not being populated in multiple places ([3e27032](https://github.com/Vinzent03/obsidian-advanced-uri/commit/3e27032ec7cbf5125133e2770afcdd89321f5d2d)), closes [#142](https://github.com/Vinzent03/obsidian-advanced-uri/issues/142)
+* wait for metadata cache to initialize before searching for uid ([0661e1a](https://github.com/Vinzent03/obsidian-advanced-uri/commit/0661e1a380d66a43ffba2a503015bc3dc3c1b2ea)), closes [#237](https://github.com/Vinzent03/obsidian-advanced-uri/issues/237)
+
 ## [2.2.0](https://github.com/Vinzent03/obsidian-advanced-uri/compare/2.1.0...2.2.0) (2026-09-23)
 
 
